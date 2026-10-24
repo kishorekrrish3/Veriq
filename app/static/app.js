@@ -1,6 +1,6 @@
 /**
- * VERIQ — Verification Engine Client
- * Aesthetic: Industrial Precision Instrument
+ * VERIQ — macOS & Liquid Glass Developer Workbench
+ * Strictly adhering to Apple HIG per AGENT.md
  */
 
 let activeRunId = null;
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadBenchmarks();
 });
 
-// Toast Notifications
+// Toast Notifications (macOS Banner Style)
 function showToast(message, type = 'info') {
   const container = document.getElementById('toast-container');
   if (!container) return;
@@ -38,9 +38,9 @@ function showToast(message, type = 'info') {
   }, 3500);
 }
 
-// Navigation & Tab Switching
+// Navigation & Segmented Control Tab Switching
 function initNavigation() {
-  const tabs = document.querySelectorAll('.deck-tab[data-tab]');
+  const tabs = document.querySelectorAll('.segment-btn[data-tab]');
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
       const targetId = tab.dataset.tab;
@@ -55,11 +55,17 @@ function initNavigation() {
 }
 
 function switchTab(tabId) {
-  document.querySelectorAll('.deck-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.segment-btn').forEach(t => {
+    t.classList.remove('active');
+    t.setAttribute('aria-selected', 'false');
+  });
   document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
 
-  const activeTab = document.querySelector(`.deck-tab[data-tab="${tabId}"]`);
-  if (activeTab) activeTab.classList.add('active');
+  const activeTab = document.querySelector(`.segment-btn[data-tab="${tabId}"]`);
+  if (activeTab) {
+    activeTab.classList.add('active');
+    activeTab.setAttribute('aria-selected', 'true');
+  }
 
   const targetSection = document.getElementById(`tab-${tabId}`);
   if (targetSection) targetSection.classList.add('active');
@@ -73,7 +79,7 @@ function switchTab(tabId) {
   if (tabId === 'ledger') loadStandaloneLedger();
 }
 
-// Presets
+// Preset Demo Scenarios
 function initPresets() {
   const presets = {
     'std-dev': {
@@ -101,7 +107,7 @@ function initPresets() {
         document.getElementById('run-title').value = data.title;
         document.getElementById('run-desc').value = data.desc;
         document.getElementById('run-repairs').value = data.repairs;
-        showToast(`Loaded preset: ${chip.textContent.trim()}`, 'info');
+        showToast(`Preset loaded: ${chip.textContent.trim()}`, 'info');
       }
     });
   });
@@ -160,15 +166,15 @@ async function openRunWorkspace(runId) {
   const navPill = document.getElementById('nav-active-pill');
   if (navPill) {
     navPill.textContent = 'ACTIVE';
-    navPill.style.color = '#38BDF8';
+    navPill.style.color = 'var(--system-blue)';
   }
 
   document.getElementById('active-run-id').textContent = runId;
   document.getElementById('active-run-title').textContent = 'Loading task specification...';
-  document.getElementById('timeline-container').innerHTML = '<div style="color:var(--ink-dim); text-align:center; padding:24px;">Connecting to event stream...</div>';
+  document.getElementById('timeline-container').innerHTML = '<div style="color:var(--label-quaternary); text-align:center; padding:28px;">Connecting to event stream...</div>';
   document.getElementById('diff-code-block').innerHTML = '<code>Waiting for candidate patch...</code>';
-  document.getElementById('routing-decisions-container').innerHTML = '<div style="color:var(--ink-dim);">Awaiting model selection...</div>';
-  document.getElementById('workspace-ledger-claims').innerHTML = '<div style="color:var(--ink-dim);">Registering claims...</div>';
+  document.getElementById('routing-decisions-container').innerHTML = '<div style="color:var(--label-quaternary); font-size:12px;">Awaiting model selection...</div>';
+  document.getElementById('workspace-ledger-claims').innerHTML = '<div style="color:var(--label-quaternary); font-size:12px;">Registering claims...</div>';
 
   startLiveTimer();
   await fetchAndDisplayRun(runId);
@@ -222,16 +228,16 @@ function subscribeToRunEvents(runId) {
 function appendTimelineEvent(ev) {
   const container = document.getElementById('timeline-container');
   const entry = document.createElement('div');
-  entry.className = 'event-entry';
+  entry.className = 'timeline-event-row';
 
   const isError = ev.event_type.includes('FAIL') || ev.event_type.includes('ERROR');
   const isSuccess = ev.event_type.includes('COMPLETE') || ev.event_type.includes('VALIDATED');
 
   entry.innerHTML = `
-    <div class="event-marker ${isError ? 'error' : isSuccess ? 'success' : ''}"></div>
-    <div class="event-body">
-      <div class="event-header">${new Date(ev.timestamp).toLocaleTimeString()} · ${ev.event_type}</div>
-      <div class="event-title">${escapeHtml(ev.message)}</div>
+    <div class="timeline-node-circle ${isError ? 'error' : isSuccess ? 'success' : ''}"></div>
+    <div style="flex:1;">
+      <div class="timeline-event-meta">${new Date(ev.timestamp).toLocaleTimeString()} · ${ev.event_type}</div>
+      <div class="timeline-event-text">${escapeHtml(ev.message)}</div>
     </div>
   `;
   container.appendChild(entry);
@@ -239,7 +245,7 @@ function appendTimelineEvent(ev) {
 
   const countEl = document.getElementById('active-event-count');
   if (countEl) {
-    const total = container.querySelectorAll('.event-entry').length;
+    const total = container.querySelectorAll('.timeline-event-row').length;
     countEl.textContent = `${total} events recorded`;
   }
 }
@@ -259,7 +265,7 @@ function handleLiveEventData(ev) {
     const navPill = document.getElementById('nav-active-pill');
     if (navPill) {
       navPill.textContent = ev.event_type === 'RUN_COMPLETED' ? 'DONE' : 'FAILED';
-      navPill.style.color = ev.event_type === 'RUN_COMPLETED' ? 'var(--truth-verified-ink)' : 'var(--truth-failed-ink)';
+      navPill.style.color = ev.event_type === 'RUN_COMPLETED' ? 'var(--system-green)' : 'var(--system-red)';
     }
   }
 }
@@ -279,9 +285,9 @@ async function fetchAndDisplayRun(runId) {
 
     const statusBadge = document.getElementById('active-run-status');
     statusBadge.textContent = run.status;
-    statusBadge.className = `status-tag ${
-      run.status === 'COMPLETED' ? 'status-tag-verified' : 
-      run.status === 'FAILED' ? 'status-tag-failed' : 'status-tag-supported'
+    statusBadge.className = `status-pill ${
+      run.status === 'COMPLETED' ? 'status-verified' : 
+      run.status === 'FAILED' ? 'status-failed' : 'status-supported'
     }`;
 
     if (run.status === 'COMPLETED' || run.status === 'FAILED') {
@@ -316,12 +322,12 @@ async function fetchRunDiff(runId) {
   } catch (e) {}
 }
 
-// Unified Diff Viewer with Line Numbers
+// Xcode-grade Unified Diff Viewer with Line Numbers
 function renderDiff(diffText) {
   const codeBlock = document.getElementById('diff-code-block');
   if (!codeBlock) return;
   if (!diffText || diffText.trim() === '' || diffText.includes('No modifications applied')) {
-    codeBlock.innerHTML = '<code>No modifications applied yet.</code>';
+    codeBlock.innerHTML = '<code>No patch modifications applied yet.</code>';
     return;
   }
 
@@ -333,16 +339,16 @@ function renderDiff(diffText) {
     let isCode = true;
 
     if (line.startsWith('+') && !line.startsWith('+++')) {
-      rowClass = 'diff-row-add';
+      rowClass = 'diff-add';
     } else if (line.startsWith('-') && !line.startsWith('---')) {
-      rowClass = 'diff-row-del';
+      rowClass = 'diff-del';
     } else if (line.startsWith('@@')) {
-      rowClass = 'diff-row-hunk';
+      rowClass = 'diff-hunk';
       isCode = false;
     }
 
     const numStr = isCode ? lineNum++ : '··';
-    return `<div class="diff-row ${rowClass}"><span class="diff-num">${numStr}</span><span class="diff-text">${safeLine}</span></div>`;
+    return `<div class="diff-row ${rowClass}"><span class="diff-gutter">${numStr}</span><span class="diff-content">${safeLine}</span></div>`;
   });
 
   codeBlock.innerHTML = rows.join('');
@@ -350,23 +356,23 @@ function renderDiff(diffText) {
 
 function renderRoutingDecision(decision) {
   const container = document.getElementById('routing-decisions-container');
-  if (container.querySelector('div') && container.innerText.includes('No routing')) {
+  if (container.querySelector('div') && container.innerText.includes('No routing decisions')) {
     container.innerHTML = '';
   }
 
   const card = document.createElement('div');
-  card.style.cssText = 'background:var(--surface-terminal); border:1px solid var(--rule-subtle); padding:10px 14px; border-radius:4px; margin-bottom:8px;';
+  card.style.cssText = 'background:var(--glass-inset); border:1px solid var(--border-subtle); padding:12px 16px; border-radius:8px; margin-bottom:10px;';
 
-  const tierTag = decision.tier === 'FAST' ? 'status-tag-supported' : decision.tier === 'STANDARD' ? 'status-tag-verified' : 'status-tag-failed';
+  const tierTag = decision.tier === 'FAST' ? 'status-supported' : decision.tier === 'STANDARD' ? 'status-verified' : 'status-failed';
 
   card.innerHTML = `
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-      <span class="status-tag ${tierTag}">${decision.tier} tier</span>
-      <span style="font-family:var(--font-mono); font-size:11px; color:var(--ink-dim);">Attempt #${decision.attempt}</span>
+      <span class="status-pill ${tierTag}">${decision.tier} tier</span>
+      <span style="font-family:var(--font-sf-mono); font-size:11px; color:var(--label-tertiary);">Attempt #${decision.attempt}</span>
     </div>
-    <div style="font-family:var(--font-mono); font-size:12px; font-weight:600; color:var(--ink-primary);">${decision.model_id}</div>
-    <div style="font-size:12px; color:var(--ink-muted); margin:4px 0;">${escapeHtml(decision.reason)}</div>
-    <div style="font-family:var(--font-mono); font-size:11px; color:var(--ink-dim); display:flex; gap:16px; margin-top:6px; border-top:1px solid var(--rule-subtle); padding-top:4px;">
+    <div style="font-family:var(--font-sf-mono); font-size:12px; font-weight:600; color:var(--label-primary);">${decision.model_id}</div>
+    <div style="font-size:12px; color:var(--label-secondary); margin:4px 0;">${escapeHtml(decision.reason)}</div>
+    <div style="font-family:var(--font-sf-mono); font-size:11px; color:var(--label-tertiary); display:flex; gap:16px; margin-top:6px; border-top:1px solid var(--border-subtle); padding-top:6px;">
       <span>Latency: ${decision.latency_ms || 0}ms</span>
       <span>Tokens: ${decision.total_tokens || 0}</span>
       <span>Cost: $${(decision.estimated_cost_usd || 0).toFixed(5)}</span>
@@ -396,10 +402,10 @@ async function fetchRunLedger(runId) {
 }
 
 function initFilters() {
-  document.querySelectorAll('.filter-bar').forEach(group => {
-    group.querySelectorAll('.filter-btn').forEach(btn => {
+  document.querySelectorAll('.ledger-filter-group').forEach(group => {
+    group.querySelectorAll('.filter-chip').forEach(btn => {
       btn.addEventListener('click', () => {
-        group.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        group.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentFilter = btn.dataset.filter;
 
@@ -425,30 +431,30 @@ function renderLedgerClaims(claims, containerId, evidenceList = []) {
   if (!container) return;
 
   if (!claims || claims.length === 0) {
-    container.innerHTML = '<div style="color:var(--ink-dim); font-size:12px; padding:16px;">No claims match the filter.</div>';
+    container.innerHTML = '<div style="color:var(--label-quaternary); font-size:12px; padding:16px;">No claims match the filter.</div>';
     return;
   }
 
   container.innerHTML = '';
   claims.forEach(claim => {
     const card = document.createElement('div');
-    card.className = 'claim-panel';
+    card.className = 'claim-inspector-item';
 
-    const statusTag = `status-tag-${claim.status.toLowerCase()}`;
+    const statusTag = `status-${claim.status.toLowerCase()}`;
     const backingEv = evidenceList.filter(e => (claim.evidence_ids || []).includes(e.evidence_id));
 
     let evHtml = '';
     backingEv.forEach(ev => {
       evHtml += `
-        <div class="evidence-terminal">
-          <div class="evidence-meta-row">
+        <div class="evidence-terminal-box">
+          <div class="evidence-header-line">
             <span>[${escapeHtml(ev.evidence_id)}] Check: ${escapeHtml(ev.check_type)}</span>
-            <span class="status-tag status-tag-${ev.status.toLowerCase()}">${ev.status}</span>
+            <span class="status-pill status-${ev.status.toLowerCase()}">${ev.status}</span>
           </div>
           ${ev.command ? `<div style="margin-bottom:4px;"><strong>Command:</strong> <code>${escapeHtml(ev.command)}</code></div>` : ''}
           ${ev.exit_code !== null ? `<div style="margin-bottom:4px;"><strong>Exit code:</strong> ${ev.exit_code} · <strong>Duration:</strong> ${ev.duration_ms}ms · <strong>Sandbox:</strong> ${escapeHtml(ev.sandbox_type || 'CONTAINER')}</div>` : ''}
-          ${ev.stdout ? `<div style="margin-top:6px;"><strong>Stdout:</strong> <pre style="white-space:pre-wrap; background:rgba(0,0,0,0.5); padding:6px; border-radius:3px; max-height:140px; overflow-y:auto; color:var(--ink-secondary);">${escapeHtml(ev.stdout)}</pre></div>` : ''}
-          ${ev.stderr ? `<div style="margin-top:6px; color:var(--truth-failed-ink);"><strong>Stderr:</strong> <pre style="white-space:pre-wrap; background:rgba(220,38,38,0.1); padding:6px; border-radius:3px; max-height:140px; overflow-y:auto;">${escapeHtml(ev.stderr)}</pre></div>` : ''}
+          ${ev.stdout ? `<div style="margin-top:6px;"><strong>Stdout:</strong> <pre style="white-space:pre-wrap; background:rgba(0,0,0,0.6); padding:8px; border-radius:4px; max-height:140px; overflow-y:auto; color:var(--label-secondary);">${escapeHtml(ev.stdout)}</pre></div>` : ''}
+          ${ev.stderr ? `<div style="margin-top:6px; color:var(--system-red);"><strong>Stderr:</strong> <pre style="white-space:pre-wrap; background:rgba(255,69,58,0.1); padding:8px; border-radius:4px; max-height:140px; overflow-y:auto;">${escapeHtml(ev.stderr)}</pre></div>` : ''}
         </div>
       `;
     });
@@ -456,9 +462,9 @@ function renderLedgerClaims(claims, containerId, evidenceList = []) {
     let limitationsHtml = '';
     if (claim.limitations && claim.limitations.length > 0) {
       limitationsHtml = `
-        <div style="margin-top:8px;">
-          <strong style="font-size:11px; color:var(--ink-muted); text-transform:uppercase;">Explicit limitations:</strong>
-          <ul style="margin-left:18px; color:var(--ink-secondary); margin-top:2px; font-size:12px;">
+        <div style="margin-top:10px;">
+          <strong style="font-size:11px; color:var(--label-tertiary); text-transform:uppercase;">Explicit limitations:</strong>
+          <ul style="margin-left:18px; color:var(--label-secondary); margin-top:4px; font-size:12px;">
             ${claim.limitations.map(l => `<li><em>${escapeHtml(l)}</em></li>`).join('')}
           </ul>
         </div>
@@ -466,29 +472,29 @@ function renderLedgerClaims(claims, containerId, evidenceList = []) {
     }
 
     card.innerHTML = `
-      <div class="claim-top">
-        <div class="claim-title-bar">
-          <span class="claim-code">${claim.claim_id}</span>
-          <span class="claim-name">${escapeHtml(claim.title)}</span>
-          <span class="claim-category-tag">${claim.category}</span>
+      <div class="claim-inspector-top">
+        <div class="claim-inspector-title">
+          <span class="claim-badge-code">${claim.claim_id}</span>
+          <strong style="color:var(--label-primary); font-size:13.5px;">${escapeHtml(claim.title)}</strong>
+          <span class="status-pill status-notrun" style="font-size:10px;">${claim.category}</span>
         </div>
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span class="status-tag ${statusTag}">${claim.status}</span>
-          <span style="font-size:11px; color:var(--ink-dim);">▼</span>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="status-pill ${statusTag}">${claim.status}</span>
+          <span style="font-size:11px; color:var(--label-quaternary);">▼</span>
         </div>
       </div>
-      <div class="claim-desc">${escapeHtml(claim.description)}</div>
-      <div class="claim-expanded-area">
+      <div class="claim-desc-text">${escapeHtml(claim.description)}</div>
+      <div class="claim-disclosure-drawer">
         ${limitationsHtml}
         <div style="margin-top:10px;">
-          <strong style="font-size:11px; color:var(--ink-muted); text-transform:uppercase;">Deterministic evidence records (${backingEv.length}):</strong>
-          ${evHtml || '<div style="color:var(--ink-dim); font-size:11px; margin-top:4px;">No concrete evidence records attached.</div>'}
+          <strong style="font-size:11px; color:var(--label-tertiary); text-transform:uppercase;">Deterministic evidence records (${backingEv.length}):</strong>
+          ${evHtml || '<div style="color:var(--label-quaternary); font-size:11px; margin-top:4px;">No concrete evidence records attached.</div>'}
         </div>
       </div>
     `;
 
     card.addEventListener('click', () => {
-      card.classList.toggle('open');
+      card.classList.toggle('expanded');
     });
 
     container.appendChild(card);
@@ -564,7 +570,7 @@ async function loadRecentRuns() {
 
     const tbody = document.getElementById('overview-runs-body');
     if (!runs || runs.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--ink-dim); padding:24px;">No runs recorded. Start a new run to begin.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--label-quaternary); padding:28px;">No runs recorded. Launch a new run to begin.</td></tr>';
       return;
     }
 
@@ -572,17 +578,17 @@ async function loadRecentRuns() {
     runs.forEach(r => {
       const tr = document.createElement('tr');
       const vClaims = r.ledger_summary ? `${r.ledger_summary.verified_count}/${r.ledger_summary.total_claims}` : '0/0';
-      const statusTag = `status-tag-${r.status.toLowerCase()}`;
+      const statusTag = `status-${r.status.toLowerCase()}`;
       tr.innerHTML = `
-        <td><code style="color:#93C5FD;">${r.run_id}</code></td>
+        <td><code style="color:var(--system-blue);">${r.run_id}</code></td>
         <td>${escapeHtml(r.task_title)}</td>
-        <td><span class="status-tag ${statusTag}">${r.status}</span></td>
-        <td><span style="font-family:var(--font-mono); font-size:11px; color:var(--ink-dim);">${r.execution_mode}</span></td>
-        <td style="font-family:var(--font-mono); color:var(--truth-verified-ink);">${vClaims}</td>
-        <td style="font-family:var(--font-mono);">${r.duration_seconds}s</td>
-        <td style="color:var(--ink-dim);">${new Date(r.created_at).toLocaleTimeString()}</td>
+        <td><span class="status-pill ${statusTag}">${r.status}</span></td>
+        <td><span style="font-family:var(--font-sf-mono); font-size:11px; color:var(--label-tertiary);">${r.execution_mode}</span></td>
+        <td style="font-family:var(--font-sf-mono); color:var(--system-green);">${vClaims}</td>
+        <td style="font-family:var(--font-sf-mono);">${r.duration_seconds}s</td>
+        <td style="color:var(--label-tertiary);">${new Date(r.created_at).toLocaleTimeString()}</td>
         <td>
-          <button class="btn btn-default btn-sm btn-inspect" data-run-id="${r.run_id}">Inspect</button>
+          <button class="btn btn-glass btn-sm btn-inspect" data-run-id="${r.run_id}">Inspect</button>
         </td>
       `;
       tr.querySelector('.btn-inspect').addEventListener('click', () => openRunWorkspace(r.run_id));
@@ -600,7 +606,7 @@ async function loadHistoryRuns() {
 
     const tbody = document.getElementById('history-runs-body');
     if (!runs || runs.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--ink-dim); padding:24px;">No runs stored in database.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--label-quaternary); padding:28px;">No runs stored in database.</td></tr>';
       return;
     }
 
@@ -608,17 +614,17 @@ async function loadHistoryRuns() {
     runs.forEach(r => {
       const tr = document.createElement('tr');
       const vClaims = r.ledger_summary ? `${r.ledger_summary.verified_count}/${r.ledger_summary.total_claims}` : '0/0';
-      const statusTag = `status-tag-${r.status.toLowerCase()}`;
+      const statusTag = `status-${r.status.toLowerCase()}`;
       tr.innerHTML = `
-        <td><code style="color:#93C5FD;">${r.run_id}</code></td>
+        <td><code style="color:var(--system-blue);">${r.run_id}</code></td>
         <td>${escapeHtml(r.task_title)}</td>
-        <td><span class="status-tag ${statusTag}">${r.status}</span></td>
-        <td><span style="font-family:var(--font-mono); font-size:11px; color:var(--ink-dim);">${r.execution_mode}</span></td>
-        <td style="font-family:var(--font-mono); color:var(--truth-verified-ink);">${vClaims}</td>
-        <td style="font-family:var(--font-mono);">${r.duration_seconds}s</td>
-        <td style="color:var(--ink-dim);">${r.completed_at ? new Date(r.completed_at).toLocaleTimeString() : 'Active'}</td>
+        <td><span class="status-pill ${statusTag}">${r.status}</span></td>
+        <td><span style="font-family:var(--font-sf-mono); font-size:11px; color:var(--label-tertiary);">${r.execution_mode}</span></td>
+        <td style="font-family:var(--font-sf-mono); color:var(--system-green);">${vClaims}</td>
+        <td style="font-family:var(--font-sf-mono);">${r.duration_seconds}s</td>
+        <td style="color:var(--label-tertiary);">${r.completed_at ? new Date(r.completed_at).toLocaleTimeString() : 'Active'}</td>
         <td>
-          <button class="btn btn-default btn-sm btn-inspect-hist" data-run-id="${r.run_id}">Inspect</button>
+          <button class="btn btn-glass btn-sm btn-inspect-hist" data-run-id="${r.run_id}">Inspect</button>
         </td>
       `;
       tr.querySelector('.btn-inspect-hist').addEventListener('click', () => openRunWorkspace(r.run_id));
@@ -668,14 +674,14 @@ async function checkProviderStatus() {
       if (hData.sandbox.docker_available) {
         if (sbBadge) {
           sbBadge.textContent = 'HARDENED CONTAINER';
-          sbBadge.className = 'status-tag status-tag-verified';
+          sbBadge.className = 'status-pill status-verified';
         }
         if (sbDesc) sbDesc.textContent = 'Docker engine connected; tests run in isolated container.';
         if (overviewTag) overviewTag.textContent = 'Docker Container';
       } else {
         if (sbBadge) {
           sbBadge.textContent = 'PROCESS FALLBACK';
-          sbBadge.className = 'status-tag status-tag-unresolved';
+          sbBadge.className = 'status-pill status-unresolved';
         }
         if (sbDesc) sbDesc.textContent = 'Process sandbox fallback active.';
         if (overviewTag) overviewTag.textContent = 'Process Sandbox';
@@ -689,10 +695,10 @@ async function checkProviderStatus() {
       if (nBadge) {
         if (pData.nebius.status === 'healthy') {
           nBadge.textContent = 'CONNECTED';
-          nBadge.className = 'status-tag status-tag-verified';
+          nBadge.className = 'status-pill status-verified';
         } else {
           nBadge.textContent = 'UNCONFIGURED';
-          nBadge.className = 'status-tag status-tag-notrun';
+          nBadge.className = 'status-pill status-notrun';
         }
       }
 
@@ -700,17 +706,17 @@ async function checkProviderStatus() {
       if (tBadge) {
         if (pData.tavily.status === 'healthy') {
           tBadge.textContent = 'CONNECTED';
-          tBadge.className = 'status-tag status-tag-verified';
+          tBadge.className = 'status-pill status-verified';
         } else {
           tBadge.textContent = 'UNCONFIGURED';
-          tBadge.className = 'status-tag status-tag-notrun';
+          tBadge.className = 'status-pill status-notrun';
         }
       }
     }
   } catch (e) {}
 }
 
-// Benchmark Suite Results
+// Benchmark Results
 async function loadBenchmarks() {
   try {
     const resp = await fetch('/api/benchmarks');
@@ -725,15 +731,15 @@ async function loadBenchmarks() {
     (bm.tasks || []).forEach(t => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td><code style="color:#93C5FD;">${t.task_id}</code></td>
+        <td><code style="color:var(--system-blue);">${t.task_id}</code></td>
         <td>${escapeHtml(t.task_name)}</td>
-        <td><span class="status-tag ${t.baseline_passed ? 'status-tag-verified' : 'status-tag-failed'}">${t.baseline_passed ? 'PASS' : 'FAIL'}</span></td>
-        <td style="font-family:var(--font-mono);">${t.baseline_latency_ms}ms</td>
-        <td><span class="status-tag ${t.routed_passed ? 'status-tag-verified' : 'status-tag-failed'}">${t.routed_passed ? 'PASS' : 'FAIL'}</span></td>
-        <td><span class="status-tag ${t.routed_tier_used === 'FAST' ? 'status-tag-supported' : 'status-tag-verified'}">${t.routed_tier_used}</span></td>
-        <td>${t.repair_triggered ? '<span class="status-tag status-tag-verified">Repaired</span>' : '<span style="color:var(--ink-dim);">No</span>'}</td>
-        <td style="font-family:var(--font-mono);">${t.routed_latency_ms}ms</td>
-        <td style="font-family:var(--font-mono); color:#93C5FD;">$${t.routed_cost_usd.toFixed(5)}</td>
+        <td><span class="status-pill ${t.baseline_passed ? 'status-verified' : 'status-failed'}">${t.baseline_passed ? 'PASS' : 'FAIL'}</span></td>
+        <td style="font-family:var(--font-sf-mono);">${t.baseline_latency_ms}ms</td>
+        <td><span class="status-pill ${t.routed_passed ? 'status-verified' : 'status-failed'}">${t.routed_passed ? 'PASS' : 'FAIL'}</span></td>
+        <td><span class="status-pill ${t.routed_tier_used === 'FAST' ? 'status-supported' : 'status-verified'}">${t.routed_tier_used}</span></td>
+        <td>${t.repair_triggered ? '<span class="status-pill status-verified">Repaired</span>' : '<span style="color:var(--label-quaternary);">No</span>'}</td>
+        <td style="font-family:var(--font-sf-mono);">${t.routed_latency_ms}ms</td>
+        <td style="font-family:var(--font-sf-mono); color:var(--system-teal);">$${t.routed_cost_usd.toFixed(5)}</td>
       `;
       tbody.appendChild(tr);
     });
