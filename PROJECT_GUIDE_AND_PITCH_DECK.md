@@ -13,15 +13,18 @@
 |---|---|
 | **Project Short Name** | **VERIQ** |
 | **Project Full Title** | **Evidence-Driven Autonomous Code Synthesis and Self-Repair via Deterministic Sandbox Verification and Multi-Tier NVIDIA Nemotron Model Routing** |
+| **Live Cloud Deployment** | [https://veriq-0ox1.onrender.com](https://veriq-0ox1.onrender.com) |
 | **GitHub Repository** | [https://github.com/kishorekrrish3/Veriq](https://github.com/kishorekrrish3/Veriq) |
 | **Headline Pitch** | While current AI coding assistants guess and hallucinate, VERIQ isolates code in a hardened sandbox, executes real automated unit tests, and proves correctness before touching developer files. |
 | **Core AI Infrastructure** | Nebius Token Factory (NVIDIA Nemotron-3-Nano-30B, Nemotron-3-Super-70B, Nemotron-4-340B-Instruct) |
 | **Research Grounding** | Tavily AI Search & Web Extract API |
 | **Security Isolation** | Zero-Network Docker Container (`--network none`) + Stripped-Environment Process Fallback |
+| **Persistence Layer** | Embedded SQLite with Write-Ahead Logging (WAL) and Cryptographic Proof Receipts |
+| **Authentication** | 100% Free Google OAuth 2.0 / OpenID Connect + 1-Click Instant Demo Login (Zero MAU paywalls) |
+| **Cloud Hosting** | Render Web Services (Automated CI/CD from GitHub, persistent disk, native SSE streaming) |
 | **Reliability Score** | **100% Test Pass Rate** (vs. 60% for single-model baseline) |
 | **Efficiency Metrics** | **-54.3% Latency** and **-62.1% Token Expenditure** via dynamic Nemotron routing |
 | **UI/UX Design** | Apple Human Interface Guidelines (HIG) macOS Liquid Glassmorphism with Dual Themes (`Cmd+T`) |
-| **Authentication** | 100% Free Google OAuth 2.0 / OpenID Connect + 1-Click Instant Demo Login |
 | **Automated Test Suite** | **48/48 unit & integration tests passing** |
 
 ---
@@ -279,17 +282,18 @@ Use this 12-slide template for your hackathon submission presentation deck:
 ---
 
 ### **Slide 10: Technology Stack Architecture**
-* **Headline**: *Best-of-breed enterprise technologies engineered for speed and security.*
+* **Headline**: *Best-of-breed enterprise technologies engineered for speed, security, and verification rigor.*
 * **Grid**:
-  * **Nebius Token Factory**: GPU inference cloud.
-  * **NVIDIA Nemotron LLMs**: Multi-tier reasoning models.
-  * **Tavily AI Search**: Anti-hallucination web documentation search.
-  * **Docker Engine**: Hardened sandbox container isolation.
-  * **FastAPI + SSE**: Real-time event streaming backend.
-  * **SQLite (WAL Mode)**: Thread-safe local persistence.
-  * **Apple Liquid Glass UI**: Dual-theme developer workbench (`Cmd+T`).
-  * **Google OAuth 2.0**: Free developer identity authentication.
-* **Visual**: Clean 8-icon technology stack grid.
+  * **Nebius Token Factory**: Cloud GPU infrastructure hosting NVIDIA Nemotron models.
+  * **NVIDIA Nemotron LLMs**: Multi-tier routing (Nano-30B, Super-70B, 340B-Instruct).
+  * **Tavily AI Search**: Live documentation grounding preventing hallucinated APIs.
+  * **Docker Engine & Process Sandbox**: Ephemeral container isolation with zero internet access (`--network none`).
+  * **FastAPI + SSE**: Real-time event streaming pipeline with zero UI latency.
+  * **SQLite (WAL Mode)**: High-concurrency local database storing tasks, sessions, and cryptographic proof receipts.
+  * **Google OAuth 2.0 & OIDC**: 100% free identity authentication + 1-click instant judge demo sign-in (no SaaS MAU limits).
+  * **Render Cloud Deployment**: Production web service with continuous GitHub CI/CD, persistent volume, and automatic HTTPS at `veriq-0ox1.onrender.com`.
+  * **Apple Liquid Glass UI**: Handcrafted macOS-grade frontend with dual dark/light themes (`Cmd+T`).
+* **Visual**: Clean 9-icon technology stack architecture grid.
 
 ---
 
@@ -308,10 +312,12 @@ Use this 12-slide template for your hackathon submission presentation deck:
 * **Headline**: *The future of AI engineering is not bigger prompts. It is deterministic verification.*
 * **Summary Points**:
   * Code generation without verification is a liability.
-  * VERIQ turns AI generation into an audited, verifiable asset.
-  * 48/48 tests passing · Live at `http://127.0.0.1:8000`.
+  * VERIQ turns probabilistic AI generation into an audited, verifiable asset.
+  * 48/48 unit tests passing (100% test suite).
+  * **Live Production Cloud**: [https://veriq-0ox1.onrender.com](https://veriq-0ox1.onrender.com)
+  * **Open Source Repository**: [https://github.com/kishorekrrish3/Veriq](https://github.com/kishorekrrish3/Veriq)
 * **Closing Quote**: *"Code is generated. Proof is earned."*
-* **Visual**: Live demo workbench link, GitHub repo QR code, and thank you banner.
+* **Visual**: Live demo workbench link, Render cloud badge, GitHub repo QR code, and thank you banner.
 
 ---
 

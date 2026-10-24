@@ -8,6 +8,7 @@
 
 <br/>
 
+[![Live Deployment](https://img.shields.io/badge/Live%20Demo-veriq--0ox1.onrender.com-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://veriq-0ox1.onrender.com)
 [![Tests: 48 Passed](https://img.shields.io/badge/Tests-48%20Passed%20(100%25)-success?style=for-the-badge&logo=pytest&logoColor=white)](tests/)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue?style=for-the-badge&logo=python&logoColor=white)](pyproject.toml)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688?style=for-the-badge&logo=fastapi&logoColor=white)](app/main.py)
@@ -34,7 +35,8 @@
 * **Primary Project Name**: **Veriq**
 * **Full Title**:  
   > **Evidence-Driven Autonomous Code Synthesis and Self-Repair via Deterministic Sandbox Verification and Multi-Tier NVIDIA Nemotron Model Routing**
-* **Repository**: [`https://github.com/kishorekrrish3/Veriq`](https://github.com/kishorekrrish3/Veriq)
+* **Live Cloud Deployment**: [https://veriq-0ox1.onrender.com](https://veriq-0ox1.onrender.com)
+* **GitHub Repository**: [`https://github.com/kishorekrrish3/Veriq`](https://github.com/kishorekrrish3/Veriq)
 * **Tagline**: *Code is generated. Proof is earned.*
 * **Core Differentiator**: Generative LLMs hypothesize; Veriq deterministically proves.
 
@@ -249,9 +251,30 @@ VERIQ Routed Cascade:   ███████░░░░░░░░░░░�
 │ Backend          │ FastAPI + Uvicorn           │ REST & SSE streaming  │
 │ Database         │ SQLite (WAL Mode)           │ ACID local persistence│
 │ Authentication   │ Google OAuth 2.0 / OIDC     │ Free identity auth    │
+│ Cloud Hosting    │ Render Web Services         │ Live auto-deploy host │
 │ Frontend         │ Apple Liquid Glass UI       │ Vanilla JS / HIG      │
 └──────────────────┴─────────────────────────────┴───────────────────────┘
 ```
+
+### Deep Dive: SQLite, Authentication & Cloud Deployment
+
+#### 🗄️ SQLite Database (WAL Mode)
+* **Zero Configuration & Zero Paywalls**: Unlike remote SaaS databases that impose latency or connection limits, SQLite is embedded directly into the application process.
+* **Write-Ahead Logging (WAL)**: Enabled via `PRAGMA journal_mode=WAL;` to allow simultaneous non-blocking concurrent readers while background tasks write ledger records.
+* **ACID Immutable Receipts**: Stores runs, real-time timeline steps, unified diffs, test terminal tracebacks, and cryptographic SHA-256 fingerprint hashes in `data/veriq.db`.
+* **Session Persistence**: Backs the session table with secure random tokens (`token_urlsafe(32)`) and automatic 14-day expiry.
+
+#### 🔐 Google OAuth 2.0 & OpenID Connect
+* **100% Free Identity Architecture**: Direct integration with Google Identity Services without third-party middleman paywalls (no Clerk or Auth0 MAU charges).
+* **Dual-Mode Sign In**:
+  1. **Official Google Sign-In**: Uses standard OAuth 2.0 authorization code flow with OpenID Connect (`openid email profile`), retrieving verified avatar, name, and email.
+  2. **1-Click Instant Demo Login**: Hackathon judges can instantly test authenticated workflows as `Alex Chen` with a single click, requiring zero preconfigured credentials.
+* **Security & Tokens**: Session tokens stored exclusively in `HttpOnly; SameSite=Lax` cookies, protecting user credentials against Cross-Site Scripting (XSS).
+
+#### ☁️ Render Cloud Hosting (`veriq-0ox1.onrender.com`)
+* **Continuous Cloud Deployment**: Connected directly to [`github.com/kishorekrrish3/Veriq`](https://github.com/kishorekrrish3/Veriq) with automatic continuous deployment on every `git push`.
+* **Native SSE Streaming Support**: Unlike serverless environments (Vercel/AWS Lambda) that throttle or buffer long-lived HTTP connections, Render maintains persistent streaming connections for real-time task progress.
+* **Automatic TLS / HTTPS**: Serves the application with secure SSL encryption at [`https://veriq-0ox1.onrender.com`](https://veriq-0ox1.onrender.com).
 
 ---
 
@@ -265,7 +288,7 @@ VERIQ features an Apple Human Interface Guidelines (HIG) workbench:
 * **Keyboard Shortcuts**: Press `Cmd + T` (macOS) or `Ctrl + T` (Windows/Linux) anywhere to instantly toggle themes.
 * **Xcode-Grade Unified Diff Viewer**: Color-coded line additions (`+`), deletions (`-`), and hunk markers (`@@`) with sticky line numbers.
 * **Live SSE Timeline**: Real-time event streaming (`MODEL_SELECTED`, `PATCH_GENERATED`, `TESTS_EXECUTED`, `RUN_COMPLETED`) with zero lag.
-* **Interactive Architecture Flow ([`/diagram`](http://127.0.0.1:8000/diagram))**: Visual SVG swimlanes, node inspector drawer, status state machine, and Mermaid code generator.
+* **Interactive Architecture Flow ([`/diagram`](https://veriq-0ox1.onrender.com/diagram))**: Visual SVG swimlanes, node inspector drawer, status state machine, and Mermaid code generator.
 
 ---
 
@@ -275,7 +298,8 @@ VERIQ includes a **100% Free** Google Authentication implementation:
 
 * **No Monthly Active User (MAU) Paywalls**: Direct integration with Google Identity Services and OAuth 2.0.
 * **Instant Demo Mode**: Click **"Instant Demo Sign-in"** to log in immediately as `alex.chen@veriq.dev` without waiting to configure Google Cloud credentials.
-* **Live Google OAuth**: Configure `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `.env` to sign in with your real Google account.
+* **Live Google OAuth**: Configured in Render production and local development environments.
+* **Production Callback URI**: `https://veriq-0ox1.onrender.com/api/auth/google/callback`
 * **Session Persistence**: HTTP-only session cookies and SQLite storage with 14-day validity.
 
 ---
@@ -512,22 +536,26 @@ When deploying to Render, Railway, Fly.io, AWS, or GCP, set these environment va
 | `ENABLE_LIVE_RESEARCH` | `true` | Enables live web grounding |
 | `GOOGLE_CLIENT_ID` | `your-client-id.apps.googleusercontent.com` | Google Cloud OAuth Client ID |
 | `GOOGLE_CLIENT_SECRET` | `your-client-secret` | Google Cloud OAuth Client Secret |
-| `GOOGLE_REDIRECT_URI` | `https://<your-domain>/api/auth/google/callback` | OAuth redirect callback URL |
+| `GOOGLE_REDIRECT_URI` | `https://veriq-0ox1.onrender.com/api/auth/google/callback` | OAuth redirect callback URL |
 | `ALLOW_DEMO_LOGIN` | `true` | Keeps instant 1-click fallback login active for judges |
 
 ---
 
 ### D. Updating Google Cloud Console for Production Domain
 
-When deploying to a public domain (e.g. `https://veriq.yourdomain.com` or `https://veriq.onrender.com`):
+When deploying to Render (`https://veriq-0ox1.onrender.com`):
 
 1. Open [Google Cloud Console → Credentials](https://console.cloud.google.com/apis/credentials).
 2. Click your OAuth 2.0 Client ID.
 3. Under **Authorized JavaScript origins**, click **+ ADD URI** and add:
-   * `https://<your-production-domain>`
+   * `https://veriq-0ox1.onrender.com`
+   * `http://127.0.0.1:8000`
+   * `http://localhost:8000`
 4. Under **Authorized redirect URIs**, click **+ ADD URI** and add:
-   * `https://<your-production-domain>/api/auth/google/callback`
-5. Click **Save**. Google changes propagate globally within ~5 minutes.
+   * `https://veriq-0ox1.onrender.com/api/auth/google/callback`
+   * `http://127.0.0.1:8000/api/auth/google/callback`
+   * `http://localhost:8000/api/auth/google/callback`
+5. Click **Save**. (Make sure the scheme is strictly lowercase `https://` and `http://`).
 
 ---
 
