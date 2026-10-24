@@ -1,44 +1,50 @@
 /**
- * VERIQ Developer Workbench — Core Client Application
- * Tagline: Code is generated. Proof is earned.
+ * VERIQ — Verification Engine Client
+ * Aesthetic: Industrial Precision Instrument
  */
 
 let activeRunId = null;
 let eventSource = null;
 let currentClaimsData = [];
 let currentFilter = 'ALL';
+let currentDiffText = '';
+let runTimerInterval = null;
+let runStartTime = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
   initForms();
   initFilters();
   initActionButtons();
+  initPresets();
   loadOverviewMetrics();
   loadRecentRuns();
   checkProviderStatus();
   loadBenchmarks();
 });
 
-// Toast notification helper
+// Toast Notifications
 function showToast(message, type = 'info') {
   const container = document.getElementById('toast-container');
-  const toast = document.createElement('div');
-  toast.className = `toast ${type === 'success' ? 'toast-success' : type === 'error' ? 'toast-error' : ''}`;
-  toast.textContent = message;
-  container.appendChild(toast);
+  if (!container) return;
+  const pill = document.createElement('div');
+  pill.className = `toast-pill ${type === 'success' ? 'success' : type === 'error' ? 'error' : ''}`;
+  pill.textContent = message;
+  container.appendChild(pill);
   setTimeout(() => {
-    toast.style.opacity = '0';
-    setTimeout(() => toast.remove(), 300);
-  }, 4000);
+    pill.style.opacity = '0';
+    pill.style.transition = 'opacity 200ms ease';
+    setTimeout(() => pill.remove(), 200);
+  }, 3500);
 }
 
-// Navigation and Tab Switching
+// Navigation & Tab Switching
 function initNavigation() {
-  const navButtons = document.querySelectorAll('.nav-item');
-  navButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tabId = btn.dataset.tab;
-      if (tabId) switchTab(tabId);
+  const tabs = document.querySelectorAll('.deck-tab[data-tab]');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const targetId = tab.dataset.tab;
+      if (targetId) switchTab(targetId);
     });
   });
 
@@ -46,54 +52,17 @@ function initNavigation() {
   if (quickNewRun) {
     quickNewRun.addEventListener('click', () => switchTab('new-run'));
   }
-
-  // Mobile drawer navigation support
-  const mobileToggle = document.getElementById('btn-mobile-menu');
-  const sidebar = document.getElementById('app-sidebar');
-  const backdrop = document.getElementById('sidebar-backdrop');
-
-  if (mobileToggle && sidebar && backdrop) {
-    mobileToggle.addEventListener('click', () => {
-      sidebar.classList.toggle('mobile-open');
-      backdrop.classList.toggle('active');
-    });
-
-    backdrop.addEventListener('click', () => {
-      sidebar.classList.remove('mobile-open');
-      backdrop.classList.remove('active');
-    });
-
-    // Close on mobile navigation click
-    navButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        sidebar.classList.remove('mobile-open');
-        backdrop.classList.remove('active');
-      });
-    });
-  }
 }
 
 function switchTab(tabId) {
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.deck-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
 
-  const activeBtn = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
-  if (activeBtn) activeBtn.classList.add('active');
+  const activeTab = document.querySelector(`.deck-tab[data-tab="${tabId}"]`);
+  if (activeTab) activeTab.classList.add('active');
 
-  const targetPane = document.getElementById(`tab-${tabId}`);
-  if (targetPane) targetPane.classList.add('active');
-
-  const pageTitle = document.getElementById('page-title');
-  const titles = {
-    'overview': 'System Overview',
-    'new-run': 'New Engineering Run',
-    'workspace': 'Active Run Workspace',
-    'history': 'Run History',
-    'ledger': 'Verification Ledger',
-    'benchmarks': 'Reproducible Benchmarks',
-    'settings': 'Settings & Infrastructure',
-  };
-  if (pageTitle) pageTitle.textContent = titles[tabId] || 'VERIQ';
+  const targetSection = document.getElementById(`tab-${tabId}`);
+  if (targetSection) targetSection.classList.add('active');
 
   if (tabId === 'history') loadHistoryRuns();
   if (tabId === 'overview') {
@@ -101,9 +70,44 @@ function switchTab(tabId) {
     loadRecentRuns();
   }
   if (tabId === 'benchmarks') loadBenchmarks();
+  if (tabId === 'ledger') loadStandaloneLedger();
 }
 
-// Form Handlers
+// Presets
+function initPresets() {
+  const presets = {
+    'std-dev': {
+      title: 'Add Standard Deviation Calculation with Boundary Safeguards',
+      desc: 'Implement standard_deviation(numbers) calculating population standard deviation. Ensure empty list raises ValueError. Preserve all existing mathematical and regression assertions without breaking existing tests.',
+      repairs: 1,
+    },
+    'div-zero': {
+      title: 'Add Safe Division with ZeroDivisionError Safeguards',
+      desc: 'Implement divide(a, b) with strict float precision. When b == 0, raise ZeroDivisionError with explicit error message "Division by zero is undefined". Ensure negative dividend handling.',
+      repairs: 1,
+    },
+    'factorial': {
+      title: 'Enforce Factorial Negative Input Validation',
+      desc: 'Update factorial(n) in calculator.py to raise ValueError when n < 0. Ensure 0! returns 1 and positive integers compute accurate factorials.',
+      repairs: 2,
+    }
+  };
+
+  document.querySelectorAll('.preset-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const key = chip.dataset.preset;
+      const data = presets[key];
+      if (data) {
+        document.getElementById('run-title').value = data.title;
+        document.getElementById('run-desc').value = data.desc;
+        document.getElementById('run-repairs').value = data.repairs;
+        showToast(`Loaded preset: ${chip.textContent.trim()}`, 'info');
+      }
+    });
+  });
+}
+
+// Form Submission
 function initForms() {
   const form = document.getElementById('new-run-form');
   if (!form) return;
@@ -112,7 +116,7 @@ function initForms() {
     e.preventDefault();
     const btn = document.getElementById('btn-submit-run');
     btn.disabled = true;
-    btn.textContent = 'Initializing Run...';
+    btn.textContent = 'Launching run...';
 
     const payload = {
       title: document.getElementById('run-title').value.trim(),
@@ -136,38 +140,58 @@ function initForms() {
       }
 
       const run = await resp.json();
-      showToast(`Run ${run.run_id} started successfully!`, 'success');
+      showToast(`Run ${run.run_id} initiated`, 'success');
       btn.disabled = false;
-      btn.textContent = 'Launch Evidence-Driven Run';
-
-      // Open workspace for this run
+      btn.textContent = 'Launch verification run';
       openRunWorkspace(run.run_id);
     } catch (err) {
       showToast(err.message, 'error');
       btn.disabled = false;
-      btn.textContent = 'Launch Evidence-Driven Run';
+      btn.textContent = 'Launch verification run';
     }
   });
 }
 
-// Open Workspace for a specific run and attach SSE
+// Open Workspace
 async function openRunWorkspace(runId) {
   activeRunId = runId;
   switchTab('workspace');
 
-  // Reset workspace UI
-  document.getElementById('active-run-id').textContent = runId;
-  document.getElementById('active-run-title').textContent = 'Loading run metadata...';
-  document.getElementById('timeline-container').innerHTML = '<div class="empty-state">Subscribing to live events...</div>';
-  document.getElementById('diff-code-block').innerHTML = '<code>Waiting for patch generation...</code>';
-  document.getElementById('routing-decisions-container').innerHTML = '<div class="empty-state">Awaiting model selection...</div>';
-  document.getElementById('workspace-ledger-claims').innerHTML = '<div class="empty-state">Registering claims...</div>';
+  const navPill = document.getElementById('nav-active-pill');
+  if (navPill) {
+    navPill.textContent = 'ACTIVE';
+    navPill.style.color = '#38BDF8';
+  }
 
+  document.getElementById('active-run-id').textContent = runId;
+  document.getElementById('active-run-title').textContent = 'Loading task specification...';
+  document.getElementById('timeline-container').innerHTML = '<div style="color:var(--ink-dim); text-align:center; padding:24px;">Connecting to event stream...</div>';
+  document.getElementById('diff-code-block').innerHTML = '<code>Waiting for candidate patch...</code>';
+  document.getElementById('routing-decisions-container').innerHTML = '<div style="color:var(--ink-dim);">Awaiting model selection...</div>';
+  document.getElementById('workspace-ledger-claims').innerHTML = '<div style="color:var(--ink-dim);">Registering claims...</div>';
+
+  startLiveTimer();
   await fetchAndDisplayRun(runId);
   subscribeToRunEvents(runId);
 }
 
-// Subscribe to SSE stream for live updates
+function startLiveTimer() {
+  clearInterval(runTimerInterval);
+  runStartTime = Date.now();
+  runTimerInterval = setInterval(() => {
+    const durEl = document.getElementById('active-run-dur');
+    if (durEl) {
+      const elapsed = ((Date.now() - runStartTime) / 1000).toFixed(1);
+      durEl.textContent = `${elapsed}s`;
+    }
+  }, 100);
+}
+
+function stopLiveTimer() {
+  clearInterval(runTimerInterval);
+}
+
+// Server-Sent Events (SSE)
 function subscribeToRunEvents(runId) {
   if (eventSource) {
     eventSource.close();
@@ -189,7 +213,6 @@ function subscribeToRunEvents(runId) {
   };
 
   eventSource.onerror = (err) => {
-    console.warn('SSE stream closed or disconnected.');
     if (eventSource) {
       eventSource.close();
     }
@@ -198,26 +221,26 @@ function subscribeToRunEvents(runId) {
 
 function appendTimelineEvent(ev) {
   const container = document.getElementById('timeline-container');
-  const item = document.createElement('div');
-  item.className = 'timeline-event-item';
+  const entry = document.createElement('div');
+  entry.className = 'event-entry';
 
   const isError = ev.event_type.includes('FAIL') || ev.event_type.includes('ERROR');
   const isSuccess = ev.event_type.includes('COMPLETE') || ev.event_type.includes('VALIDATED');
 
-  item.innerHTML = `
-    <div class="timeline-dot ${isError ? 'error' : isSuccess ? 'success' : ''}"></div>
-    <div class="timeline-content">
-      <div class="timeline-time">${new Date(ev.timestamp).toLocaleTimeString()} · <span class="font-mono text-cyan">${ev.event_type}</span></div>
-      <div class="timeline-msg">${escapeHtml(ev.message)}</div>
+  entry.innerHTML = `
+    <div class="event-marker ${isError ? 'error' : isSuccess ? 'success' : ''}"></div>
+    <div class="event-body">
+      <div class="event-header">${new Date(ev.timestamp).toLocaleTimeString()} · ${ev.event_type}</div>
+      <div class="event-title">${escapeHtml(ev.message)}</div>
     </div>
   `;
-  container.appendChild(item);
+  container.appendChild(entry);
   container.scrollTop = container.scrollHeight;
 
-  const countBadge = document.getElementById('active-event-count');
-  if (countBadge) {
-    const total = container.querySelectorAll('.timeline-event-item').length;
-    countBadge.textContent = `${total} events`;
+  const countEl = document.getElementById('active-event-count');
+  if (countEl) {
+    const total = container.querySelectorAll('.event-entry').length;
+    countEl.textContent = `${total} events recorded`;
   }
 }
 
@@ -230,12 +253,18 @@ function handleLiveEventData(ev) {
     fetchRunLedger(activeRunId);
     fetchRunDiff(activeRunId);
   } else if (ev.event_type === 'RUN_COMPLETED' || ev.event_type === 'RUN_FAILED') {
+    stopLiveTimer();
     fetchAndDisplayRun(activeRunId);
     loadOverviewMetrics();
+    const navPill = document.getElementById('nav-active-pill');
+    if (navPill) {
+      navPill.textContent = ev.event_type === 'RUN_COMPLETED' ? 'DONE' : 'FAILED';
+      navPill.style.color = ev.event_type === 'RUN_COMPLETED' ? 'var(--truth-verified-ink)' : 'var(--truth-failed-ink)';
+    }
   }
 }
 
-// Fetch run details and update UI
+// Fetch Run Details
 async function fetchAndDisplayRun(runId) {
   try {
     const resp = await fetch(`/api/runs/${runId}`);
@@ -250,21 +279,26 @@ async function fetchAndDisplayRun(runId) {
 
     const statusBadge = document.getElementById('active-run-status');
     statusBadge.textContent = run.status;
-    statusBadge.className = `status-badge status-${run.status.toLowerCase()}`;
+    statusBadge.className = `status-tag ${
+      run.status === 'COMPLETED' ? 'status-tag-verified' : 
+      run.status === 'FAILED' ? 'status-tag-failed' : 'status-tag-supported'
+    }`;
 
-    // Render diff
+    if (run.status === 'COMPLETED' || run.status === 'FAILED') {
+      stopLiveTimer();
+    }
+
     if (run.unified_diff) {
+      currentDiffText = run.unified_diff;
       renderDiff(run.unified_diff);
     }
 
-    // Render routing decisions
     if (run.routing_history && run.routing_history.length > 0) {
       const container = document.getElementById('routing-decisions-container');
       container.innerHTML = '';
       run.routing_history.forEach(renderRoutingDecision);
     }
 
-    // Load ledger
     fetchRunLedger(runId);
   } catch (e) {
     console.error('Failed to fetch run details:', e);
@@ -276,62 +310,72 @@ async function fetchRunDiff(runId) {
     const resp = await fetch(`/api/runs/${runId}/diff`);
     if (resp.ok) {
       const diffText = await resp.text();
+      currentDiffText = diffText;
       renderDiff(diffText);
     }
   } catch (e) {}
 }
 
+// Unified Diff Viewer with Line Numbers
 function renderDiff(diffText) {
   const codeBlock = document.getElementById('diff-code-block');
+  if (!codeBlock) return;
   if (!diffText || diffText.trim() === '' || diffText.includes('No modifications applied')) {
-    codeBlock.innerHTML = '<code>No patch modifications applied yet.</code>';
+    codeBlock.innerHTML = '<code>No modifications applied yet.</code>';
     return;
   }
 
   const lines = diffText.split('\n');
-  const formattedLines = lines.map(line => {
+  let lineNum = 1;
+  const rows = lines.map(line => {
     const safeLine = escapeHtml(line);
+    let rowClass = '';
+    let isCode = true;
+
     if (line.startsWith('+') && !line.startsWith('+++')) {
-      return `<div class="diff-line-add">${safeLine}</div>`;
+      rowClass = 'diff-row-add';
     } else if (line.startsWith('-') && !line.startsWith('---')) {
-      return `<div class="diff-line-del">${safeLine}</div>`;
+      rowClass = 'diff-row-del';
     } else if (line.startsWith('@@')) {
-      return `<div class="diff-line-hunk">${safeLine}</div>`;
+      rowClass = 'diff-row-hunk';
+      isCode = false;
     }
-    return `<div>${safeLine}</div>`;
+
+    const numStr = isCode ? lineNum++ : '··';
+    return `<div class="diff-row ${rowClass}"><span class="diff-num">${numStr}</span><span class="diff-text">${safeLine}</span></div>`;
   });
 
-  codeBlock.innerHTML = formattedLines.join('');
+  codeBlock.innerHTML = rows.join('');
 }
 
 function renderRoutingDecision(decision) {
   const container = document.getElementById('routing-decisions-container');
-  if (container.querySelector('.empty-state')) {
+  if (container.querySelector('div') && container.innerText.includes('No routing')) {
     container.innerHTML = '';
   }
 
   const card = document.createElement('div');
-  card.className = 'routing-telemetry-row';
+  card.style.cssText = 'background:var(--surface-terminal); border:1px solid var(--rule-subtle); padding:10px 14px; border-radius:4px; margin-bottom:8px;';
 
-  const tierBadgeClass = decision.tier === 'FAST' ? 'badge-cyan' : decision.tier === 'STANDARD' ? 'badge-blue' : 'badge-escalate';
+  const tierTag = decision.tier === 'FAST' ? 'status-tag-supported' : decision.tier === 'STANDARD' ? 'status-tag-verified' : 'status-tag-failed';
 
   card.innerHTML = `
-    <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-bottom:4px;">
-      <span class="badge ${tierBadgeClass}">${decision.tier} TIER</span>
-      <span class="text-muted font-mono" style="font-size:11px;">Attempt #${decision.attempt}</span>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+      <span class="status-tag ${tierTag}">${decision.tier} tier</span>
+      <span style="font-family:var(--font-mono); font-size:11px; color:var(--ink-dim);">Attempt #${decision.attempt}</span>
     </div>
-    <div class="font-mono text-cyan" style="font-size:12.5px; font-weight:700; word-break:break-all;">${decision.model_id}</div>
-    <div class="text-secondary" style="font-size:12px; margin:4px 0; line-height:1.45;">${escapeHtml(decision.reason)}</div>
-    <div style="display:flex; flex-wrap:wrap; gap:12px; font-size:11.5px; color:var(--text-muted); margin-top:6px; border-top:1px solid var(--border-subtle); padding-top:6px; width:100%;">
-      <span>Latency: <strong class="font-mono text-primary">${decision.latency_ms || 0}ms</strong></span>
-      <span>Tokens: <strong class="font-mono text-primary">${decision.total_tokens || 0}</strong></span>
-      <span>Cost: <strong class="font-mono text-primary">$${(decision.estimated_cost_usd || 0).toFixed(5)}</strong></span>
+    <div style="font-family:var(--font-mono); font-size:12px; font-weight:600; color:var(--ink-primary);">${decision.model_id}</div>
+    <div style="font-size:12px; color:var(--ink-muted); margin:4px 0;">${escapeHtml(decision.reason)}</div>
+    <div style="font-family:var(--font-mono); font-size:11px; color:var(--ink-dim); display:flex; gap:16px; margin-top:6px; border-top:1px solid var(--rule-subtle); padding-top:4px;">
+      <span>Latency: ${decision.latency_ms || 0}ms</span>
+      <span>Tokens: ${decision.total_tokens || 0}</span>
+      <span>Cost: $${(decision.estimated_cost_usd || 0).toFixed(5)}</span>
     </div>
   `;
   container.appendChild(card);
 }
 
-// Verification Ledger fetching and filtering
+// Verification Ledger
 async function fetchRunLedger(runId) {
   try {
     const resp = await fetch(`/api/runs/${runId}/ledger`);
@@ -339,7 +383,6 @@ async function fetchRunLedger(runId) {
     const ledger = await resp.json();
     currentClaimsData = ledger.claims || [];
 
-    // Calculate verification rate
     const vRate = ledger.total_claims > 0 
       ? ((ledger.verified_count / ledger.total_claims) * 100).toFixed(1)
       : '0.0';
@@ -353,12 +396,12 @@ async function fetchRunLedger(runId) {
 }
 
 function initFilters() {
-  document.querySelectorAll('.ledger-filter-pills').forEach(group => {
-    group.querySelectorAll('.pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        group.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-        currentFilter = pill.dataset.filter;
+  document.querySelectorAll('.filter-bar').forEach(group => {
+    group.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        group.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
 
         const targetId = group.id === 'workspace-ledger-filters' 
           ? 'workspace-ledger-claims' 
@@ -382,34 +425,30 @@ function renderLedgerClaims(claims, containerId, evidenceList = []) {
   if (!container) return;
 
   if (!claims || claims.length === 0) {
-    container.innerHTML = '<div class="empty-state">No claims match the selected filter.</div>';
+    container.innerHTML = '<div style="color:var(--ink-dim); font-size:12px; padding:16px;">No claims match the filter.</div>';
     return;
   }
 
   container.innerHTML = '';
   claims.forEach(claim => {
     const card = document.createElement('div');
-    card.className = 'claim-card';
-    card.setAttribute('tabindex', '0');
-    card.setAttribute('role', 'button');
-    card.setAttribute('aria-expanded', 'false');
-    card.setAttribute('aria-label', `Claim ${claim.claim_id}: ${claim.title}. Status: ${claim.status}`);
+    card.className = 'claim-panel';
 
-    const statusClass = `status-${claim.status.toLowerCase()}`;
+    const statusTag = `status-tag-${claim.status.toLowerCase()}`;
     const backingEv = evidenceList.filter(e => (claim.evidence_ids || []).includes(e.evidence_id));
 
     let evHtml = '';
     backingEv.forEach(ev => {
       evHtml += `
-        <div class="evidence-box">
-          <div class="evidence-header">
+        <div class="evidence-terminal">
+          <div class="evidence-meta-row">
             <span>[${escapeHtml(ev.evidence_id)}] Check: ${escapeHtml(ev.check_type)}</span>
-            <span class="status-badge status-${ev.status.toLowerCase()}">${ev.status}</span>
+            <span class="status-tag status-tag-${ev.status.toLowerCase()}">${ev.status}</span>
           </div>
-          ${ev.command ? `<div><strong>Command:</strong> <code>${escapeHtml(ev.command)}</code></div>` : ''}
-          ${ev.exit_code !== null ? `<div><strong>Exit Code:</strong> ${ev.exit_code} · <strong>Duration:</strong> ${ev.duration_ms}ms</div>` : ''}
-          ${ev.stdout ? `<div style="margin-top:4px;"><strong>Stdout:</strong> <pre style="white-space:pre-wrap; color:var(--text-secondary);">${escapeHtml(ev.stdout)}</pre></div>` : ''}
-          ${ev.stderr ? `<div style="margin-top:4px; color:var(--status-failed);"><strong>Stderr:</strong> <pre style="white-space:pre-wrap;">${escapeHtml(ev.stderr)}</pre></div>` : ''}
+          ${ev.command ? `<div style="margin-bottom:4px;"><strong>Command:</strong> <code>${escapeHtml(ev.command)}</code></div>` : ''}
+          ${ev.exit_code !== null ? `<div style="margin-bottom:4px;"><strong>Exit code:</strong> ${ev.exit_code} · <strong>Duration:</strong> ${ev.duration_ms}ms · <strong>Sandbox:</strong> ${escapeHtml(ev.sandbox_type || 'CONTAINER')}</div>` : ''}
+          ${ev.stdout ? `<div style="margin-top:6px;"><strong>Stdout:</strong> <pre style="white-space:pre-wrap; background:rgba(0,0,0,0.5); padding:6px; border-radius:3px; max-height:140px; overflow-y:auto; color:var(--ink-secondary);">${escapeHtml(ev.stdout)}</pre></div>` : ''}
+          ${ev.stderr ? `<div style="margin-top:6px; color:var(--truth-failed-ink);"><strong>Stderr:</strong> <pre style="white-space:pre-wrap; background:rgba(220,38,38,0.1); padding:6px; border-radius:3px; max-height:140px; overflow-y:auto;">${escapeHtml(ev.stderr)}</pre></div>` : ''}
         </div>
       `;
     });
@@ -418,8 +457,8 @@ function renderLedgerClaims(claims, containerId, evidenceList = []) {
     if (claim.limitations && claim.limitations.length > 0) {
       limitationsHtml = `
         <div style="margin-top:8px;">
-          <strong style="color:var(--text-muted); font-size:11px; text-transform:uppercase;">Explicit Limitations:</strong>
-          <ul style="margin-left:18px; color:var(--text-secondary);">
+          <strong style="font-size:11px; color:var(--ink-muted); text-transform:uppercase;">Explicit limitations:</strong>
+          <ul style="margin-left:18px; color:var(--ink-secondary); margin-top:2px; font-size:12px;">
             ${claim.limitations.map(l => `<li><em>${escapeHtml(l)}</em></li>`).join('')}
           </ul>
         </div>
@@ -427,45 +466,36 @@ function renderLedgerClaims(claims, containerId, evidenceList = []) {
     }
 
     card.innerHTML = `
-      <div class="claim-card-header">
-        <div class="claim-title-group">
-          <span class="claim-id">${claim.claim_id}</span>
-          <span class="claim-title">${escapeHtml(claim.title)}</span>
-          <span class="badge badge-outline" style="font-size:10px;">${claim.category}</span>
+      <div class="claim-top">
+        <div class="claim-title-bar">
+          <span class="claim-code">${claim.claim_id}</span>
+          <span class="claim-name">${escapeHtml(claim.title)}</span>
+          <span class="claim-category-tag">${claim.category}</span>
         </div>
-        <div style="display:flex; align-items:center; gap:10px;">
-          <span class="status-badge ${statusClass}">${claim.status}</span>
-          <svg class="claim-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="status-tag ${statusTag}">${claim.status}</span>
+          <span style="font-size:11px; color:var(--ink-dim);">▼</span>
         </div>
       </div>
-      <div class="text-secondary" style="margin-top:6px; font-size:12.5px;">${escapeHtml(claim.description)}</div>
-      <div class="claim-details">
+      <div class="claim-desc">${escapeHtml(claim.description)}</div>
+      <div class="claim-expanded-area">
         ${limitationsHtml}
         <div style="margin-top:10px;">
-          <strong style="color:var(--text-muted); font-size:11px; text-transform:uppercase;">Backing Proof & Evidence Records (${backingEv.length}):</strong>
-          ${evHtml || '<div class="text-muted text-sm" style="margin-top:4px;">No concrete evidence records attached.</div>'}
+          <strong style="font-size:11px; color:var(--ink-muted); text-transform:uppercase;">Deterministic evidence records (${backingEv.length}):</strong>
+          ${evHtml || '<div style="color:var(--ink-dim); font-size:11px; margin-top:4px;">No concrete evidence records attached.</div>'}
         </div>
       </div>
     `;
 
-    const toggleClaim = () => {
-      const isExpanded = card.classList.toggle('expanded');
-      card.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
-    };
-
-    card.addEventListener('click', toggleClaim);
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        toggleClaim();
-      }
+    card.addEventListener('click', () => {
+      card.classList.toggle('open');
     });
 
     container.appendChild(card);
   });
 }
 
-// Download action buttons
+// Action Buttons
 function initActionButtons() {
   document.getElementById('btn-download-report-md')?.addEventListener('click', () => {
     if (!activeRunId) return showToast('No active run selected', 'error');
@@ -477,27 +507,38 @@ function initActionButtons() {
     window.open(`/api/runs/${activeRunId}/report?format=json`, '_blank');
   });
 
+  document.getElementById('btn-copy-diff')?.addEventListener('click', () => {
+    if (!currentDiffText || currentDiffText.trim() === '') {
+      return showToast('No patch generated to copy', 'error');
+    }
+    navigator.clipboard.writeText(currentDiffText).then(() => {
+      showToast('Unified diff copied to clipboard', 'success');
+    }).catch(() => {
+      showToast('Failed to copy to clipboard', 'error');
+    });
+  });
+
   document.getElementById('btn-refresh-runs')?.addEventListener('click', () => {
     loadOverviewMetrics();
     loadRecentRuns();
-    showToast('Telemetry refreshed', 'info');
+    showToast('Overview telemetry refreshed', 'info');
   });
 
   document.getElementById('btn-run-benchmark')?.addEventListener('click', async () => {
     const btn = document.getElementById('btn-run-benchmark');
     btn.disabled = true;
-    btn.textContent = 'Executing Benchmark Suite...';
+    btn.textContent = 'Executing benchmark suite...';
     try {
       const resp = await fetch('/api/benchmarks/run', { method: 'POST' });
       if (resp.ok) {
-        showToast('Benchmark suite executed successfully!', 'success');
+        showToast('Benchmark suite executed successfully', 'success');
         loadBenchmarks();
       }
     } catch (e) {
       showToast('Benchmark execution failed', 'error');
     } finally {
       btn.disabled = false;
-      btn.textContent = 'Re-run Benchmark Harness';
+      btn.textContent = 'Re-run benchmark harness';
     }
   });
 }
@@ -511,14 +552,10 @@ async function loadOverviewMetrics() {
 
     document.getElementById('metric-verif-rate').textContent = `${data.verification_rate_percent}%`;
     document.getElementById('metric-total-runs').textContent = data.total_runs;
-    document.getElementById('overview-verified').textContent = data.verified_claims;
-    document.getElementById('overview-supported').textContent = data.supported_claims;
-    document.getElementById('overview-failed').textContent = data.failed_claims;
-    document.getElementById('overview-unresolved').textContent = data.unresolved_claims;
   } catch (e) {}
 }
 
-// Load Recent Runs into Overview Table
+// Load Recent Runs
 async function loadRecentRuns() {
   try {
     const resp = await fetch('/api/runs?limit=10');
@@ -527,7 +564,7 @@ async function loadRecentRuns() {
 
     const tbody = document.getElementById('overview-runs-body');
     if (!runs || runs.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">No runs recorded yet. Start a run above!</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--ink-dim); padding:24px;">No runs recorded. Start a new run to begin.</td></tr>';
       return;
     }
 
@@ -535,16 +572,17 @@ async function loadRecentRuns() {
     runs.forEach(r => {
       const tr = document.createElement('tr');
       const vClaims = r.ledger_summary ? `${r.ledger_summary.verified_count}/${r.ledger_summary.total_claims}` : '0/0';
+      const statusTag = `status-tag-${r.status.toLowerCase()}`;
       tr.innerHTML = `
-        <td><strong class="font-mono text-cyan">${r.run_id}</strong></td>
+        <td><code style="color:#93C5FD;">${r.run_id}</code></td>
         <td>${escapeHtml(r.task_title)}</td>
-        <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
-        <td><span class="badge badge-outline">${r.execution_mode}</span></td>
-        <td class="font-mono">${vClaims}</td>
-        <td class="font-mono">${r.duration_seconds}s</td>
-        <td class="text-muted">${new Date(r.created_at).toLocaleTimeString()}</td>
+        <td><span class="status-tag ${statusTag}">${r.status}</span></td>
+        <td><span style="font-family:var(--font-mono); font-size:11px; color:var(--ink-dim);">${r.execution_mode}</span></td>
+        <td style="font-family:var(--font-mono); color:var(--truth-verified-ink);">${vClaims}</td>
+        <td style="font-family:var(--font-mono);">${r.duration_seconds}s</td>
+        <td style="color:var(--ink-dim);">${new Date(r.created_at).toLocaleTimeString()}</td>
         <td>
-          <button class="btn btn-sm btn-outline btn-inspect" data-run-id="${r.run_id}">Inspect</button>
+          <button class="btn btn-default btn-sm btn-inspect" data-run-id="${r.run_id}">Inspect</button>
         </td>
       `;
       tr.querySelector('.btn-inspect').addEventListener('click', () => openRunWorkspace(r.run_id));
@@ -562,7 +600,7 @@ async function loadHistoryRuns() {
 
     const tbody = document.getElementById('history-runs-body');
     if (!runs || runs.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">No runs stored in SQLite database.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--ink-dim); padding:24px;">No runs stored in database.</td></tr>';
       return;
     }
 
@@ -570,16 +608,17 @@ async function loadHistoryRuns() {
     runs.forEach(r => {
       const tr = document.createElement('tr');
       const vClaims = r.ledger_summary ? `${r.ledger_summary.verified_count}/${r.ledger_summary.total_claims}` : '0/0';
+      const statusTag = `status-tag-${r.status.toLowerCase()}`;
       tr.innerHTML = `
-        <td><strong class="font-mono text-cyan">${r.run_id}</strong></td>
+        <td><code style="color:#93C5FD;">${r.run_id}</code></td>
         <td>${escapeHtml(r.task_title)}</td>
-        <td><span class="status-badge status-${r.status.toLowerCase()}">${r.status}</span></td>
-        <td><span class="badge badge-outline">${r.execution_mode}</span></td>
-        <td class="font-mono">${vClaims}</td>
-        <td class="font-mono">${r.duration_seconds}s</td>
-        <td class="text-muted">${r.completed_at ? new Date(r.completed_at).toLocaleTimeString() : 'In Progress'}</td>
+        <td><span class="status-tag ${statusTag}">${r.status}</span></td>
+        <td><span style="font-family:var(--font-mono); font-size:11px; color:var(--ink-dim);">${r.execution_mode}</span></td>
+        <td style="font-family:var(--font-mono); color:var(--truth-verified-ink);">${vClaims}</td>
+        <td style="font-family:var(--font-mono);">${r.duration_seconds}s</td>
+        <td style="color:var(--ink-dim);">${r.completed_at ? new Date(r.completed_at).toLocaleTimeString() : 'Active'}</td>
         <td>
-          <button class="btn btn-sm btn-outline btn-inspect-hist" data-run-id="${r.run_id}">Inspect</button>
+          <button class="btn btn-default btn-sm btn-inspect-hist" data-run-id="${r.run_id}">Inspect</button>
         </td>
       `;
       tr.querySelector('.btn-inspect-hist').addEventListener('click', () => openRunWorkspace(r.run_id));
@@ -588,31 +627,58 @@ async function loadHistoryRuns() {
   } catch (e) {}
 }
 
-// Check Infrastructure & Provider Health
+// Standalone Ledger
+async function loadStandaloneLedger() {
+  if (activeRunId) {
+    fetchRunLedger(activeRunId);
+  } else {
+    try {
+      const resp = await fetch('/api/runs?limit=1');
+      if (resp.ok) {
+        const runs = await resp.json();
+        if (runs.length > 0) {
+          const runId = runs[0].run_id;
+          const ledgerResp = await fetch(`/api/runs/${runId}/ledger`);
+          if (ledgerResp.ok) {
+            const ledger = await ledgerResp.json();
+            currentClaimsData = ledger.claims || [];
+            renderLedgerClaims(currentClaimsData, 'standalone-ledger-claims', ledger.evidence || []);
+          }
+        }
+      }
+    } catch (e) {}
+  }
+}
+
+// Provider & Infrastructure Status
 async function checkProviderStatus() {
   try {
     const healthResp = await fetch('/api/health');
     if (healthResp.ok) {
       const hData = await healthResp.json();
-      const modeBadge = document.getElementById('mode-badge');
-      if (hData.modes.live_inference_configured) {
-        modeBadge.textContent = 'Live Inference';
-        modeBadge.className = 'badge badge-pill badge-cyan';
-      } else {
-        modeBadge.textContent = 'Recorded Replay';
-        modeBadge.className = 'badge badge-pill badge-outline';
+      const deckText = document.getElementById('deck-status-text');
+      if (deckText) {
+        deckText.textContent = hData.modes.live_inference_configured ? 'Live inference' : 'Recorded replay';
       }
 
       const sbBadge = document.getElementById('settings-sandbox-badge');
       const sbDesc = document.getElementById('settings-sandbox-desc');
+      const overviewTag = document.getElementById('overview-sandbox-tag');
+
       if (hData.sandbox.docker_available) {
-        sbBadge.textContent = 'HARDENED CONTAINER';
-        sbBadge.className = 'status-badge status-verified';
-        sbDesc.textContent = 'Docker engine connected; executing in isolated container.';
+        if (sbBadge) {
+          sbBadge.textContent = 'HARDENED CONTAINER';
+          sbBadge.className = 'status-tag status-tag-verified';
+        }
+        if (sbDesc) sbDesc.textContent = 'Docker engine connected; tests run in isolated container.';
+        if (overviewTag) overviewTag.textContent = 'Docker Container';
       } else {
-        sbBadge.textContent = 'RESTRICTED PROCESS FALLBACK';
-        sbBadge.className = 'status-badge status-unresolved';
-        sbDesc.textContent = 'Docker unavailable; running in stripped-environment process sandbox.';
+        if (sbBadge) {
+          sbBadge.textContent = 'PROCESS FALLBACK';
+          sbBadge.className = 'status-tag status-tag-unresolved';
+        }
+        if (sbDesc) sbDesc.textContent = 'Process sandbox fallback active.';
+        if (overviewTag) overviewTag.textContent = 'Process Sandbox';
       }
     }
 
@@ -620,27 +686,31 @@ async function checkProviderStatus() {
     if (provResp.ok) {
       const pData = await provResp.json();
       const nBadge = document.getElementById('settings-nebius-badge');
-      if (pData.nebius.status === 'healthy') {
-        nBadge.textContent = 'CONNECTED';
-        nBadge.className = 'status-badge status-verified';
-      } else {
-        nBadge.textContent = 'UNCONFIGURED (REPLAY READY)';
-        nBadge.className = 'status-badge status-not-run';
+      if (nBadge) {
+        if (pData.nebius.status === 'healthy') {
+          nBadge.textContent = 'CONNECTED';
+          nBadge.className = 'status-tag status-tag-verified';
+        } else {
+          nBadge.textContent = 'UNCONFIGURED';
+          nBadge.className = 'status-tag status-tag-notrun';
+        }
       }
 
       const tBadge = document.getElementById('settings-tavily-badge');
-      if (pData.tavily.status === 'healthy') {
-        tBadge.textContent = 'CONNECTED';
-        tBadge.className = 'status-badge status-verified';
-      } else {
-        tBadge.textContent = 'UNCONFIGURED (REPLAY READY)';
-        tBadge.className = 'status-badge status-not-run';
+      if (tBadge) {
+        if (pData.tavily.status === 'healthy') {
+          tBadge.textContent = 'CONNECTED';
+          tBadge.className = 'status-tag status-tag-verified';
+        } else {
+          tBadge.textContent = 'UNCONFIGURED';
+          tBadge.className = 'status-tag status-tag-notrun';
+        }
       }
     }
   } catch (e) {}
 }
 
-// Load Benchmark Experiment Results
+// Benchmark Suite Results
 async function loadBenchmarks() {
   try {
     const resp = await fetch('/api/benchmarks');
@@ -655,15 +725,15 @@ async function loadBenchmarks() {
     (bm.tasks || []).forEach(t => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td><strong class="font-mono text-cyan">${t.task_id}</strong></td>
+        <td><code style="color:#93C5FD;">${t.task_id}</code></td>
         <td>${escapeHtml(t.task_name)}</td>
-        <td><span class="status-badge ${t.baseline_passed ? 'status-verified' : 'status-failed'}">${t.baseline_passed ? 'PASS' : 'FAIL'}</span></td>
-        <td class="font-mono">${t.baseline_latency_ms}ms</td>
-        <td><span class="status-badge ${t.routed_passed ? 'status-verified' : 'status-failed'}">${t.routed_passed ? 'PASS' : 'FAIL'}</span></td>
-        <td><span class="badge ${t.routed_tier_used === 'FAST' ? 'badge-cyan' : t.routed_tier_used === 'STANDARD' ? 'badge-blue' : 'badge-escalate'}">${t.routed_tier_used}</span></td>
-        <td>${t.repair_triggered ? '<span class="status-badge status-verified">YES (REPAIRED)</span>' : '<span class="text-muted">No</span>'}</td>
-        <td class="font-mono">${t.routed_latency_ms}ms</td>
-        <td class="font-mono">$${t.routed_cost_usd.toFixed(5)}</td>
+        <td><span class="status-tag ${t.baseline_passed ? 'status-tag-verified' : 'status-tag-failed'}">${t.baseline_passed ? 'PASS' : 'FAIL'}</span></td>
+        <td style="font-family:var(--font-mono);">${t.baseline_latency_ms}ms</td>
+        <td><span class="status-tag ${t.routed_passed ? 'status-tag-verified' : 'status-tag-failed'}">${t.routed_passed ? 'PASS' : 'FAIL'}</span></td>
+        <td><span class="status-tag ${t.routed_tier_used === 'FAST' ? 'status-tag-supported' : 'status-tag-verified'}">${t.routed_tier_used}</span></td>
+        <td>${t.repair_triggered ? '<span class="status-tag status-tag-verified">Repaired</span>' : '<span style="color:var(--ink-dim);">No</span>'}</td>
+        <td style="font-family:var(--font-mono);">${t.routed_latency_ms}ms</td>
+        <td style="font-family:var(--font-mono); color:#93C5FD;">$${t.routed_cost_usd.toFixed(5)}</td>
       `;
       tbody.appendChild(tr);
     });

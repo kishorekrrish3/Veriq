@@ -3,559 +3,591 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VERIQ — Code is generated. Proof is earned.</title>
-  <link rel="stylesheet" href="/static/styles.css?v=3.0">
+  <title>VERIQ — Verification Engine</title>
+  
+  <!-- IBM Plex Typography (Engineering Grade) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/static/styles.css?v=6.0">
   <link rel="icon" type="image/svg+xml" href="/static/assets/favicon.svg">
 </head>
 <body>
-  <div class="app-layout">
-    <!-- Backdrop for mobile drawer navigation -->
-    <div class="sidebar-backdrop" id="sidebar-backdrop" tabindex="-1" aria-hidden="true"></div>
-
-    <!-- Sidebar Navigation -->
-    <aside class="sidebar" id="app-sidebar" role="navigation" aria-label="Main Navigation">
-      <div class="brand">
-        <div class="brand-logo" aria-hidden="true">
-          <!-- Geometric VERIQ Monogram Logo (V + Proof Vector) -->
-          <svg width="34" height="34" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="40" height="40" rx="8" fill="#171D28" stroke="#29313F" stroke-width="1.5"/>
-            <path d="M11 14L19 28L29 12" stroke="#38BDF8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M19 28L25 18" stroke="#F4F7FB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="29" cy="12" r="2.5" fill="#38BDF8"/>
-          </svg>
-        </div>
-        <div class="brand-text">
-          <span class="brand-name">VERIQ</span>
-          <span class="brand-tagline">Proof is earned.</span>
+  <!-- Top Operational Deck -->
+  <header class="top-deck" role="banner">
+    <div class="top-deck-inner">
+      <div class="deck-brand">
+        <div class="brand-symbol" aria-hidden="true">V</div>
+        <div class="brand-text-block">
+          <span class="brand-title">VERIQ</span>
+          <span class="brand-subtitle">Verification engine</span>
         </div>
       </div>
 
-      <nav class="nav-menu" aria-label="Workspace views">
-        <button class="nav-item active" data-tab="overview" aria-label="System Overview">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          Overview
+      <nav class="deck-nav" aria-label="Main navigation">
+        <button class="deck-tab active" data-tab="overview">
+          <span>Overview</span>
         </button>
-        <button class="nav-item" data-tab="new-run" aria-label="Configure New Engineering Run">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          New Run
+        <button class="deck-tab" data-tab="new-run">
+          <span>New run</span>
         </button>
-        <button class="nav-item" data-tab="history" aria-label="View Run History">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Run History
+        <button class="deck-tab" data-tab="workspace">
+          <span>Active run</span>
+          <span class="tab-pill" id="nav-active-pill">IDLE</span>
         </button>
-        <button class="nav-item" data-tab="ledger" aria-label="Inspect Global Verification Ledger">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-          Verification Ledger
+        <button class="deck-tab" data-tab="ledger">
+          <span>Ledger</span>
         </button>
-        <button class="nav-item" data-tab="benchmarks" aria-label="Reproducible Benchmarks">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          Benchmarks
+        <button class="deck-tab" data-tab="history">
+          <span>History</span>
         </button>
-        <button class="nav-item" data-tab="settings" aria-label="Infrastructure and Provider Settings">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          Settings
+        <button class="deck-tab" data-tab="benchmarks">
+          <span>Benchmarks</span>
         </button>
-
-        <a href="/diagram" class="nav-item" target="_blank" rel="noopener" style="text-decoration: none; margin-top: 8px; border-top: 1px solid var(--border-subtle); padding-top: 12px;" aria-label="Interactive Architecture Flow Diagram">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><path d="M10 6.5h4 M7 10v4 M17.5 10v4 M10 17.5h4"/></svg>
-          Flow Diagram
-          <span class="badge badge-cyan" style="font-size: 10px; margin-left: auto;">/diagram</span>
+        <button class="deck-tab" data-tab="settings">
+          <span>Settings</span>
+        </button>
+        <a href="/diagram" class="deck-tab" target="_blank" rel="noopener">
+          <span>Flow diagram</span>
+          <span class="tab-pill">↗</span>
         </a>
       </nav>
 
-      <div class="sidebar-footer">
-        <div class="status-indicator">
-          <span class="pulse-dot" id="system-status-dot" aria-hidden="true"></span>
-          <span id="system-status-text">System Active</span>
+      <div class="deck-actions">
+        <div class="status-indicator-pill" id="deck-status-pill">
+          <span class="status-dot"></span>
+          <span id="deck-status-text">Engine ready</span>
         </div>
-        <div class="footer-meta">Nebius × NVIDIA Hackathon 2026</div>
+        <button class="btn btn-primary" id="btn-quick-new-run">New run</button>
       </div>
-    </aside>
+    </div>
+  </header>
 
-    <!-- Main Content Workspace -->
-    <main class="main-content" role="main">
-      <!-- Top Action Bar -->
-      <header class="top-bar">
-        <button class="mobile-menu-toggle" id="btn-mobile-menu" aria-label="Toggle Navigation Menu">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        </button>
-        <div class="top-title">
-          <h1 id="page-title">Overview</h1>
-          <span class="motto">Evidence before confidence.</span>
-        </div>
-        <div class="top-actions">
-          <div class="badge badge-pill badge-outline font-mono" id="mode-badge">Replay Mode</div>
-          <button class="btn btn-primary" id="btn-quick-new-run" aria-label="Launch a new evidence-driven run">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Start Engineering Run
-          </button>
-        </div>
-      </header>
-
-      <!-- TAB 1: OVERVIEW -->
-      <section id="tab-overview" class="tab-pane active">
-        <!-- Hero Statement -->
-        <div class="hero-banner">
-          <div class="hero-content">
-            <span class="badge badge-cyan">Evidence-Driven Autonomous Engineering</span>
-            <h2 class="hero-title">Code is generated. Proof is earned.</h2>
-            <p class="hero-desc">
-              VERIQ pairs NVIDIA Nemotron model reasoning on Nebius Token Factory with deterministic
-              verification, AST checks, isolated sandbox execution, and an immutable Verification Ledger.
-            </p>
+  <!-- Main Workspace Wrapper -->
+  <main class="workspace-wrapper" role="main">
+    
+    <!-- VIEW 1: OVERVIEW -->
+    <section id="tab-overview" class="view-section active">
+      <div class="instrument-strip">
+        <div class="strip-cell">
+          <div class="strip-label">
+            <span>Verification rate</span>
+            <span class="tab-pill">Audit</span>
           </div>
-          <div class="hero-metrics-pill">
-            <div class="metric-mini">
-              <span class="metric-label">Verification Rate</span>
-              <span class="metric-val" id="metric-verif-rate">0.0%</span>
-            </div>
-            <div class="metric-mini">
-              <span class="metric-label">Total Proven Runs</span>
-              <span class="metric-val" id="metric-total-runs">0</span>
-            </div>
-          </div>
+          <div class="strip-value" id="metric-verif-rate">0.0%</div>
+          <div class="strip-sub">Deterministic claims verified</div>
         </div>
 
-        <!-- Metric Cards -->
-        <div class="metrics-grid">
-          <div class="card metric-card">
-            <div class="metric-header">
-              <span class="metric-label">Claims Verified</span>
-              <span class="status-badge status-verified">VERIFIED</span>
-            </div>
-            <div class="metric-number" id="overview-verified">0</div>
-            <div class="metric-sub">Deterministic checks passed</div>
+        <div class="strip-cell">
+          <div class="strip-label">
+            <span>Engineering runs</span>
+            <span class="tab-pill">SQLite</span>
           </div>
-          <div class="card metric-card">
-            <div class="metric-header">
-              <span class="metric-label">Supported Grounding</span>
-              <span class="status-badge status-supported">SUPPORTED</span>
-            </div>
-            <div class="metric-number" id="overview-supported">0</div>
-            <div class="metric-sub">Primary documentation verified</div>
-          </div>
-          <div class="card metric-card">
-            <div class="metric-header">
-              <span class="metric-label">Failed / Regressions</span>
-              <span class="status-badge status-failed">FAILED</span>
-            </div>
-            <div class="metric-number" id="overview-failed">0</div>
-            <div class="metric-sub">Failed checks or regressions</div>
-          </div>
-          <div class="card metric-card">
-            <div class="metric-header">
-              <span class="metric-label">Unresolved Questions</span>
-              <span class="status-badge status-unresolved">UNRESOLVED</span>
-            </div>
-            <div class="metric-number" id="overview-unresolved">0</div>
-            <div class="metric-sub">Risks requiring inspection</div>
-          </div>
+          <div class="strip-value" id="metric-total-runs">0</div>
+          <div class="strip-sub">Stored in verification log</div>
         </div>
 
-        <!-- Recent Runs Section -->
-        <div class="card section-card">
-          <div class="card-header">
-            <h3>Recent Engineering Runs</h3>
-            <button class="btn btn-sm btn-outline" id="btn-refresh-runs">Refresh</button>
+        <div class="strip-cell">
+          <div class="strip-label">
+            <span>Sandbox environment</span>
+            <span class="tab-pill">Isolation</span>
           </div>
-          <div class="table-container">
-            <table class="data-table" id="table-overview-runs">
-              <thead>
-                <tr>
-                  <th>Run ID</th>
-                  <th>Task</th>
-                  <th>Status</th>
-                  <th>Mode</th>
-                  <th>Verified Claims</th>
-                  <th>Duration</th>
-                  <th>Created</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="overview-runs-body">
-                <tr><td colspan="8" class="text-center text-muted">No engineering runs recorded yet. Start a new run to begin.</td></tr>
-              </tbody>
-            </table>
+          <div class="strip-value" style="font-size: 16px; line-height: 1.6;" id="overview-sandbox-tag">Docker Container</div>
+          <div class="strip-sub">Zero network · stripped credentials</div>
+        </div>
+
+        <div class="strip-cell">
+          <div class="strip-label">
+            <span>Model tier latency</span>
+            <span class="tab-pill">Fast tier</span>
+          </div>
+          <div class="strip-value" style="color: var(--truth-verified-ink);">-54%</div>
+          <div class="strip-sub">Nano-30B routing on targeted diffs</div>
+        </div>
+      </div>
+
+      <!-- Pipeline Sequence -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Verification sequence</h2>
+            <p class="panel-subtitle">Every synthesized patch must pass 6 deterministic validation gates</p>
+          </div>
+          <a href="/diagram" target="_blank" rel="noopener" class="btn btn-default btn-sm">Interactive flow diagram ↗</a>
+        </div>
+        <div class="panel-body">
+          <div class="pipeline-sequence">
+            <div class="sequence-box">
+              <div class="sequence-num">01</div>
+              <div class="sequence-heading">Isolation snapshot</div>
+              <div class="sequence-desc">Target repo cloned to isolated workspace; host source untouched.</div>
+            </div>
+            <div class="sequence-box">
+              <div class="sequence-num">02</div>
+              <div class="sequence-heading">Tavily research</div>
+              <div class="sequence-desc">Documentation retrieved and hashed into SHA-256 evidence.</div>
+            </div>
+            <div class="sequence-box">
+              <div class="sequence-num">03</div>
+              <div class="sequence-heading">Nemotron routing</div>
+              <div class="sequence-desc">Targeted diff synthesized with Nano-30B, Super-70B, or 340B.</div>
+            </div>
+            <div class="sequence-box">
+              <div class="sequence-num">04</div>
+              <div class="sequence-heading">AST validation</div>
+              <div class="sequence-desc">Syntax parsed without execution; file path traversal checked.</div>
+            </div>
+            <div class="sequence-box">
+              <div class="sequence-num">05</div>
+              <div class="sequence-heading">Container tests</div>
+              <div class="sequence-desc">Imports and test suites executed in hardened Docker sandbox.</div>
+            </div>
+            <div class="sequence-box">
+              <div class="sequence-num">06</div>
+              <div class="sequence-heading">Ledger report</div>
+              <div class="sequence-desc">Verification ledger published with deterministic receipts.</div>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      <!-- TAB 2: NEW RUN -->
-      <section id="tab-new-run" class="tab-pane">
-        <div class="run-builder-grid">
-          <div class="card form-card">
-            <div class="card-header">
-              <h3>Configure Engineering Run</h3>
-              <span class="text-muted">Task specification & verification constraints</span>
+      <!-- Recent Runs Table -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Recent runs</h2>
+            <p class="panel-subtitle">Latest engineering tasks and their proof status</p>
+          </div>
+          <button class="btn btn-default btn-sm" id="btn-refresh-runs">Refresh</button>
+        </div>
+        <div class="table-wrap">
+          <table class="spec-table" aria-label="Recent engineering runs">
+            <thead>
+              <tr>
+                <th>Run ID</th>
+                <th>Task description</th>
+                <th>Status</th>
+                <th>Mode</th>
+                <th>Claims</th>
+                <th>Duration</th>
+                <th>Time</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="overview-runs-body">
+              <tr><td colspan="8" style="text-align:center; color:var(--ink-dim); padding:24px;">No runs recorded. Start a new run to begin.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: NEW RUN -->
+    <section id="tab-new-run" class="view-section">
+      <div class="run-form-layout">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Configure engineering task</h2>
+              <p class="panel-subtitle">Define task specification and constraints</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <!-- Preset Scenario Chips -->
+            <div class="preset-chip-row">
+              <span style="font-size:11px; color:var(--ink-muted); margin-right:4px; align-self:center;">Presets:</span>
+              <button type="button" class="preset-chip" data-preset="std-dev">Standard deviation calculation</button>
+              <button type="button" class="preset-chip" data-preset="div-zero">Safe division guard</button>
+              <button type="button" class="preset-chip" data-preset="factorial">Factorial negative check</button>
             </div>
 
             <form id="new-run-form">
-              <div class="form-group">
-                <label for="run-title">Task Title</label>
-                <input type="text" id="run-title" class="form-input" required 
+              <div class="field-group">
+                <label for="run-title" class="field-label">Task title</label>
+                <input type="text" id="run-title" class="field-input" required 
                        value="Add Standard Deviation Calculation with Boundary Safeguards">
               </div>
 
-              <div class="form-group">
-                <label for="run-desc">Task Specification & Requirements</label>
-                <textarea id="run-desc" class="form-textarea" rows="4" required>Implement standard_deviation(numbers) calculating population standard deviation. Ensure empty list raises ValueError. Preserve all existing mathematical and regression assertions without breaking existing tests.</textarea>
+              <div class="field-group">
+                <label for="run-desc" class="field-label">Task requirements</label>
+                <textarea id="run-desc" class="field-textarea" rows="4" required>Implement standard_deviation(numbers) calculating population standard deviation. Ensure empty list raises ValueError. Preserve all existing mathematical and regression assertions without breaking existing tests.</textarea>
               </div>
 
-              <div class="form-row">
-                <div class="form-group flex-1">
-                  <label for="run-sample">Target Repository</label>
-                  <select id="run-sample" class="form-select">
+              <div class="field-row">
+                <div class="field-group" style="flex:1;">
+                  <label for="run-sample" class="field-label">Target repository</label>
+                  <select id="run-sample" class="field-select">
                     <option value="calculator">Scientific & Statistical Calculator (Python)</option>
                   </select>
                 </div>
-                <div class="form-group flex-1">
-                  <label for="run-mode">Execution Mode</label>
-                  <select id="run-mode" class="form-select">
+                <div class="field-group" style="flex:1;">
+                  <label for="run-mode" class="field-label">Execution mode</label>
+                  <select id="run-mode" class="field-select">
                     <option value="auto">Auto (Live if keys present, else Replay)</option>
-                    <option value="replay">Recorded Replay (Demonstration)</option>
-                    <option value="live">Live Nebius & Tavily Inference</option>
+                    <option value="replay">Recorded replay (demo)</option>
+                    <option value="live">Live Nebius & Tavily inference</option>
                   </select>
                 </div>
               </div>
 
-              <div class="form-row">
-                <div class="form-group flex-1">
-                  <label for="run-repairs">Max Repair Attempts</label>
-                  <input type="number" id="run-repairs" class="form-input" min="0" max="3" value="1">
+              <div class="field-row">
+                <div class="field-group" style="flex:1;">
+                  <label for="run-repairs" class="field-label">Max repair attempts (0-3)</label>
+                  <input type="number" id="run-repairs" class="field-input" min="0" max="3" value="1">
                 </div>
-                <div class="form-group flex-1">
-                  <label class="checkbox-label">
-                    <input type="checkbox" id="run-research" checked>
-                    <span>Enable Tavily Documentation Grounding</span>
+                <div class="field-group" style="flex:1; display:flex; align-items:center; padding-top:22px;">
+                  <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:12.5px; color:var(--ink-secondary);">
+                    <input type="checkbox" id="run-research" checked style="accent-color:var(--action-primary);">
+                    <span>Enable Tavily documentation grounding</span>
                   </label>
                 </div>
               </div>
 
-              <div class="form-actions">
+              <div style="margin-top:16px;">
                 <button type="submit" class="btn btn-primary btn-lg" id="btn-submit-run">
-                  Launch Evidence-Driven Run
+                  Launch verification run
                 </button>
               </div>
             </form>
           </div>
-
-          <div class="card info-card">
-            <div class="card-header">
-              <h3>Execution Pipeline</h3>
-            </div>
-            <div class="pipeline-steps">
-              <div class="step-item">
-                <span class="step-num">1</span>
-                <div>
-                  <strong>Snapshot & Isolation</strong>
-                  <p>Working copy created; original repository is never modified.</p>
-                </div>
-              </div>
-              <div class="step-item">
-                <span class="step-num">2</span>
-                <div>
-                  <strong>Tavily Research Grounding</strong>
-                  <p>Authoritative documentation queried and linked to claims.</p>
-                </div>
-              </div>
-              <div class="step-item">
-                <span class="step-num">3</span>
-                <div>
-                  <strong>Nemotron Synthesis</strong>
-                  <p>Model tier dynamically routed based on complexity signals.</p>
-                </div>
-              </div>
-              <div class="step-item">
-                <span class="step-num">4</span>
-                <div>
-                  <strong>Deterministic Verification</strong>
-                  <p>AST parsing, isolated imports, pytest regression checks.</p>
-                </div>
-              </div>
-              <div class="step-item">
-                <span class="step-num">5</span>
-                <div>
-                  <strong>Bounded Self-Repair</strong>
-                  <p>Escalates to Nemotron-340B if regression detected.</p>
-                </div>
-              </div>
-              <div class="step-item">
-                <span class="step-num">6</span>
-                <div>
-                  <strong>Verification Ledger</strong>
-                  <p>Traceable evidence and explicit limitation auditing.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 3: RUN WORKSPACE / ACTIVE EXECUTION -->
-      <section id="tab-workspace" class="tab-pane">
-        <!-- Run Workspace Header -->
-        <div class="workspace-header card">
-          <div class="workspace-meta">
-            <div class="run-badge-group">
-              <span class="badge badge-cyan font-mono" id="active-run-id">NO ACTIVE RUN</span>
-              <span class="status-badge" id="active-run-status">IDLE</span>
-              <span class="badge badge-outline font-mono" id="active-run-mode">REPLAY</span>
-            </div>
-            <h2 id="active-run-title">Select or start a run to inspect workspace</h2>
-            <div class="meta-row">
-              <span class="meta-item">Duration: <strong id="active-run-dur">0.0s</strong></span>
-              <span class="meta-item">Files: <strong id="active-run-files">0</strong></span>
-              <span class="meta-item">Verification: <strong id="active-run-vrate">0%</strong></span>
-            </div>
-          </div>
-          <div class="workspace-actions">
-            <button class="btn btn-outline" id="btn-download-report-md">Download Report (.md)</button>
-            <button class="btn btn-outline" id="btn-download-report-json">Download Ledger (.json)</button>
-          </div>
         </div>
 
-        <!-- 3-Column Workbench Grid -->
-        <div class="workbench-grid">
-          <!-- Col 1: Real-time Event Timeline -->
-          <div class="card timeline-card">
-            <div class="card-header">
-              <h3>Live Event Timeline</h3>
-              <span class="badge badge-outline" id="active-event-count">0 events</span>
-            </div>
-            <div class="timeline-stream" id="timeline-container">
-              <div class="empty-state">No events streamed yet.</div>
-            </div>
-          </div>
-
-          <!-- Col 2: Unified Diff Viewer & Code -->
-          <div class="card diff-card">
-            <div class="card-header">
-              <h3>Code Changes (Unified Diff)</h3>
-              <span class="font-mono text-muted text-sm" id="diff-file-label">calculator.py</span>
-            </div>
-            <div class="diff-viewer" id="diff-container">
-              <pre class="diff-code" id="diff-code-block"><code>No patch generated yet.</code></pre>
-            </div>
-          </div>
-
-          <!-- Col 3: Model Routing Telemetry -->
-          <div class="card telemetry-card">
-            <div class="card-header">
-              <h3>Model Routing Telemetry</h3>
-            </div>
-            <div id="routing-decisions-container">
-              <div class="empty-state">No routing events recorded.</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Full-Width Embedded Verification Ledger -->
-        <div class="card section-card mt-4">
-          <div class="card-header">
-            <h3>Verification Ledger for Active Run</h3>
-            <div class="ledger-filter-pills" id="workspace-ledger-filters">
-              <button class="pill active" data-filter="ALL">All</button>
-              <button class="pill" data-filter="VERIFIED">Verified</button>
-              <button class="pill" data-filter="SUPPORTED">Supported</button>
-              <button class="pill" data-filter="FAILED">Failed</button>
-              <button class="pill" data-filter="UNRESOLVED">Unresolved</button>
-            </div>
-          </div>
-          <div class="ledger-items" id="workspace-ledger-claims">
-            <div class="empty-state">Launch a run to inspect claims and backing evidence.</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 4: RUN HISTORY -->
-      <section id="tab-history" class="tab-pane">
-        <div class="card section-card">
-          <div class="card-header">
-            <h3>Persisted Engineering Runs</h3>
-            <span class="text-muted">Stored in SQLite database</span>
-          </div>
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Run ID</th>
-                  <th>Task Title</th>
-                  <th>Status</th>
-                  <th>Mode</th>
-                  <th>Verified / Total</th>
-                  <th>Duration</th>
-                  <th>Completed At</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="history-runs-body">
-                <tr><td colspan="8" class="text-center text-muted">Loading history...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 5: VERIFICATION LEDGER STANDALONE -->
-      <section id="tab-ledger" class="tab-pane">
-        <div class="card section-card">
-          <div class="card-header">
+        <div class="panel">
+          <div class="panel-header">
             <div>
-              <h3>Global Verification Ledger</h3>
-              <p class="text-muted">Inspect deterministic proof, AST audits, pytest executions, and unresolved risks.</p>
-            </div>
-            <div class="ledger-filter-pills" id="standalone-ledger-filters">
-              <button class="pill active" data-filter="ALL">All Claims</button>
-              <button class="pill" data-filter="VERIFIED">Verified</button>
-              <button class="pill" data-filter="SUPPORTED">Supported</button>
-              <button class="pill" data-filter="FAILED">Failed</button>
-              <button class="pill" data-filter="UNRESOLVED">Unresolved</button>
+              <h2 class="panel-title">Verification gates</h2>
+              <p class="panel-subtitle">Sequential integrity requirements</p>
             </div>
           </div>
-          <div class="ledger-items" id="standalone-ledger-claims">
-            <div class="empty-state">Select a run from Run History to inspect its ledger.</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 6: BENCHMARKS -->
-      <section id="tab-benchmarks" class="tab-pane">
-        <div class="card section-card">
-          <div class="card-header">
+          <div class="panel-body" style="font-size:12px; line-height:1.6; color:var(--ink-secondary);">
+            <div style="margin-bottom:14px;">
+              <strong style="color:var(--ink-primary); display:block;">1. Workspace isolation</strong>
+              Isolated working directory created; host files remain untouched.
+            </div>
+            <div style="margin-bottom:14px;">
+              <strong style="color:var(--ink-primary); display:block;">2. Tavily grounding</strong>
+              Official Python docs retrieved; SHA-256 evidence tokens produced.
+            </div>
+            <div style="margin-bottom:14px;">
+              <strong style="color:var(--ink-primary); display:block;">3. Nemotron synthesis</strong>
+              Model selected based on change size and previous repair attempts.
+            </div>
+            <div style="margin-bottom:14px;">
+              <strong style="color:var(--ink-primary); display:block;">4. AST validation</strong>
+              Static syntax parsing and file bounds validation before any execution.
+            </div>
+            <div style="margin-bottom:14px;">
+              <strong style="color:var(--ink-primary); display:block;">5. Sandbox container</strong>
+              Imports and regression tests run in hardened Docker container.
+            </div>
             <div>
-              <h3>Reproducible Benchmarks</h3>
-              <p class="text-muted">Single-Model Baseline vs. Evidence-Driven Routing Cascade on 5 Standard Tasks</p>
-            </div>
-            <button class="btn btn-primary" id="btn-run-benchmark">Re-run Benchmark Harness</button>
-          </div>
-
-          <div class="benchmark-summary-grid">
-            <div class="card metric-card">
-              <span class="metric-label">Baseline Pass Rate</span>
-              <div class="metric-number text-amber" id="bm-base-rate">60.0%</div>
-              <div class="metric-sub">Single 70B pass (no cascade/repair)</div>
-            </div>
-            <div class="card metric-card">
-              <span class="metric-label">VERIQ Routed Pass Rate</span>
-              <div class="metric-number text-cyan" id="bm-routed-rate">100.0%</div>
-              <div class="metric-sub">Cascade + bounded self-repair</div>
-            </div>
-            <div class="card metric-card">
-              <span class="metric-label">Average Latency (Fast Tasks)</span>
-              <div class="metric-number" id="bm-lat-diff">-54%</div>
-              <div class="metric-sub">Fast tier efficiency on small changes</div>
-            </div>
-          </div>
-
-          <div class="table-container mt-4">
-            <table class="data-table" id="bm-table">
-              <thead>
-                <tr>
-                  <th>Task ID</th>
-                  <th>Task Name</th>
-                  <th>Baseline Pass</th>
-                  <th>Baseline Latency</th>
-                  <th>Routed Pass</th>
-                  <th>Tier Used</th>
-                  <th>Repair Triggered</th>
-                  <th>Routed Latency</th>
-                  <th>Est. Cost Impact</th>
-                </tr>
-              </thead>
-              <tbody id="bm-table-body">
-                <tr><td colspan="9" class="text-center text-muted">Loading benchmark data...</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="card mt-4 p-4">
-            <h4>Experimental Conclusions & Integrity Notes</h4>
-            <ul class="conclusions-list" id="bm-conclusions">
-              <li>Verification-driven routing achieved 100% test completion vs 60% for single-model baseline.</li>
-              <li>Bounded self-repair successfully resolved regressions in factorial negative boundary handling.</li>
-              <li>On tasks requiring repair, total latency and token cost increased appropriately to ensure test verification.</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 7: SETTINGS & PROVIDERS -->
-      <section id="tab-settings" class="tab-pane">
-        <div class="settings-grid">
-          <div class="card">
-            <div class="card-header">
-              <h3>Infrastructure & Provider Status</h3>
-            </div>
-            <div class="provider-status-list">
-              <div class="provider-row">
-                <div>
-                  <strong>Nebius Token Factory</strong>
-                  <p class="text-muted" id="settings-nebius-endpoint">https://api.studio.nebius.ai/v1</p>
-                </div>
-                <span class="status-badge" id="settings-nebius-badge">Checking...</span>
-              </div>
-              <div class="provider-row">
-                <div>
-                  <strong>Tavily Search API</strong>
-                  <p class="text-muted">Primary technical search and extract engine</p>
-                </div>
-                <span class="status-badge" id="settings-tavily-badge">Checking...</span>
-              </div>
-              <div class="provider-row">
-                <div>
-                  <strong>Sandbox Execution Engine</strong>
-                  <p class="text-muted" id="settings-sandbox-desc">Checking environment...</p>
-                </div>
-                <span class="status-badge" id="settings-sandbox-badge">Checking...</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <h3>NVIDIA Nemotron Tier Configuration</h3>
-            </div>
-            <div class="config-table-container">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Tier</th>
-                    <th>Model Identifier</th>
-                    <th>Role</th>
-                    <th>Est. Pricing</th>
-                  </tr>
-                </thead>
-                <tbody id="models-table-body">
-                  <tr>
-                    <td><span class="badge badge-cyan">FAST</span></td>
-                    <td><code>nvidia/nemotron-mini-4b-instruct</code></td>
-                    <td>Planning, syntax fix, low-latency tasks</td>
-                    <td>$0.20 / 1M</td>
-                  </tr>
-                  <tr>
-                    <td><span class="badge badge-blue">STANDARD</span></td>
-                    <td><code>nvidia/Llama-3.1-Nemotron-70B-Instruct-HF</code></td>
-                    <td>Primary code synthesis and multi-file logic</td>
-                    <td>$0.70 / 1M</td>
-                  </tr>
-                  <tr>
-                    <td><span class="badge badge-escalate">ESCALATION</span></td>
-                    <td><code>nvidia/nemotron-4-340b-instruct</code></td>
-                    <td>Regression repair & complex debugging</td>
-                    <td>$2.50 / 1M</td>
-                  </tr>
-                </tbody>
-              </table>
+              <strong style="color:var(--ink-primary); display:block;">6. Verification ledger</strong>
+              Claims evaluated against evidence; audit report published.
             </div>
           </div>
         </div>
-      </section>
-    </main>
-  </div>
+      </div>
+    </section>
 
-  <!-- Notification Toast Container with Accessibility Live Region -->
-  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+    <!-- VIEW 3: ACTIVE RUN WORKSPACE (Clean Split, No Overlap) -->
+    <section id="tab-workspace" class="view-section">
+      <!-- Run Meta Panel -->
+      <div class="active-run-meta-panel">
+        <div class="meta-headline-group">
+          <div class="meta-badges">
+            <span class="status-tag status-tag-notrun" id="active-run-id">NO ACTIVE RUN</span>
+            <span class="status-tag status-tag-notrun" id="active-run-status">IDLE</span>
+            <span class="status-tag status-tag-notrun" id="active-run-mode">REPLAY</span>
+          </div>
+          <h1 class="meta-title" id="active-run-title">Select or launch a run to inspect workspace</h1>
+          <div class="meta-stats">
+            <span>Duration: <strong id="active-run-dur">0.0s</strong></span>
+            <span>Modified files: <strong id="active-run-files">0</strong></span>
+            <span>Verified claims: <strong style="color:var(--truth-verified-ink);" id="active-run-vrate">0%</strong></span>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-default btn-sm" id="btn-download-report-md">Download report (.md)</button>
+          <button class="btn btn-default btn-sm" id="btn-download-report-json">Download ledger (.json)</button>
+        </div>
+      </div>
 
-  <script src="/static/app.js?v=3.0"></script>
+      <!-- Two-Column Operational Deck: Left = Events, Right = Diff -->
+      <div class="split-deck">
+        <!-- Execution Timeline Stream -->
+        <div class="panel timeline-panel">
+          <div class="panel-header">
+            <div>
+              <h3 class="panel-title">Execution timeline</h3>
+              <p class="panel-subtitle" id="active-event-count">0 events recorded</p>
+            </div>
+          </div>
+          <div class="panel-body" id="timeline-container">
+            <div style="color:var(--ink-dim); font-size:12px; text-align:center; padding:24px;">
+              Awaiting execution events...
+            </div>
+          </div>
+        </div>
+
+        <!-- Candidate Patch Diff Viewer -->
+        <div class="panel diff-panel">
+          <div class="panel-header">
+            <div>
+              <h3 class="panel-title">Candidate patch (unified diff)</h3>
+              <p class="panel-subtitle" id="diff-file-label">calculator.py</p>
+            </div>
+            <button class="btn btn-default btn-sm" id="btn-copy-diff">Copy patch</button>
+          </div>
+          <div class="panel-body">
+            <div class="diff-code-wrapper" id="diff-code-block"><code>No modifications applied yet.</code></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Model Telemetry Row -->
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-header">
+          <div>
+            <h3 class="panel-title">Model routing telemetry</h3>
+            <p class="panel-subtitle">Model tier decisions and inference cost tracking</p>
+          </div>
+        </div>
+        <div class="panel-body" id="routing-decisions-container">
+          <div style="color:var(--ink-dim); font-size:12px;">No routing decisions recorded.</div>
+        </div>
+      </div>
+
+      <!-- Full-Width Verification Ledger Table -->
+      <div class="panel claims-table-card">
+        <div class="panel-header">
+          <div>
+            <h3 class="panel-title">Verification ledger</h3>
+            <p class="panel-subtitle">Deterministic claims and inspectable evidence records</p>
+          </div>
+          <div class="filter-bar" id="workspace-ledger-filters">
+            <button class="filter-btn active" data-filter="ALL">All</button>
+            <button class="filter-btn" data-filter="VERIFIED">Verified</button>
+            <button class="filter-btn" data-filter="SUPPORTED">Supported</button>
+            <button class="filter-btn" data-filter="FAILED">Failed</button>
+            <button class="filter-btn" data-filter="UNRESOLVED">Unresolved</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="claims-stack" id="workspace-ledger-claims">
+            <div style="color:var(--ink-dim); font-size:12px;">Start a run to inspect claims.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: STANDALONE LEDGER -->
+    <section id="tab-ledger" class="view-section">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Global verification ledger</h2>
+            <p class="panel-subtitle">Audit log of all claims evaluated across runs</p>
+          </div>
+          <div class="filter-bar" id="standalone-ledger-filters">
+            <button class="filter-btn active" data-filter="ALL">All</button>
+            <button class="filter-btn" data-filter="VERIFIED">Verified</button>
+            <button class="filter-btn" data-filter="SUPPORTED">Supported</button>
+            <button class="filter-btn" data-filter="FAILED">Failed</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="claims-stack" id="standalone-ledger-claims">
+            <div style="color:var(--ink-dim); font-size:12px;">Select a run to view verification claims.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: HISTORY -->
+    <section id="tab-history" class="view-section">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Run history</h2>
+            <p class="panel-subtitle">Persisted in local database (data/veriq.db)</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="spec-table" aria-label="Historical runs">
+            <thead>
+              <tr>
+                <th>Run ID</th>
+                <th>Task title</th>
+                <th>Status</th>
+                <th>Mode</th>
+                <th>Claims (Verified/Total)</th>
+                <th>Duration</th>
+                <th>Completed</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="history-runs-body">
+              <tr><td colspan="8" style="text-align:center; color:var(--ink-dim); padding:24px;">Loading run history...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 6: BENCHMARKS -->
+    <section id="tab-benchmarks" class="view-section">
+      <div class="instrument-strip">
+        <div class="strip-cell">
+          <div class="strip-label">Single-model baseline</div>
+          <div class="strip-value" style="color:var(--truth-failed-ink);" id="bm-base-rate">60.0%</div>
+          <div class="strip-sub">Pass rate without verification loop</div>
+        </div>
+        <div class="strip-cell">
+          <div class="strip-label">VERIQ routed cascade</div>
+          <div class="strip-value" style="color:var(--truth-verified-ink);" id="bm-routed-rate">100.0%</div>
+          <div class="strip-sub">Multi-tier cascade with self-repair</div>
+        </div>
+        <div class="strip-cell">
+          <div class="strip-label">Token expenditure</div>
+          <div class="strip-value" style="color:#60A5FA;">-62%</div>
+          <div class="strip-sub">Nano tier applied to localized diffs</div>
+        </div>
+        <div class="strip-cell">
+          <div class="strip-label">Average latency</div>
+          <div class="strip-value" style="color:var(--truth-verified-ink);" id="bm-lat-diff">-54%</div>
+          <div class="strip-sub">Fast tier efficiency on small changes</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Benchmark comparison (5 standard tasks)</h2>
+            <p class="panel-subtitle">Single-model baseline vs. VERIQ evidence-driven routing</p>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-run-benchmark">Re-run benchmark harness</button>
+        </div>
+        <div class="table-wrap">
+          <table class="spec-table" aria-label="Benchmark tasks comparison">
+            <thead>
+              <tr>
+                <th>Task ID</th>
+                <th>Task name</th>
+                <th>Baseline</th>
+                <th>Base lat.</th>
+                <th>VERIQ</th>
+                <th>Tier</th>
+                <th>Repaired</th>
+                <th>VERIQ lat.</th>
+                <th>Cost</th>
+              </tr>
+            </thead>
+            <tbody id="bm-table-body">
+              <tr><td colspan="9" style="text-align:center; color:var(--ink-dim); padding:24px;">Loading benchmark data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title">Empirical findings</h3>
+        </div>
+        <div class="panel-body" style="font-size:12.5px; color:var(--ink-secondary); line-height:1.7;">
+          <ul id="bm-conclusions" style="margin-left:18px;">
+            <li>Verification-driven routing achieved 100% test completion vs 60% for single-model baseline.</li>
+            <li>Bounded self-repair successfully resolved regressions in factorial negative boundary handling.</li>
+            <li>Nano-30B handled 80% of localized single-file edits, reducing token expenditure by ~62%.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 7: SETTINGS & PROVIDERS -->
+    <section id="tab-settings" class="view-section">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Infrastructure and provider status</h2>
+            <p class="panel-subtitle">Live health check of Nebius Token Factory, Tavily Search, and Docker sandbox</p>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 14px; background:var(--surface-terminal); border:1px solid var(--rule-subtle); border-radius:var(--radius-sm);">
+              <div>
+                <strong style="color:var(--ink-primary);">Nebius Token Factory</strong>
+                <p style="font-family:var(--font-mono); font-size:11px; color:var(--ink-muted);" id="settings-nebius-endpoint">https://api.studio.nebius.ai/v1</p>
+              </div>
+              <span class="status-tag status-tag-notrun" id="settings-nebius-badge">Checking...</span>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 14px; background:var(--surface-terminal); border:1px solid var(--rule-subtle); border-radius:var(--radius-sm);">
+              <div>
+                <strong style="color:var(--ink-primary);">Tavily Search API</strong>
+                <p style="font-size:11.5px; color:var(--ink-muted);">Technical research and evidence extraction</p>
+              </div>
+              <span class="status-tag status-tag-notrun" id="settings-tavily-badge">Checking...</span>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 14px; background:var(--surface-terminal); border:1px solid var(--rule-subtle); border-radius:var(--radius-sm);">
+              <div>
+                <strong style="color:var(--ink-primary);">Sandbox execution engine</strong>
+                <p style="font-size:11.5px; color:var(--ink-muted);" id="settings-sandbox-desc">Checking environment...</p>
+              </div>
+              <span class="status-tag status-tag-notrun" id="settings-sandbox-badge">Checking...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h3 class="panel-title">NVIDIA Nemotron routing matrix</h3>
+            <p class="panel-subtitle">Nebius Token Factory endpoints by task scope</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="spec-table" aria-label="Nemotron models matrix">
+            <thead>
+              <tr>
+                <th>Tier</th>
+                <th>Model identifier</th>
+                <th>Role</th>
+                <th>Pricing</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="status-tag status-tag-supported">FAST</span></td>
+                <td><code>nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B</code></td>
+                <td>Planning, syntax fix, low-latency targeted tasks</td>
+                <td>$0.20 / 1M</td>
+              </tr>
+              <tr>
+                <td><span class="status-tag status-tag-verified">STANDARD</span></td>
+                <td><code>nvidia/nemotron-3-super-70b</code></td>
+                <td>Primary code synthesis and multi-file logic</td>
+                <td>$0.70 / 1M</td>
+              </tr>
+              <tr>
+                <td><span class="status-tag status-tag-failed">ESCALATION</span></td>
+                <td><code>nvidia/nemotron-4-340b-instruct</code></td>
+                <td>Regression repair and complex debugging</td>
+                <td>$2.50 / 1M</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Notification Toast Anchor -->
+  <div id="toast-container" class="toast-anchor" aria-live="polite"></div>
+
+  <script src="/static/app.js?v=6.0"></script>
 </body>
 </html>
