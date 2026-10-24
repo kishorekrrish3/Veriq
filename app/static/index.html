@@ -4,21 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VERIQ — Code is generated. Proof is earned.</title>
-  <link rel="stylesheet" href="/static/styles.css?v=2.5">
+  <link rel="stylesheet" href="/static/styles.css?v=3.0">
   <link rel="icon" type="image/svg+xml" href="/static/assets/favicon.svg">
 </head>
 <body>
   <div class="app-layout">
+    <!-- Backdrop for mobile drawer navigation -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop" tabindex="-1" aria-hidden="true"></div>
+
     <!-- Sidebar Navigation -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="app-sidebar" role="navigation" aria-label="Main Navigation">
       <div class="brand">
-        <div class="brand-logo">
+        <div class="brand-logo" aria-hidden="true">
           <!-- Geometric VERIQ Monogram Logo (V + Proof Vector) -->
           <svg width="34" height="34" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="40" height="40" rx="8" fill="#171D28" stroke="#29313F" stroke-width="1.5"/>
-            <path d="M11 14L19 28L29 12" stroke="#8CE4FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M11 14L19 28L29 12" stroke="#38BDF8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M19 28L25 18" stroke="#F4F7FB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="29" cy="12" r="2.5" fill="#8CE4FF"/>
+            <circle cx="29" cy="12" r="2.5" fill="#38BDF8"/>
           </svg>
         </div>
         <div class="brand-text">
@@ -27,34 +30,34 @@
         </div>
       </div>
 
-      <nav class="nav-menu">
-        <button class="nav-item active" data-tab="overview">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <nav class="nav-menu" aria-label="Workspace views">
+        <button class="nav-item active" data-tab="overview" aria-label="System Overview">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
           Overview
         </button>
-        <button class="nav-item" data-tab="new-run">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <button class="nav-item" data-tab="new-run" aria-label="Configure New Engineering Run">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           New Run
         </button>
-        <button class="nav-item" data-tab="history">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <button class="nav-item" data-tab="history" aria-label="View Run History">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           Run History
         </button>
-        <button class="nav-item" data-tab="ledger">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <button class="nav-item" data-tab="ledger" aria-label="Inspect Global Verification Ledger">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
           Verification Ledger
         </button>
-        <button class="nav-item" data-tab="benchmarks">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <button class="nav-item" data-tab="benchmarks" aria-label="Reproducible Benchmarks">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           Benchmarks
         </button>
-        <button class="nav-item" data-tab="settings">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <button class="nav-item" data-tab="settings" aria-label="Infrastructure and Provider Settings">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           Settings
         </button>
 
-        <a href="/diagram" class="nav-item" target="_blank" style="text-decoration: none; margin-top: 8px; border-top: 1px solid var(--border-subtle); padding-top: 12px;">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><path d="M10 6.5h4 M7 10v4 M17.5 10v4 M10 17.5h4"/></svg>
+        <a href="/diagram" class="nav-item" target="_blank" rel="noopener" style="text-decoration: none; margin-top: 8px; border-top: 1px solid var(--border-subtle); padding-top: 12px;" aria-label="Interactive Architecture Flow Diagram">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><path d="M10 6.5h4 M7 10v4 M17.5 10v4 M10 17.5h4"/></svg>
           Flow Diagram
           <span class="badge badge-cyan" style="font-size: 10px; margin-left: auto;">/diagram</span>
         </a>
@@ -62,7 +65,7 @@
 
       <div class="sidebar-footer">
         <div class="status-indicator">
-          <span class="pulse-dot" id="system-status-dot"></span>
+          <span class="pulse-dot" id="system-status-dot" aria-hidden="true"></span>
           <span id="system-status-text">System Active</span>
         </div>
         <div class="footer-meta">Nebius × NVIDIA Hackathon 2026</div>
@@ -70,17 +73,20 @@
     </aside>
 
     <!-- Main Content Workspace -->
-    <main class="main-content">
+    <main class="main-content" role="main">
       <!-- Top Action Bar -->
       <header class="top-bar">
+        <button class="mobile-menu-toggle" id="btn-mobile-menu" aria-label="Toggle Navigation Menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
         <div class="top-title">
           <h1 id="page-title">Overview</h1>
           <span class="motto">Evidence before confidence.</span>
         </div>
         <div class="top-actions">
-          <div class="badge badge-pill badge-outline" id="mode-badge">Replay Mode</div>
-          <button class="btn btn-primary" id="btn-quick-new-run">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <div class="badge badge-pill badge-outline font-mono" id="mode-badge">Replay Mode</div>
+          <button class="btn btn-primary" id="btn-quick-new-run" aria-label="Launch a new evidence-driven run">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Start Engineering Run
           </button>
         </div>
@@ -547,9 +553,9 @@
     </main>
   </div>
 
-  <!-- Notification Toast Container -->
-  <div id="toast-container" class="toast-container"></div>
+  <!-- Notification Toast Container with Accessibility Live Region -->
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
-  <script src="/static/app.js?v=2.5"></script>
+  <script src="/static/app.js?v=3.0"></script>
 </body>
 </html>

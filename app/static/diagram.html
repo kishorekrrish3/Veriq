@@ -50,6 +50,18 @@
       overflow-x: hidden;
     }
 
+    :focus-visible {
+      outline: 2px solid var(--accent-cyan);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
     /* Top Navigation Header */
     .header {
       background-color: var(--bg-surface);

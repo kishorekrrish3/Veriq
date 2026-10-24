@@ -38,13 +38,38 @@ function initNavigation() {
   navButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       const tabId = btn.dataset.tab;
-      switchTab(tabId);
+      if (tabId) switchTab(tabId);
     });
   });
 
   const quickNewRun = document.getElementById('btn-quick-new-run');
   if (quickNewRun) {
     quickNewRun.addEventListener('click', () => switchTab('new-run'));
+  }
+
+  // Mobile drawer navigation support
+  const mobileToggle = document.getElementById('btn-mobile-menu');
+  const sidebar = document.getElementById('app-sidebar');
+  const backdrop = document.getElementById('sidebar-backdrop');
+
+  if (mobileToggle && sidebar && backdrop) {
+    mobileToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('mobile-open');
+      backdrop.classList.toggle('active');
+    });
+
+    backdrop.addEventListener('click', () => {
+      sidebar.classList.remove('mobile-open');
+      backdrop.classList.remove('active');
+    });
+
+    // Close on mobile navigation click
+    navButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        sidebar.classList.remove('mobile-open');
+        backdrop.classList.remove('active');
+      });
+    });
   }
 }
 
@@ -286,21 +311,21 @@ function renderRoutingDecision(decision) {
   }
 
   const card = document.createElement('div');
-  card.className = 'provider-row routing-telemetry-row';
+  card.className = 'routing-telemetry-row';
 
   const tierBadgeClass = decision.tier === 'FAST' ? 'badge-cyan' : decision.tier === 'STANDARD' ? 'badge-blue' : 'badge-escalate';
 
   card.innerHTML = `
-    <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-bottom:6px;">
+    <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-bottom:4px;">
       <span class="badge ${tierBadgeClass}">${decision.tier} TIER</span>
-      <span class="text-muted font-mono text-sm">Attempt #${decision.attempt}</span>
+      <span class="text-muted font-mono" style="font-size:11px;">Attempt #${decision.attempt}</span>
     </div>
-    <div class="font-mono text-cyan" style="font-size:12px; font-weight:600;">${decision.model_id}</div>
-    <div class="text-muted" style="font-size:12px; margin:4px 0;">${escapeHtml(decision.reason)}</div>
-    <div style="display:flex; gap:12px; font-size:11px; color:var(--text-secondary); margin-top:4px;">
-      <span>Latency: <strong class="font-mono">${decision.latency_ms || 0}ms</strong></span>
-      <span>Tokens: <strong class="font-mono">${decision.total_tokens || 0}</strong></span>
-      <span>Est. Cost: <strong class="font-mono">$${(decision.estimated_cost_usd || 0).toFixed(5)}</strong></span>
+    <div class="font-mono text-cyan" style="font-size:12.5px; font-weight:700; word-break:break-all;">${decision.model_id}</div>
+    <div class="text-secondary" style="font-size:12px; margin:4px 0; line-height:1.45;">${escapeHtml(decision.reason)}</div>
+    <div style="display:flex; flex-wrap:wrap; gap:12px; font-size:11.5px; color:var(--text-muted); margin-top:6px; border-top:1px solid var(--border-subtle); padding-top:6px; width:100%;">
+      <span>Latency: <strong class="font-mono text-primary">${decision.latency_ms || 0}ms</strong></span>
+      <span>Tokens: <strong class="font-mono text-primary">${decision.total_tokens || 0}</strong></span>
+      <span>Cost: <strong class="font-mono text-primary">$${(decision.estimated_cost_usd || 0).toFixed(5)}</strong></span>
     </div>
   `;
   container.appendChild(card);
@@ -365,6 +390,10 @@ function renderLedgerClaims(claims, containerId, evidenceList = []) {
   claims.forEach(claim => {
     const card = document.createElement('div');
     card.className = 'claim-card';
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-expanded', 'false');
+    card.setAttribute('aria-label', `Claim ${claim.claim_id}: ${claim.title}. Status: ${claim.status}`);
 
     const statusClass = `status-${claim.status.toLowerCase()}`;
     const backingEv = evidenceList.filter(e => (claim.evidence_ids || []).includes(e.evidence_id));
@@ -404,9 +433,12 @@ function renderLedgerClaims(claims, containerId, evidenceList = []) {
           <span class="claim-title">${escapeHtml(claim.title)}</span>
           <span class="badge badge-outline" style="font-size:10px;">${claim.category}</span>
         </div>
-        <span class="status-badge ${statusClass}">${claim.status}</span>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="status-badge ${statusClass}">${claim.status}</span>
+          <svg class="claim-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
       </div>
-      <div class="text-muted" style="margin-top:6px; font-size:12.5px;">${escapeHtml(claim.description)}</div>
+      <div class="text-secondary" style="margin-top:6px; font-size:12.5px;">${escapeHtml(claim.description)}</div>
       <div class="claim-details">
         ${limitationsHtml}
         <div style="margin-top:10px;">
@@ -416,8 +448,17 @@ function renderLedgerClaims(claims, containerId, evidenceList = []) {
       </div>
     `;
 
-    card.addEventListener('click', () => {
-      card.classList.toggle('expanded');
+    const toggleClaim = () => {
+      const isExpanded = card.classList.toggle('expanded');
+      card.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+    };
+
+    card.addEventListener('click', toggleClaim);
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleClaim();
+      }
     });
 
     container.appendChild(card);
