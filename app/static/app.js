@@ -14,6 +14,7 @@ let runStartTime = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
+  initAuth();
   initNavigation();
   initForms();
   initFilters();
@@ -804,4 +805,155 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+}
+
+// ==============================================================================
+// GOOGLE AUTHENTICATION & USER PROFILE MANAGEMENT
+// ==============================================================================
+function initAuth() {
+  checkAuthSession();
+
+  // Check URL params for OAuth callbacks
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('auth_success') === 'google') {
+    showToast('Successfully signed in with Google!', 'success');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  } else if (urlParams.get('auth_notice') === 'google_keys_missing') {
+    openAuthModal();
+    showToast('Google OAuth keys missing in .env. You can use Instant Demo.', 'info');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  } else if (urlParams.get('auth_error')) {
+    showToast(`Google sign-in error: ${urlParams.get('auth_error')}`, 'error');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+
+  // Open modal
+  const btnAuthOpen = document.getElementById('btn-auth-open');
+  if (btnAuthOpen) {
+    btnAuthOpen.addEventListener('click', openAuthModal);
+  }
+
+  // Close modal
+  const btnCloseModal = document.getElementById('btn-close-auth-modal');
+  const authModalOverlay = document.getElementById('auth-modal-overlay');
+  if (btnCloseModal) btnCloseModal.addEventListener('click', closeAuthModal);
+  if (authModalOverlay) {
+    authModalOverlay.addEventListener('click', (e) => {
+      if (e.target === authModalOverlay) closeAuthModal();
+    });
+  }
+
+  // Demo Login
+  const btnDemoLogin = document.getElementById('btn-oauth-demo-login');
+  if (btnDemoLogin) {
+    btnDemoLogin.addEventListener('click', async () => {
+      try {
+        btnDemoLogin.disabled = true;
+        btnDemoLogin.textContent = 'Signing in...';
+        const resp = await fetch('/api/auth/demo-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: 'Alex Chen', email: 'alex.chen@veriq.dev', role: 'Staff Engineer' }),
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          renderAuthenticatedUser(data.user);
+          closeAuthModal();
+          showToast(`Welcome back, ${data.user.name}!`, 'success');
+        } else {
+          showToast('Failed to sign in', 'error');
+        }
+      } catch (e) {
+        showToast('Sign in network error', 'error');
+      } finally {
+        btnDemoLogin.disabled = false;
+        btnDemoLogin.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg><span>Instant Demo Sign-in (Alex Chen)</span>`;
+      }
+    });
+  }
+
+  // User Profile Popover Toggle
+  const btnProfilePill = document.getElementById('btn-user-profile-pill');
+  const popover = document.getElementById('user-profile-popover');
+  if (btnProfilePill && popover) {
+    btnProfilePill.addEventListener('click', (e) => {
+      e.stopPropagation();
+      popover.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#user-profile-container')) {
+        popover.classList.remove('active');
+      }
+    });
+  }
+
+  // Logout
+  const btnLogout = document.getElementById('btn-auth-logout');
+  if (btnLogout) {
+    btnLogout.addEventListener('click', async () => {
+      try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        renderUnauthenticated();
+        if (popover) popover.classList.remove('active');
+        showToast('Signed out successfully', 'info');
+      } catch (e) {
+        showToast('Sign out error', 'error');
+      }
+    });
+  }
+}
+
+async function checkAuthSession() {
+  try {
+    const resp = await fetch('/api/auth/me');
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (data.authenticated && data.user) {
+      renderAuthenticatedUser(data.user);
+    } else {
+      renderUnauthenticated();
+    }
+  } catch (e) {
+    renderUnauthenticated();
+  }
+}
+
+function renderAuthenticatedUser(user) {
+  const btnAuthOpen = document.getElementById('btn-auth-open');
+  const userContainer = document.getElementById('user-profile-container');
+  const pillAvatar = document.getElementById('user-pill-avatar');
+  const pillName = document.getElementById('user-pill-name');
+  const popoverAvatar = document.getElementById('popover-avatar');
+  const popoverName = document.getElementById('popover-name');
+  const popoverEmail = document.getElementById('popover-email');
+  const popoverRole = document.getElementById('popover-role');
+
+  if (btnAuthOpen) btnAuthOpen.style.display = 'none';
+  if (userContainer) userContainer.style.display = 'block';
+
+  const avatarSrc = user.picture || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces';
+  if (pillAvatar) pillAvatar.src = avatarSrc;
+  if (pillName) pillName.textContent = user.name || user.email.split('@')[0];
+  if (popoverAvatar) popoverAvatar.src = avatarSrc;
+  if (popoverName) popoverName.textContent = user.name || 'Developer';
+  if (popoverEmail) popoverEmail.textContent = user.email || '';
+  if (popoverRole) popoverRole.textContent = user.role || 'Senior Engineer';
+}
+
+function renderUnauthenticated() {
+  const btnAuthOpen = document.getElementById('btn-auth-open');
+  const userContainer = document.getElementById('user-profile-container');
+  if (btnAuthOpen) btnAuthOpen.style.display = 'inline-flex';
+  if (userContainer) userContainer.style.display = 'none';
+}
+
+function openAuthModal() {
+  const overlay = document.getElementById('auth-modal-overlay');
+  if (overlay) overlay.classList.add('active');
+}
+
+function closeAuthModal() {
+  const overlay = document.getElementById('auth-modal-overlay');
+  if (overlay) overlay.classList.remove('active');
 }

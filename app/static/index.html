@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VERIQ — macOS Developer Workbench</title>
   
-  <link rel="stylesheet" href="/static/styles.css?v=9.0">
+  <link rel="stylesheet" href="/static/styles.css?v=10.0">
   <link rel="icon" type="image/svg+xml" href="/static/assets/favicon.svg">
   <script>
     (function() {
@@ -71,7 +71,7 @@
         </nav>
       </div>
 
-      <!-- Toolbar Actions, Theme Switcher & Health Status -->
+      <!-- Toolbar Actions, Theme Switcher, Google Auth & Health Status -->
       <div class="toolbar-right">
         <!-- Tactile Dark/Light Mode Switcher -->
         <button class="theme-switch-btn" id="btn-theme-toggle" aria-label="Toggle Dark and Light Mode" title="Toggle theme (⌘T)">
@@ -82,6 +82,60 @@
           <span class="status-dot"></span>
           <span id="deck-status-text">Engine ready</span>
         </div>
+
+        <!-- Google Authentication Control -->
+        <button class="btn-auth-signin" id="btn-auth-open" title="Sign in with Google">
+          <svg width="14" height="14" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span>Sign in</span>
+        </button>
+
+        <div id="user-profile-container" style="display:none; position:relative;">
+          <button class="user-profile-pill" id="btn-user-profile-pill" aria-label="Account Menu">
+            <img id="user-pill-avatar" class="user-avatar-img" src="" alt="Avatar" />
+            <span id="user-pill-name" class="user-name-label">User</span>
+            <span class="user-google-badge">G</span>
+          </button>
+
+          <!-- Frosted Popover -->
+          <div class="user-popover" id="user-profile-popover">
+            <div class="popover-user-header">
+              <img id="popover-avatar" class="popover-avatar-lg" src="" alt="Avatar" />
+              <div>
+                <div class="popover-name" id="popover-name">Developer</div>
+                <div class="popover-email" id="popover-email">user@veriq.dev</div>
+              </div>
+            </div>
+
+            <div class="popover-meta-box">
+              <div class="popover-meta-row">
+                <span class="popover-meta-label">Provider:</span>
+                <span class="popover-meta-val" style="display:flex; align-items:center; gap:4px;">
+                  <svg width="12" height="12" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+                  Google Account
+                </span>
+              </div>
+              <div class="popover-meta-row">
+                <span class="popover-meta-label">Role:</span>
+                <span class="popover-meta-val" id="popover-role">Lead Engineer</span>
+              </div>
+              <div class="popover-meta-row">
+                <span class="popover-meta-label">Session:</span>
+                <span class="status-pill status-verified" style="font-size:9.5px; padding:1px 6px;">Verified Active</span>
+              </div>
+            </div>
+
+            <button class="btn-signout" id="btn-auth-logout">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+              Sign Out
+            </button>
+          </div>
+        </div>
+
         <button class="btn btn-primary btn-sm" id="btn-quick-new-run">New task</button>
       </div>
     </header>
@@ -895,9 +949,63 @@
     </main>
   </div>
 
+  <!-- Google Sign-In Liquid Glass Modal -->
+  <div class="auth-modal-overlay" id="auth-modal-overlay">
+    <div class="auth-modal-card">
+      <button class="auth-modal-close" id="btn-close-auth-modal" aria-label="Close modal">&times;</button>
+      <div class="auth-modal-header">
+        <div class="auth-modal-glyph">
+          <svg width="24" height="24" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+        </div>
+        <h2 class="auth-modal-title">Sign in to VERIQ</h2>
+        <p class="auth-modal-desc">
+          Authenticate with your Google account to track task history, sign verification proofs, and manage autonomous code runs.
+        </p>
+      </div>
+
+      <div class="auth-action-stack">
+        <!-- Official Google OAuth Link -->
+        <a href="/api/auth/google/login" class="btn-google-primary" id="btn-oauth-google-link">
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span>Continue with Google</span>
+        </a>
+
+        <!-- Instant Demo Login Button -->
+        <button type="button" class="btn-google-demo" id="btn-oauth-demo-login">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          <span>Instant Demo Sign-in (Alex Chen)</span>
+        </button>
+      </div>
+
+      <!-- Free Google Cloud Setup Spoiler -->
+      <details class="auth-setup-spoiler">
+        <summary>How to connect your free Google Cloud OAuth ID</summary>
+        <ol class="auth-setup-steps">
+          <li>Open <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud Console → Credentials</a>.</li>
+          <li>Create an <strong>OAuth 2.0 Client ID</strong> (Web application).</li>
+          <li>Set Authorized redirect URI: <code>http://127.0.0.1:8000/api/auth/google/callback</code>.</li>
+          <li>Add to your project <code>.env</code> file:
+            <pre style="margin-top:4px; font-size:11px;">GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret</pre>
+          </li>
+        </ol>
+      </details>
+    </div>
+  </div>
+
   <!-- Notification Toast Anchor -->
   <div id="toast-container" class="toast-anchor" aria-live="polite"></div>
 
-  <script src="/static/app.js?v=9.0"></script>
+  <script src="/static/app.js?v=10.0"></script>
 </body>
 </html>

@@ -60,6 +60,16 @@ class Settings(BaseSettings):
     SANDBOX_DOCKER_IMAGE: str = "veriq-sandbox:latest"
     ALLOW_FALLBACK_SANDBOX: bool = True
 
+    # Authentication & Google OAuth (100% Free Google Identity)
+    SECRET_KEY: str = Field(default="veriq-developer-secret-key-32bytes-auth", description="Secret key for signing sessions")
+    GOOGLE_CLIENT_ID: str = Field(default="", description="Google Cloud OAuth Client ID")
+    GOOGLE_CLIENT_SECRET: str = Field(default="", description="Google Cloud OAuth Client Secret")
+    GOOGLE_REDIRECT_URI: str = Field(
+        default="http://127.0.0.1:8000/api/auth/google/callback",
+        description="OAuth2 Redirect URI registered in Google Cloud Console"
+    )
+    ALLOW_DEMO_LOGIN: bool = Field(default=True, description="Allow demo Google login when credentials not configured")
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -73,6 +83,10 @@ class Settings(BaseSettings):
     @property
     def is_live_research_configured(self) -> bool:
         return bool(self.TAVILY_API_KEY.strip() and self.ENABLE_LIVE_RESEARCH)
+
+    @property
+    def is_google_auth_configured(self) -> bool:
+        return bool(self.GOOGLE_CLIENT_ID.strip() and self.GOOGLE_CLIENT_SECRET.strip())
 
     @property
     def data_path(self) -> Path:
