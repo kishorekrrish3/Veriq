@@ -1,0 +1,36 @@
+services:
+  veriq-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: veriq:latest
+    container_name: veriq-workbench
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=production
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DATABASE_URL=sqlite:///./data/veriq.db
+      - NEBIUS_API_KEY=${NEBIUS_API_KEY:-}
+      - NEBIUS_BASE_URL=${NEBIUS_BASE_URL:-https://api.studio.nebius.ai/v1}
+      - NEBIUS_MODEL_FAST=${NEBIUS_MODEL_FAST:-nvidia/nemotron-mini-4b-instruct}
+      - NEBIUS_MODEL_STANDARD=${NEBIUS_MODEL_STANDARD:-nvidia/Llama-3.1-Nemotron-70B-Instruct-HF}
+      - NEBIUS_MODEL_ESCALATION=${NEBIUS_MODEL_ESCALATION:-nvidia/nemotron-4-340b-instruct}
+      - TAVILY_API_KEY=${TAVILY_API_KEY:-}
+      - ENABLE_LIVE_INFERENCE=${ENABLE_LIVE_INFERENCE:-false}
+      - ENABLE_LIVE_RESEARCH=${ENABLE_LIVE_RESEARCH:-false}
+      - ALLOW_FALLBACK_SANDBOX=true
+    volumes:
+      - veriq-data:/app/data
+    restart: unless-stopped
+
+  veriq-sandbox-image:
+    build:
+      context: ./sandbox
+      dockerfile: Dockerfile
+    image: veriq-sandbox:latest
+    entrypoint: ["echo", "VERIQ Sandbox Image Built"]
+
+volumes:
+  veriq-data:

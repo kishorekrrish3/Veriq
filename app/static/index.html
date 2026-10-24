@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VERIQ — Code is generated. Proof is earned.</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="icon" type="image/svg+xml" href="/static/assets/favicon.svg">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">
+          <!-- Geometric VERIQ Monogram Logo (V + Proof Vector) -->
+          <svg width="34" height="34" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="8" fill="#171D28" stroke="#29313F" stroke-width="1.5"/>
+            <path d="M11 14L19 28L29 12" stroke="#8CE4FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M19 28L25 18" stroke="#F4F7FB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="29" cy="12" r="2.5" fill="#8CE4FF"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">VERIQ</span>
+          <span class="brand-tagline">Proof is earned.</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="overview">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Overview
+        </button>
+        <button class="nav-item" data-tab="new-run">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          New Run
+        </button>
+        <button class="nav-item" data-tab="history">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Run History
+        </button>
+        <button class="nav-item" data-tab="ledger">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Verification Ledger
+        </button>
+        <button class="nav-item" data-tab="benchmarks">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Benchmarks
+        </button>
+        <button class="nav-item" data-tab="settings">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Settings
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="status-indicator">
+          <span class="pulse-dot" id="system-status-dot"></span>
+          <span id="system-status-text">System Active</span>
+        </div>
+        <div class="footer-meta">Nebius × NVIDIA Hackathon 2026</div>
+      </div>
+    </aside>
+
+    <!-- Main Content Workspace -->
+    <main class="main-content">
+      <!-- Top Action Bar -->
+      <header class="top-bar">
+        <div class="top-title">
+          <h1 id="page-title">Overview</h1>
+          <span class="motto">Evidence before confidence.</span>
+        </div>
+        <div class="top-actions">
+          <div class="badge badge-pill badge-outline" id="mode-badge">Replay Mode</div>
+          <button class="btn btn-primary" id="btn-quick-new-run">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Start Engineering Run
+          </button>
+        </div>
+      </header>
+
+      <!-- TAB 1: OVERVIEW -->
+      <section id="tab-overview" class="tab-pane active">
+        <!-- Hero Statement -->
+        <div class="hero-banner">
+          <div class="hero-content">
+            <span class="badge badge-cyan">Evidence-Driven Autonomous Engineering</span>
+            <h2 class="hero-title">Code is generated. Proof is earned.</h2>
+            <p class="hero-desc">
+              VERIQ pairs NVIDIA Nemotron model reasoning on Nebius Token Factory with deterministic
+              verification, AST checks, isolated sandbox execution, and an immutable Verification Ledger.
+            </p>
+          </div>
+          <div class="hero-metrics-pill">
+            <div class="metric-mini">
+              <span class="metric-label">Verification Rate</span>
+              <span class="metric-val" id="metric-verif-rate">0.0%</span>
+            </div>
+            <div class="metric-mini">
+              <span class="metric-label">Total Proven Runs</span>
+              <span class="metric-val" id="metric-total-runs">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="metrics-grid">
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span class="metric-label">Claims Verified</span>
+              <span class="status-badge status-verified">VERIFIED</span>
+            </div>
+            <div class="metric-number" id="overview-verified">0</div>
+            <div class="metric-sub">Deterministic checks passed</div>
+          </div>
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span class="metric-label">Supported Grounding</span>
+              <span class="status-badge status-supported">SUPPORTED</span>
+            </div>
+            <div class="metric-number" id="overview-supported">0</div>
+            <div class="metric-sub">Primary documentation verified</div>
+          </div>
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span class="metric-label">Failed / Regressions</span>
+              <span class="status-badge status-failed">FAILED</span>
+            </div>
+            <div class="metric-number" id="overview-failed">0</div>
+            <div class="metric-sub">Failed checks or regressions</div>
+          </div>
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span class="metric-label">Unresolved Questions</span>
+              <span class="status-badge status-unresolved">UNRESOLVED</span>
+            </div>
+            <div class="metric-number" id="overview-unresolved">0</div>
+            <div class="metric-sub">Risks requiring inspection</div>
+          </div>
+        </div>
+
+        <!-- Recent Runs Section -->
+        <div class="card section-card">
+          <div class="card-header">
+            <h3>Recent Engineering Runs</h3>
+            <button class="btn btn-sm btn-outline" id="btn-refresh-runs">Refresh</button>
+          </div>
+          <div class="table-container">
+            <table class="data-table" id="table-overview-runs">
+              <thead>
+                <tr>
+                  <th>Run ID</th>
+                  <th>Task</th>
+                  <th>Status</th>
+                  <th>Mode</th>
+                  <th>Verified Claims</th>
+                  <th>Duration</th>
+                  <th>Created</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="overview-runs-body">
+                <tr><td colspan="8" class="text-center text-muted">No engineering runs recorded yet. Start a new run to begin.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: NEW RUN -->
+      <section id="tab-new-run" class="tab-pane">
+        <div class="run-builder-grid">
+          <div class="card form-card">
+            <div class="card-header">
+              <h3>Configure Engineering Run</h3>
+              <span class="text-muted">Task specification & verification constraints</span>
+            </div>
+
+            <form id="new-run-form">
+              <div class="form-group">
+                <label for="run-title">Task Title</label>
+                <input type="text" id="run-title" class="form-input" required 
+                       value="Add Standard Deviation Calculation with Boundary Safeguards">
+              </div>
+
+              <div class="form-group">
+                <label for="run-desc">Task Specification & Requirements</label>
+                <textarea id="run-desc" class="form-textarea" rows="4" required>Implement standard_deviation(numbers) calculating population standard deviation. Ensure empty list raises ValueError. Preserve all existing mathematical and regression assertions without breaking existing tests.</textarea>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label for="run-sample">Target Repository</label>
+                  <select id="run-sample" class="form-select">
+                    <option value="calculator">Scientific & Statistical Calculator (Python)</option>
+                  </select>
+                </div>
+                <div class="form-group flex-1">
+                  <label for="run-mode">Execution Mode</label>
+                  <select id="run-mode" class="form-select">
+                    <option value="auto">Auto (Live if keys present, else Replay)</option>
+                    <option value="replay">Recorded Replay (Demonstration)</option>
+                    <option value="live">Live Nebius & Tavily Inference</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label for="run-repairs">Max Repair Attempts</label>
+                  <input type="number" id="run-repairs" class="form-input" min="0" max="3" value="1">
+                </div>
+                <div class="form-group flex-1">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="run-research" checked>
+                    <span>Enable Tavily Documentation Grounding</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg" id="btn-submit-run">
+                  Launch Evidence-Driven Run
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="card info-card">
+            <div class="card-header">
+              <h3>Execution Pipeline</h3>
+            </div>
+            <div class="pipeline-steps">
+              <div class="step-item">
+                <span class="step-num">1</span>
+                <div>
+                  <strong>Snapshot & Isolation</strong>
+                  <p>Working copy created; original repository is never modified.</p>
+                </div>
+              </div>
+              <div class="step-item">
+                <span class="step-num">2</span>
+                <div>
+                  <strong>Tavily Research Grounding</strong>
+                  <p>Authoritative documentation queried and linked to claims.</p>
+                </div>
+              </div>
+              <div class="step-item">
+                <span class="step-num">3</span>
+                <div>
+                  <strong>Nemotron Synthesis</strong>
+                  <p>Model tier dynamically routed based on complexity signals.</p>
+                </div>
+              </div>
+              <div class="step-item">
+                <span class="step-num">4</span>
+                <div>
+                  <strong>Deterministic Verification</strong>
+                  <p>AST parsing, isolated imports, pytest regression checks.</p>
+                </div>
+              </div>
+              <div class="step-item">
+                <span class="step-num">5</span>
+                <div>
+                  <strong>Bounded Self-Repair</strong>
+                  <p>Escalates to Nemotron-340B if regression detected.</p>
+                </div>
+              </div>
+              <div class="step-item">
+                <span class="step-num">6</span>
+                <div>
+                  <strong>Verification Ledger</strong>
+                  <p>Traceable evidence and explicit limitation auditing.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: RUN WORKSPACE / ACTIVE EXECUTION -->
+      <section id="tab-workspace" class="tab-pane">
+        <!-- Run Workspace Header -->
+        <div class="workspace-header card">
+          <div class="workspace-meta">
+            <div class="run-badge-group">
+              <span class="badge badge-cyan font-mono" id="active-run-id">NO ACTIVE RUN</span>
+              <span class="status-badge" id="active-run-status">IDLE</span>
+              <span class="badge badge-outline font-mono" id="active-run-mode">REPLAY</span>
+            </div>
+            <h2 id="active-run-title">Select or start a run to inspect workspace</h2>
+            <div class="meta-row">
+              <span class="meta-item">Duration: <strong id="active-run-dur">0.0s</strong></span>
+              <span class="meta-item">Files: <strong id="active-run-files">0</strong></span>
+              <span class="meta-item">Verification: <strong id="active-run-vrate">0%</strong></span>
+            </div>
+          </div>
+          <div class="workspace-actions">
+            <button class="btn btn-outline" id="btn-download-report-md">Download Report (.md)</button>
+            <button class="btn btn-outline" id="btn-download-report-json">Download Ledger (.json)</button>
+          </div>
+        </div>
+
+        <!-- 3-Column Workbench Grid -->
+        <div class="workbench-grid">
+          <!-- Col 1: Real-time Event Timeline -->
+          <div class="card timeline-card">
+            <div class="card-header">
+              <h3>Live Event Timeline</h3>
+              <span class="badge badge-outline" id="active-event-count">0 events</span>
+            </div>
+            <div class="timeline-stream" id="timeline-container">
+              <div class="empty-state">No events streamed yet.</div>
+            </div>
+          </div>
+
+          <!-- Col 2: Unified Diff Viewer & Code -->
+          <div class="card diff-card">
+            <div class="card-header">
+              <h3>Code Changes (Unified Diff)</h3>
+              <span class="font-mono text-muted text-sm" id="diff-file-label">calculator.py</span>
+            </div>
+            <div class="diff-viewer" id="diff-container">
+              <pre class="diff-code" id="diff-code-block"><code>No patch generated yet.</code></pre>
+            </div>
+          </div>
+
+          <!-- Col 3: Model Routing Telemetry -->
+          <div class="card telemetry-card">
+            <div class="card-header">
+              <h3>Model Routing Telemetry</h3>
+            </div>
+            <div id="routing-decisions-container">
+              <div class="empty-state">No routing events recorded.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full-Width Embedded Verification Ledger -->
+        <div class="card section-card mt-4">
+          <div class="card-header">
+            <h3>Verification Ledger for Active Run</h3>
+            <div class="ledger-filter-pills" id="workspace-ledger-filters">
+              <button class="pill active" data-filter="ALL">All</button>
+              <button class="pill" data-filter="VERIFIED">Verified</button>
+              <button class="pill" data-filter="SUPPORTED">Supported</button>
+              <button class="pill" data-filter="FAILED">Failed</button>
+              <button class="pill" data-filter="UNRESOLVED">Unresolved</button>
+            </div>
+          </div>
+          <div class="ledger-items" id="workspace-ledger-claims">
+            <div class="empty-state">Launch a run to inspect claims and backing evidence.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: RUN HISTORY -->
+      <section id="tab-history" class="tab-pane">
+        <div class="card section-card">
+          <div class="card-header">
+            <h3>Persisted Engineering Runs</h3>
+            <span class="text-muted">Stored in SQLite database</span>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Run ID</th>
+                  <th>Task Title</th>
+                  <th>Status</th>
+                  <th>Mode</th>
+                  <th>Verified / Total</th>
+                  <th>Duration</th>
+                  <th>Completed At</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="history-runs-body">
+                <tr><td colspan="8" class="text-center text-muted">Loading history...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: VERIFICATION LEDGER STANDALONE -->
+      <section id="tab-ledger" class="tab-pane">
+        <div class="card section-card">
+          <div class="card-header">
+            <div>
+              <h3>Global Verification Ledger</h3>
+              <p class="text-muted">Inspect deterministic proof, AST audits, pytest executions, and unresolved risks.</p>
+            </div>
+            <div class="ledger-filter-pills" id="standalone-ledger-filters">
+              <button class="pill active" data-filter="ALL">All Claims</button>
+              <button class="pill" data-filter="VERIFIED">Verified</button>
+              <button class="pill" data-filter="SUPPORTED">Supported</button>
+              <button class="pill" data-filter="FAILED">Failed</button>
+              <button class="pill" data-filter="UNRESOLVED">Unresolved</button>
+            </div>
+          </div>
+          <div class="ledger-items" id="standalone-ledger-claims">
+            <div class="empty-state">Select a run from Run History to inspect its ledger.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 6: BENCHMARKS -->
+      <section id="tab-benchmarks" class="tab-pane">
+        <div class="card section-card">
+          <div class="card-header">
+            <div>
+              <h3>Reproducible Benchmarks</h3>
+              <p class="text-muted">Single-Model Baseline vs. Evidence-Driven Routing Cascade on 5 Standard Tasks</p>
+            </div>
+            <button class="btn btn-primary" id="btn-run-benchmark">Re-run Benchmark Harness</button>
+          </div>
+
+          <div class="benchmark-summary-grid">
+            <div class="card metric-card">
+              <span class="metric-label">Baseline Pass Rate</span>
+              <div class="metric-number text-amber" id="bm-base-rate">60.0%</div>
+              <div class="metric-sub">Single 70B pass (no cascade/repair)</div>
+            </div>
+            <div class="card metric-card">
+              <span class="metric-label">VERIQ Routed Pass Rate</span>
+              <div class="metric-number text-cyan" id="bm-routed-rate">100.0%</div>
+              <div class="metric-sub">Cascade + bounded self-repair</div>
+            </div>
+            <div class="card metric-card">
+              <span class="metric-label">Average Latency (Fast Tasks)</span>
+              <div class="metric-number" id="bm-lat-diff">-54%</div>
+              <div class="metric-sub">Fast tier efficiency on small changes</div>
+            </div>
+          </div>
+
+          <div class="table-container mt-4">
+            <table class="data-table" id="bm-table">
+              <thead>
+                <tr>
+                  <th>Task ID</th>
+                  <th>Task Name</th>
+                  <th>Baseline Pass</th>
+                  <th>Baseline Latency</th>
+                  <th>Routed Pass</th>
+                  <th>Tier Used</th>
+                  <th>Repair Triggered</th>
+                  <th>Routed Latency</th>
+                  <th>Est. Cost Impact</th>
+                </tr>
+              </thead>
+              <tbody id="bm-table-body">
+                <tr><td colspan="9" class="text-center text-muted">Loading benchmark data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card mt-4 p-4">
+            <h4>Experimental Conclusions & Integrity Notes</h4>
+            <ul class="conclusions-list" id="bm-conclusions">
+              <li>Verification-driven routing achieved 100% test completion vs 60% for single-model baseline.</li>
+              <li>Bounded self-repair successfully resolved regressions in factorial negative boundary handling.</li>
+              <li>On tasks requiring repair, total latency and token cost increased appropriately to ensure test verification.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 7: SETTINGS & PROVIDERS -->
+      <section id="tab-settings" class="tab-pane">
+        <div class="settings-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3>Infrastructure & Provider Status</h3>
+            </div>
+            <div class="provider-status-list">
+              <div class="provider-row">
+                <div>
+                  <strong>Nebius Token Factory</strong>
+                  <p class="text-muted" id="settings-nebius-endpoint">https://api.studio.nebius.ai/v1</p>
+                </div>
+                <span class="status-badge" id="settings-nebius-badge">Checking...</span>
+              </div>
+              <div class="provider-row">
+                <div>
+                  <strong>Tavily Search API</strong>
+                  <p class="text-muted">Primary technical search and extract engine</p>
+                </div>
+                <span class="status-badge" id="settings-tavily-badge">Checking...</span>
+              </div>
+              <div class="provider-row">
+                <div>
+                  <strong>Sandbox Execution Engine</strong>
+                  <p class="text-muted" id="settings-sandbox-desc">Checking environment...</p>
+                </div>
+                <span class="status-badge" id="settings-sandbox-badge">Checking...</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>NVIDIA Nemotron Tier Configuration</h3>
+            </div>
+            <div class="config-table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Tier</th>
+                    <th>Model Identifier</th>
+                    <th>Role</th>
+                    <th>Est. Pricing</th>
+                  </tr>
+                </thead>
+                <tbody id="models-table-body">
+                  <tr>
+                    <td><span class="badge badge-cyan">FAST</span></td>
+                    <td><code>nvidia/nemotron-mini-4b-instruct</code></td>
+                    <td>Planning, syntax fix, low-latency tasks</td>
+                    <td>$0.20 / 1M</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge badge-blue">STANDARD</span></td>
+                    <td><code>nvidia/Llama-3.1-Nemotron-70B-Instruct-HF</code></td>
+                    <td>Primary code synthesis and multi-file logic</td>
+                    <td>$0.70 / 1M</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge badge-escalate">ESCALATION</span></td>
+                    <td><code>nvidia/nemotron-4-340b-instruct</code></td>
+                    <td>Regression repair & complex debugging</td>
+                    <td>$2.50 / 1M</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Notification Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

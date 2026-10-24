@@ -1,0 +1,58 @@
+{
+  "scenario_id": "SCENARIO-CALC-REGRESSION-REPAIR",
+  "title": "Add Standard Deviation Calculation with Boundary Safeguards",
+  "tagline": "Code is generated. Proof is earned.",
+  "task": {
+    "title": "Add Standard Deviation Calculation with Boundary Safeguards",
+    "description": "Implement standard_deviation(numbers) calculating population standard deviation. Ensure empty list raises ValueError. Preserve all existing mathematical and regression assertions without breaking existing tests.",
+    "sample_repo": "calculator"
+  },
+  "stages": [
+    {
+      "stage": 1,
+      "name": "Research & Planning",
+      "action": "Query Tavily for python standard library math specifications",
+      "grounding": "Python 3 documentation confirms math.sqrt and math.factorial exception requirements"
+    },
+    {
+      "stage": 2,
+      "name": "Initial Patch Synthesis (Fast Tier)",
+      "model": "nvidia/nemotron-mini-4b-instruct",
+      "outcome": "Patch generated adding standard_deviation, but accidentally introduces regression in factorial(-1)"
+    },
+    {
+      "stage": 3,
+      "name": "Deterministic Verification Execution",
+      "checks": [
+        {"check": "AST Syntax", "status": "VERIFIED"},
+        {"check": "Isolated Import", "status": "VERIFIED"},
+        {"check": "Pytest Regression", "status": "FAILED", "reason": "test_calculator.py::test_factorial failed (ValueError not raised for -1)"}
+      ]
+    },
+    {
+      "stage": 4,
+      "name": "Evidence-Driven Routing Escalation",
+      "trigger": "VERIFICATION_FAILURE_ESCALATION",
+      "model": "nvidia/nemotron-4-340b-instruct",
+      "tier": "ESCALATION",
+      "action": "Diagnose failure from pytest stderr and generate minimal corrective repair"
+    },
+    {
+      "stage": 5,
+      "name": "Verification Re-Execution",
+      "checks": [
+        {"check": "AST Syntax", "status": "VERIFIED"},
+        {"check": "Isolated Import", "status": "VERIFIED"},
+        {"check": "Pytest Regression", "status": "VERIFIED", "passed": 8, "failed": 0}
+      ]
+    },
+    {
+      "stage": 6,
+      "name": "Verification Ledger Finalization",
+      "verified_claims": 5,
+      "supported_claims": 1,
+      "failed_claims": 0,
+      "unresolved_risks": 0
+    }
+  ]
+}
