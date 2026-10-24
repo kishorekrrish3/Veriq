@@ -1334,10 +1334,6 @@
       document.getElementById('node-drawer').classList.add('active');
     }
 
-      document.getElementById('drawer-overlay').classList.add('active');
-      document.getElementById('node-drawer').classList.add('active');
-    }
-
     function closeDrawer() {
       document.getElementById('drawer-overlay').classList.remove('active');
       document.getElementById('node-drawer').classList.remove('active');
@@ -1353,10 +1349,14 @@
     }
 
     // Theme switcher engine
+    let themeInitialized = false;
     function initTheme() {
       const savedTheme = localStorage.getItem('veriq-theme') || 
         (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
       applyTheme(savedTheme, false);
+
+      if (themeInitialized) return;
+      themeInitialized = true;
 
       const toggleBtn = document.getElementById('btn-theme-toggle');
       if (toggleBtn) {
