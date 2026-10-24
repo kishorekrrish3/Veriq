@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VERIQ — End-to-End Workflow & Architecture Diagram</title>
+  <link rel="icon" type="image/svg+xml" href="/static/assets/favicon.svg">
+  <style>
+    :root {
+      --bg-base: #0B0D12;
+      --bg-surface: #11151D;
+      --bg-elevated: #171D28;
+      --bg-elevated-hover: #1E2634;
+      --border-subtle: #29313F;
+      --border-focus: #8CE4FF;
+      --text-primary: #F4F7FB;
+      --text-secondary: #A3ADBC;
+      --text-muted: #6B778C;
+      --accent-cyan: #8CE4FF;
+      --accent-cyan-dim: rgba(140, 228, 255, 0.12);
+      --accent-blue: #3E8BFF;
+      --status-verified: #10B981;
+      --status-verified-bg: rgba(16, 185, 129, 0.12);
+      --status-supported: #8CE4FF;
+      --status-supported-bg: rgba(140, 228, 255, 0.12);
+      --status-failed: #EF4444;
+      --status-failed-bg: rgba(239, 68, 68, 0.14);
+      --status-unresolved: #F59E0B;
+      --status-unresolved-bg: rgba(245, 158, 11, 0.14);
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-pill: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation Header */
+    .header {
+      background-color: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      background-color: var(--accent-cyan-dim);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(140, 228, 255, 0.3);
+      font-family: var(--font-mono);
+    }
+
+    .brand-tagline {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      font-family: inherit;
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background-color: var(--accent-cyan);
+      color: #07090D;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background-color: #A3ECFF;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border-color: var(--border-subtle);
+      color: var(--text-primary);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--bg-elevated);
+      border-color: var(--accent-cyan);
+    }
+
+    /* Sub-header Tabs & Controls */
+    .controls-bar {
+      background-color: var(--bg-elevated);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      padding: 6px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+      background-color: rgba(255, 255, 255, 0.04);
+    }
+
+    .tab-btn.active {
+      background-color: var(--bg-surface);
+      color: var(--accent-cyan);
+      border-color: var(--border-subtle);
+    }
+
+    .legend-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .legend-verified { background-color: var(--status-verified); box-shadow: 0 0 6px var(--status-verified); }
+    .legend-inference { background-color: var(--accent-cyan); }
+    .legend-research { background-color: #A78BFA; }
+    .legend-sandbox { background-color: #F59E0B; }
+    .legend-repair { background-color: #F43F5E; }
+
+    /* Canvas / Viewport Area */
+    .canvas-container {
+      padding: 32px;
+      max-width: 1560px;
+      margin: 0 auto;
+    }
+
+    .view-panel {
+      display: none;
+    }
+
+    .view-panel.active {
+      display: block;
+    }
+
+    /* Diagram Card */
+    .diagram-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      position: relative;
+    }
+
+    /* SVG Diagram Styling */
+    .flow-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Interactive Node Styling inside SVG */
+    .flow-node {
+      cursor: pointer;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+
+    .flow-node:hover rect {
+      stroke: var(--accent-cyan) !important;
+      stroke-width: 2px !important;
+      filter: drop-shadow(0 0 8px rgba(140, 228, 255, 0.3));
+    }
+
+    .flow-node:hover polygon {
+      stroke: var(--accent-cyan) !important;
+      stroke-width: 2px !important;
+      filter: drop-shadow(0 0 8px rgba(140, 228, 255, 0.3));
+    }
+
+    /* Animated connecting paths */
+    .flow-wire {
+      stroke: #334155;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .flow-wire.active {
+      stroke: var(--accent-cyan);
+      stroke-dasharray: 6, 6;
+      animation: dashMove 20s linear infinite;
+    }
+
+    .flow-wire.repair {
+      stroke: #F43F5E;
+      stroke-dasharray: 6, 6;
+      animation: dashMoveReverse 16s linear infinite;
+    }
+
+    @keyframes dashMove {
+      from { stroke-dashoffset: 500; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes dashMoveReverse {
+      from { stroke-dashoffset: 0; }
+      to { stroke-dashoffset: 500; }
+    }
+
+    /* Node Details Drawer / Modal */
+    .drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: -480px;
+      bottom: 0;
+      width: 480px;
+      max-width: 90vw;
+      background-color: var(--bg-surface);
+      border-left: 1px solid var(--border-subtle);
+      box-shadow: -8px 0 32px rgba(0, 0, 0, 0.6);
+      z-index: 101;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer.active {
+      right: 0;
+    }
+
+    .drawer-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .drawer-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 20px;
+      padding: 4px;
+      line-height: 1;
+    }
+
+    .drawer-close:hover {
+      color: var(--text-primary);
+    }
+
+    .drawer-body {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .detail-section {
+      margin-bottom: 20px;
+    }
+
+    .detail-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .detail-content {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .detail-box {
+      background-color: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent-cyan);
+      margin-top: 6px;
+    }
+
+    /* Markdown Code Block for Mermaid Tab */
+    .code-container {
+      background-color: #07090D;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      position: relative;
+    }
+
+    .code-block {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: #E2E8F0;
+      white-space: pre;
+      overflow-x: auto;
+      line-height: 1.6;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: var(--bg-elevated-hover);
+      color: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+    }
+
+    /* State Machine Grid */
+    .state-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .state-card {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 18px;
+    }
+
+    .state-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .state-name {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .badge-verified { color: var(--status-verified); background: var(--status-verified-bg); border: 1px solid rgba(16,185,129,0.3); }
+    .badge-supported { color: var(--status-supported); background: var(--status-supported-bg); border: 1px solid rgba(140,228,255,0.3); }
+    .badge-failed { color: var(--status-failed); background: var(--status-failed-bg); border: 1px solid rgba(239,68,68,0.3); }
+    .badge-unresolved { color: var(--status-unresolved); background: var(--status-unresolved-bg); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-not-run { color: var(--text-muted); background: rgba(107,119,140,0.12); border: 1px solid var(--border-subtle); }
+
+    .state-badge {
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="header">
+    <div class="brand-group">
+      <!-- VERIQ Geometric Logo -->
+      <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="8" fill="#171D28" stroke="#29313F" stroke-width="1.5"/>
+        <path d="M11 14L19 28L29 12" stroke="#8CE4FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M19 28L25 18" stroke="#F4F7FB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="29" cy="12" r="2.5" fill="#8CE4FF"/>
+      </svg>
+      <div>
+        <div class="brand-title">
+          VERIQ Architecture & Pipeline Flow
+          <span class="brand-badge">EVIDENCE-DRIVEN</span>
+        </div>
+        <div class="brand-tagline">Code is generated. Proof is earned. — Nebius × NVIDIA Global AI Hackathon</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/" class="btn btn-outline">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Return to Workbench
+      </a>
+      <button class="btn btn-primary" id="btn-export-svg" onclick="window.print()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Print / Save Architecture
+      </button>
+    </div>
+  </header>
+
+  <!-- Controls & Sub-Navigation -->
+  <div class="controls-bar">
+    <div class="nav-tabs">
+      <button class="tab-btn active" data-view="pipeline">1. End-to-End Pipeline Flow</button>
+      <button class="tab-btn" data-view="state-machine">2. Verification Ledger State Machine</button>
+      <button class="tab-btn" data-view="mermaid">3. Mermaid Specification Code</button>
+    </div>
+    <div class="legend-group">
+      <span class="legend-item"><span class="legend-dot legend-research"></span> Tavily Research</span>
+      <span class="legend-item"><span class="legend-dot legend-inference"></span> Nemotron / Nebius</span>
+      <span class="legend-item"><span class="legend-dot legend-sandbox"></span> Sandbox Isolation</span>
+      <span class="legend-item"><span class="legend-dot legend-verified"></span> Deterministic Proof</span>
+      <span class="legend-item"><span class="legend-dot legend-repair"></span> Self-Repair Loop</span>
+    </div>
+  </div>
+
+  <!-- Main Canvas Container -->
+  <main class="canvas-container">
+
+    <!-- VIEW 1: INTERACTIVE PIPELINE FLOW (SVG) -->
+    <div id="view-pipeline" class="view-panel active">
+      <div class="diagram-card">
+        <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 600;">Autonomous Engineering Workflow Execution Path</h3>
+            <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">
+              Click any stage block to inspect deterministic checks, backing evidence IDs, security boundaries, and failure transitions.
+            </p>
+          </div>
+          <span style="font-size: 11.5px; font-family: var(--font-mono); color: var(--accent-cyan); background: var(--bg-elevated); padding: 4px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+            7 Major Stages · 4 Deterministic Checks · 0-3 Self-Repairs
+          </span>
+        </div>
+
+        <!-- High-Resolution Vector Workflow SVG -->
+        <svg class="flow-svg" viewBox="0 0 1440 920" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Drop Shadow Filters -->
+            <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#8CE4FF" flood-opacity="0.15"/>
+            </filter>
+            <filter id="glow-emerald" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#10B981" flood-opacity="0.15"/>
+            </filter>
+            <filter id="glow-card" x="-10%" y="-10%" width="120%" height="120%">
+              <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.4"/>
+            </filter>
+            
+            <!-- Arrow Markers -->
+            <marker id="arrow-cyan" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="#8CE4FF"/>
+            </marker>
+            <marker id="arrow-gray" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="#4B5563"/>
+            </marker>
+            <marker id="arrow-red" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="#F43F5E"/>
+            </marker>
+            <marker id="arrow-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="#10B981"/>
+            </marker>
+          </defs>
+
+          <!-- ================= BACKGROUND SWIMLANES ================= -->
+          <rect x="20" y="20" width="310" height="880" rx="12" fill="#11151D" stroke="#29313F" stroke-width="1"/>
+          <text x="40" y="55" fill="#A3ADBC" font-size="12" font-weight="700" letter-spacing="1">STAGE 1 & 2: INTAKE & RESEARCH</text>
+
+          <rect x="360" y="20" width="350" height="880" rx="12" fill="#11151D" stroke="#29313F" stroke-width="1"/>
+          <text x="380" y="55" fill="#A3ADBC" font-size="12" font-weight="700" letter-spacing="1">STAGE 3 & 4: ROUTING & SYNTHESIS</text>
+
+          <rect x="740" y="20" width="340" height="880" rx="12" fill="#11151D" stroke="#29313F" stroke-width="1"/>
+          <text x="760" y="55" fill="#A3ADBC" font-size="12" font-weight="700" letter-spacing="1">STAGE 5: ISOLATED VERIFICATION</text>
+
+          <rect x="1110" y="20" width="310" height="880" rx="12" fill="#11151D" stroke="#29313F" stroke-width="1"/>
+          <text x="1130" y="55" fill="#A3ADBC" font-size="12" font-weight="700" letter-spacing="1">STAGE 6 & 7: PROOF LEDGER & AUDIT</text>
+
+          <!-- ================= CONNECTING WIRES ================= -->
+          <!-- Task Spec -> Repo Snapshot -->
+          <path d="M 175 140 L 175 180" class="flow-wire active" marker-end="url(#arrow-cyan)"/>
+          
+          <!-- Repo Snapshot -> Tavily Research -->
+          <path d="M 175 260 L 175 300" class="flow-wire active" marker-end="url(#arrow-cyan)"/>
+
+          <!-- Tavily Research -> Model Router -->
+          <path d="M 310 350 L 380 350" class="flow-wire active" marker-end="url(#arrow-cyan)"/>
+
+          <!-- Model Router -> Model Selection (Branching) -->
+          <path d="M 535 390 L 535 440" class="flow-wire active" marker-end="url(#arrow-cyan)"/>
+
+          <!-- Model -> Patch Synthesizer -->
+          <path d="M 535 560 L 535 600" class="flow-wire active" marker-end="url(#arrow-cyan)"/>
+
+          <!-- Patch Synthesizer -> AST & Patch Check -->
+          <path d="M 690 645 L 760 645" class="flow-wire active" marker-end="url(#arrow-cyan)"/>
+
+          <!-- AST Check -> Sandbox Dispatch Decision -->
+          <path d="M 910 600 L 910 540" class="flow-wire active" marker-end="url(#arrow-cyan)"/>
+
+          <!-- Decision -> Docker or Subprocess -->
+          <path d="M 860 480 L 800 480 L 800 390" class="flow-wire" stroke="#F59E0B" marker-end="url(#arrow-cyan)"/>
+          <path d="M 960 480 L 1020 480 L 1020 390" class="flow-wire" stroke="#F59E0B" marker-end="url(#arrow-cyan)"/>
+
+          <!-- Sandboxes converge -> Test Execution & Import -->
+          <path d="M 800 310 L 800 240 L 870 240" class="flow-wire" stroke="#10B981" marker-end="url(#arrow-cyan)"/>
+          <path d="M 1020 310 L 1020 240 L 950 240" class="flow-wire" stroke="#10B981" marker-end="url(#arrow-cyan)"/>
+
+          <!-- Test Suite -> Evaluation Decision Diamond -->
+          <path d="M 910 200 L 910 140 L 1130 140" class="flow-wire active" marker-end="url(#arrow-cyan)"/>
+
+          <!-- Test PASS -> Ledger Finalization -->
+          <path d="M 1265 180 L 1265 240" class="flow-wire" stroke="#10B981" marker-end="url(#arrow-green)"/>
+
+          <!-- Test FAIL -> Bounded Repair Decision Loop -->
+          <path d="M 1205 140 L 1060 140 L 1060 100" class="flow-wire repair" marker-end="url(#arrow-red)"/>
+          <path d="M 1060 100 L 535 100 L 535 300" class="flow-wire repair" marker-end="url(#arrow-red)"/>
+
+          <!-- Ledger Finalization -> Persistence & SSE Delivery -->
+          <path d="M 1265 340 L 1265 400" class="flow-wire active" marker-end="url(#arrow-cyan)"/>
+          <path d="M 1265 500 L 1265 560" class="flow-wire active" marker-end="url(#arrow-cyan)"/>
+          <path d="M 1265 660 L 1265 720" class="flow-wire active" marker-end="url(#arrow-cyan)"/>
+
+
+          <!-- ================= STAGE 1 NODES ================= -->
+          <!-- Node: Task Specification -->
+          <g class="flow-node" onclick="showNodeDetails('task-spec')">
+            <rect x="40" y="80" width="270" height="60" rx="8" fill="#171D28" stroke="#29313F" stroke-width="1.5" filter="url(#glow-card)"/>
+            <text x="56" y="105" fill="#F4F7FB" font-size="13" font-weight="600">Task Specification & Constraints</text>
+            <text x="56" y="125" fill="#6B778C" font-size="11" font-family="var(--font-mono)">Prompt, repo target, mode, max repairs</text>
+            <circle cx="285" cy="110" r="4" fill="#8CE4FF"/>
+          </g>
+
+          <!-- Node: Repository Snapshotting -->
+          <g class="flow-node" onclick="showNodeDetails('repo-snapshot')">
+            <rect x="40" y="180" width="270" height="80" rx="8" fill="#171D28" stroke="#29313F" stroke-width="1.5" filter="url(#glow-card)"/>
+            <text x="56" y="205" fill="#F4F7FB" font-size="13" font-weight="600">Repository Snapshot Engine</text>
+            <text x="56" y="225" fill="#A3ADBC" font-size="11.5">Isolates project into temporary copy</text>
+            <text x="56" y="244" fill="#10B981" font-size="10.5" font-family="var(--font-mono)">.veriq_workspaces/RUN-xxxx (No host edits)</text>
+          </g>
+
+          <!-- Node: Tavily Documentation Grounding -->
+          <g class="flow-node" onclick="showNodeDetails('tavily-grounding')">
+            <rect x="40" y="300" width="270" height="100" rx="8" fill="#171D28" stroke="#A78BFA" stroke-width="1.5" filter="url(#glow-card)"/>
+            <rect x="52" y="312" width="76" height="18" rx="4" fill="rgba(167, 139, 250, 0.15)"/>
+            <text x="58" y="325" fill="#A78BFA" font-size="10" font-weight="600">TAVILY API</text>
+            <text x="56" y="350" fill="#F4F7FB" font-size="13" font-weight="600">Documentation Grounding</text>
+            <text x="56" y="370" fill="#A3ADBC" font-size="11.5">Authoritative docs queried & cached</text>
+            <text x="56" y="388" fill="#A78BFA" font-size="10.5" font-family="var(--font-mono)">Outputs: EVID-DOC-xxx (SHA-256)</text>
+          </g>
+
+          <!-- Stage 1 Callout -->
+          <rect x="40" y="440" width="270" height="150" rx="8" fill="#0D1117" stroke="#29313F" stroke-dasharray="4,4"/>
+          <text x="56" y="468" fill="#8CE4FF" font-size="11.5" font-weight="600">Deterministic Principle #1</text>
+          <text x="56" y="492" fill="#A3ADBC" font-size="11.5">Original codebase is strictly read-only.</text>
+          <text x="56" y="512" fill="#A3ADBC" font-size="11.5">No changes touch developer files</text>
+          <text x="56" y="532" fill="#A3ADBC" font-size="11.5">until all tests and checks pass.</text>
+          <text x="56" y="562" fill="#10B981" font-size="11" font-family="var(--font-mono)">Safe Isolation Guaranteed</text>
+
+
+          <!-- ================= STAGE 2 NODES: INFERENCE ================= -->
+          <!-- Node: Model Router -->
+          <g class="flow-node" onclick="showNodeDetails('model-router')">
+            <rect x="380" y="300" width="310" height="90" rx="8" fill="#171D28" stroke="#8CE4FF" stroke-width="1.5" filter="url(#glow-cyan)"/>
+            <text x="396" y="326" fill="#F4F7FB" font-size="13.5" font-weight="600">Nemotron Dynamic Model Router</text>
+            <text x="396" y="348" fill="#A3ADBC" font-size="11.5">Evaluates task complexity, lines of diff, & risk</text>
+            <text x="396" y="372" fill="#8CE4FF" font-size="10.5" font-family="var(--font-mono)">Nebius Token Factory Inference</text>
+          </g>
+
+          <!-- Model Tiers Display -->
+          <g class="flow-node" onclick="showNodeDetails('nemotron-tiers')">
+            <rect x="380" y="440" width="310" height="120" rx="8" fill="#121824" stroke="#29313F" stroke-width="1.5"/>
+            <text x="396" y="465" fill="#8CE4FF" font-size="11" font-weight="700">NEBIUS × NVIDIA NEMOTRON TIERS</text>
+            
+            <rect x="396" y="478" width="54" height="16" rx="3" fill="rgba(140, 228, 255, 0.15)"/>
+            <text x="402" y="490" fill="#8CE4FF" font-size="9" font-weight="600">FAST</text>
+            <text x="458" y="490" fill="#A3ADBC" font-size="11" font-family="var(--font-mono)">Nemotron-3-Nano-30B-A3B</text>
+
+            <rect x="396" y="504" width="70" height="16" rx="3" fill="rgba(62, 139, 255, 0.15)"/>
+            <text x="402" y="516" fill="#3E8BFF" font-size="9" font-weight="600">STANDARD</text>
+            <text x="474" y="516" fill="#A3ADBC" font-size="11" font-family="var(--font-mono)">Nemotron-3-Super-70B</text>
+
+            <rect x="396" y="530" width="74" height="16" rx="3" fill="rgba(244, 63, 94, 0.15)"/>
+            <text x="402" y="542" fill="#F43F5E" font-size="9" font-weight="600">ESCALATE</text>
+            <text x="478" y="542" fill="#A3ADBC" font-size="11" font-family="var(--font-mono)">Nemotron-4-340B-Instruct</text>
+          </g>
+
+          <!-- Node: Structured Patch Synthesizer -->
+          <g class="flow-node" onclick="showNodeDetails('patch-gen')">
+            <rect x="380" y="600" width="310" height="90" rx="8" fill="#171D28" stroke="#29313F" stroke-width="1.5" filter="url(#glow-card)"/>
+            <text x="396" y="626" fill="#F4F7FB" font-size="13.5" font-weight="600">Structured Patch Synthesizer</text>
+            <text x="396" y="648" fill="#A3ADBC" font-size="11.5">Extracts constrained code diff & files</text>
+            <text x="396" y="672" fill="#10B981" font-size="10.5" font-family="var(--font-mono)">Multi-strategy JSON / code parsing</text>
+          </g>
+
+
+          <!-- ================= STAGE 3 NODES: VERIFICATION ================= -->
+          <!-- Node: AST & Patch Integrity -->
+          <g class="flow-node" onclick="showNodeDetails('ast-integrity')">
+            <rect x="760" y="600" width="300" height="90" rx="8" fill="#171D28" stroke="#10B981" stroke-width="1.5" filter="url(#glow-emerald)"/>
+            <text x="776" y="626" fill="#F4F7FB" font-size="13.5" font-weight="600">Deterministic Checks: AST & Bounds</text>
+            <text x="776" y="648" fill="#A3ADBC" font-size="11.5">Path traversal guard & ast.parse()</text>
+            <text x="776" y="672" fill="#10B981" font-size="10.5" font-family="var(--font-mono)">Produces: CLAIM-001 & CLAIM-002</text>
+          </g>
+
+          <!-- Node: Sandbox Selection Decision Diamond -->
+          <g class="flow-node" onclick="showNodeDetails('sandbox-decision')">
+            <polygon points="910,440 980,480 910,520 840,480" fill="#1A2232" stroke="#F59E0B" stroke-width="1.5"/>
+            <text x="880" y="476" fill="#F4F7FB" font-size="11" font-weight="600">Docker</text>
+            <text x="872" y="492" fill="#F59E0B" font-size="10" font-family="var(--font-mono)">Available?</text>
+          </g>
+
+          <!-- Node: Hardened Docker Sandbox (Left branch) -->
+          <g class="flow-node" onclick="showNodeDetails('docker-sandbox')">
+            <rect x="745" y="310" width="130" height="80" rx="8" fill="#171D28" stroke="#10B981" stroke-width="1.5"/>
+            <text x="755" y="335" fill="#10B981" font-size="11.5" font-weight="700">Docker Container</text>
+            <text x="755" y="354" fill="#A3ADBC" font-size="10.5">--network none</text>
+            <text x="755" y="372" fill="#A3ADBC" font-size="10.5">256MB RAM / Non-root</text>
+          </g>
+
+          <!-- Node: Process Fallback Sandbox (Right branch) -->
+          <g class="flow-node" onclick="showNodeDetails('process-sandbox')">
+            <rect x="945" y="310" width="130" height="80" rx="8" fill="#171D28" stroke="#F59E0B" stroke-width="1.5"/>
+            <text x="955" y="335" fill="#F59E0B" font-size="11.5" font-weight="700">Process Fallback</text>
+            <text x="955" y="354" fill="#A3ADBC" font-size="10.5">Stripped API Keys</text>
+            <text x="955" y="372" fill="#A3ADBC" font-size="10.5">Command Allowlist</text>
+          </g>
+
+          <!-- Node: Isolated Sandbox Execution -->
+          <g class="flow-node" onclick="showNodeDetails('test-execution')">
+            <rect x="760" y="200" width="300" height="80" rx="8" fill="#171D28" stroke="#10B981" stroke-width="1.5" filter="url(#glow-emerald)"/>
+            <text x="776" y="225" fill="#F4F7FB" font-size="13.5" font-weight="600">Isolated Import & Pytest Execution</text>
+            <text x="776" y="247" fill="#A3ADBC" font-size="11.5">Clean import check & regression test suite</text>
+            <text x="776" y="268" fill="#10B981" font-size="10.5" font-family="var(--font-mono)">Produces: CLAIM-003 & CLAIM-004</text>
+          </g>
+
+
+          <!-- ================= STAGE 4 NODES: AUDIT & LEDGER ================= -->
+          <!-- Decision Diamond: All Checks Pass? -->
+          <g class="flow-node" onclick="showNodeDetails('pass-decision')">
+            <polygon points="1265,100 1340,140 1265,180 1190,140" fill="#1A2232" stroke="#10B981" stroke-width="1.5"/>
+            <text x="1235" y="136" fill="#F4F7FB" font-size="11" font-weight="600">All Tests</text>
+            <text x="1242" y="152" fill="#10B981" font-size="10" font-family="var(--font-mono)">Passed?</text>
+          </g>
+
+          <!-- Red arrow label for Self-Repair -->
+          <rect x="790" y="86" width="220" height="26" rx="4" fill="#24141E" stroke="#F43F5E" stroke-width="1"/>
+          <text x="802" y="103" fill="#F43F5E" font-size="10.5" font-weight="600" font-family="var(--font-mono)">
+            FAILED → Bounded Self-Repair Loop (0-3)
+          </text>
+
+          <!-- Node: Verification Ledger Aggregator -->
+          <g class="flow-node" onclick="showNodeDetails('ledger-aggregator')">
+            <rect x="1130" y="240" width="270" height="100" rx="8" fill="#171D28" stroke="#10B981" stroke-width="2" filter="url(#glow-emerald)"/>
+            <rect x="1142" y="252" width="124" height="18" rx="4" fill="rgba(16, 185, 129, 0.15)"/>
+            <text x="1148" y="265" fill="#10B981" font-size="10" font-weight="700">CORE DIFFERENTIATOR</text>
+            <text x="1146" y="292" fill="#F4F7FB" font-size="14" font-weight="700">Verification Ledger</text>
+            <text x="1146" y="312" fill="#A3ADBC" font-size="11.5">Links every claim to physical evidence</text>
+            <text x="1146" y="330" fill="#8CE4FF" font-size="10.5" font-family="var(--font-mono)">Honest where uncertain; no guessing</text>
+          </g>
+
+          <!-- Node: Report Generation -->
+          <g class="flow-node" onclick="showNodeDetails('report-gen')">
+            <rect x="1130" y="400" width="270" height="100" rx="8" fill="#171D28" stroke="#29313F" stroke-width="1.5" filter="url(#glow-card)"/>
+            <text x="1146" y="428" fill="#F4F7FB" font-size="13.5" font-weight="600">Inspectable Engineering Report</text>
+            <text x="1146" y="450" fill="#A3ADBC" font-size="11.5">Cryptographic evidence audit trail</text>
+            <text x="1146" y="474" fill="#A3ADBC" font-size="11" font-family="var(--font-mono)">• report.md (Developer Report)</text>
+            <text x="1146" y="492" fill="#A3ADBC" font-size="11" font-family="var(--font-mono)">• ledger.json (Machine Parseable)</text>
+          </g>
+
+          <!-- Node: SQLite Persistence -->
+          <g class="flow-node" onclick="showNodeDetails('sqlite-persist')">
+            <rect x="1130" y="560" width="270" height="100" rx="8" fill="#171D28" stroke="#29313F" stroke-width="1.5" filter="url(#glow-card)"/>
+            <text x="1146" y="588" fill="#F4F7FB" font-size="13.5" font-weight="600">SQLite Run State Persistence</text>
+            <text x="1146" y="610" fill="#A3ADBC" font-size="11.5">Persists runs, claims, evidence, & events</text>
+            <text x="1146" y="632" fill="#10B981" font-size="10.5" font-family="var(--font-mono)">data/veriq.db (Thread-safe WAL)</text>
+            <text x="1146" y="650" fill="#6B778C" font-size="10.5" font-family="var(--font-mono)">Full run history & benchmark metrics</text>
+          </g>
+
+          <!-- Node: Real-time UI Streaming via SSE -->
+          <g class="flow-node" onclick="showNodeDetails('sse-ui')">
+            <rect x="1130" y="720" width="270" height="100" rx="8" fill="#171D28" stroke="#8CE4FF" stroke-width="1.5" filter="url(#glow-cyan)"/>
+            <text x="1146" y="748" fill="#F4F7FB" font-size="13.5" font-weight="600">Real-time SSE UI Workbench</text>
+            <text x="1146" y="770" fill="#A3ADBC" font-size="11.5">Server-Sent Events streaming</text>
+            <text x="1146" y="792" fill="#8CE4FF" font-size="10.5" font-family="var(--font-mono)">Live diff, timeline, telemetry & ledger</text>
+            <text x="1146" y="810" fill="#10B981" font-size="10.5" font-family="var(--font-mono)">100% verified developer UI</text>
+          </g>
+
+        </svg>
+      </div>
+    </div>
+
+    <!-- VIEW 2: VERIFICATION LEDGER STATE MACHINE -->
+    <div id="view-state-machine" class="view-panel">
+      <div class="diagram-card">
+        <h3 style="font-size: 16px; font-weight: 600;">Verification Ledger Claim Lifecycle & Deterministic Status Model</h3>
+        <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px;">
+          VERIQ adheres to an honest verification model: <strong>Passing syntax checks does not prove functional correctness. A retrieved document does not validate code. Bounded tests do not prove universal truth.</strong>
+        </p>
+
+        <div class="state-grid">
+          <div class="state-card" style="border-left: 4px solid var(--status-verified);">
+            <div class="state-card-header">
+              <span class="state-name">VERIFIED</span>
+              <span class="state-badge badge-verified">DETERMINISTIC PASS</span>
+            </div>
+            <p class="detail-content">
+              A specific deterministic check executed and succeeded completely. Examples: AST parsed with 0 syntax errors; Pytest test suite exited with code 0.
+            </p>
+            <div class="detail-box">Evidence: Exit code 0, 0 stderr, AST node verified</div>
+          </div>
+
+          <div class="state-card" style="border-left: 4px solid var(--status-supported);">
+            <div class="state-card-header">
+              <span class="state-name">SUPPORTED</span>
+              <span class="state-badge badge-supported">EVIDENCE BACKED</span>
+            </div>
+            <p class="detail-content">
+              Available evidence supports the claim, but bounded by inherent domain limits. Examples: Tavily retrieved official documentation; empirical linting checks.
+            </p>
+            <div class="detail-box">Evidence: Official doc passage, SHA-256 hash match</div>
+          </div>
+
+          <div class="state-card" style="border-left: 4px solid var(--status-failed);">
+            <div class="state-card-header">
+              <span class="state-name">FAILED</span>
+              <span class="state-badge badge-failed">CHECK FAILED</span>
+            </div>
+            <p class="detail-content">
+              A deterministic check executed and produced a failure. Examples: AST SyntaxError; non-zero pytest exit code; import traceback; disallowed path traversal.
+            </p>
+            <div class="detail-box">Evidence: Exit code > 0, traceback, assertion error</div>
+          </div>
+
+          <div class="state-card" style="border-left: 4px solid var(--status-unresolved);">
+            <div class="state-card-header">
+              <span class="state-name">UNRESOLVED</span>
+              <span class="state-badge badge-unresolved">INCONCLUSIVE</span>
+            </div>
+            <p class="detail-content">
+              Evidence is missing, incomplete, or bounded by execution constraints. Examples: External service unreachable; timeout hit; test suite omitted.
+            </p>
+            <div class="detail-box">Evidence: Timeout limit exceeded, missing coverage</div>
+          </div>
+
+          <div class="state-card" style="border-left: 4px solid var(--text-muted);">
+            <div class="state-card-header">
+              <span class="state-name">NOT_RUN</span>
+              <span class="state-badge badge-not-run">SKIPPED</span>
+            </div>
+            <p class="detail-content">
+              The check was skipped or bypassed intentionally (e.g. earlier pipeline stage failed; feature disabled by user configuration).
+            </p>
+            <div class="detail-box">Evidence: Check skipped in orchestration graph</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: MERMAID SPECIFICATION CODE -->
+    <div id="view-mermaid" class="view-panel">
+      <div class="diagram-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 600;">Mermaid Flowchart Specification</h3>
+            <p style="font-size: 12.5px; color: var(--text-muted);">
+              Use this standard Mermaid markdown snippet in your GitHub README, technical documentation, or hackathon submission slides.
+            </p>
+          </div>
+          <button class="btn btn-outline" id="btn-copy-mermaid" onclick="copyMermaidCode()">Copy Mermaid Code</button>
+        </div>
+
+        <div class="code-container">
+          <pre class="code-block" id="mermaid-code-text"><code>flowchart TD
+    %% VERIQ Autonomous Engineering Agent Workflow
+    %% Brand: VERIQ — Code is generated. Proof is earned.
+    
+    subgraph Intake ["Phase 1: Task Intake & Repository Isolation"]
+        A[Task Specification & Constraints] --> B[Repository Snapshotting Service]
+        B -->|Isolated Disposable Workspace| C[Baseline Environment & Git Snapshot]
+    end
+
+    subgraph Grounding ["Phase 2: Tavily Research Grounding"]
+        C --> D[Tavily Search API & Extract API]
+        D -->|Cache & SHA-256 Fingerprint| E[(Authoritative Docs & Constraints)]
+    end
+
+    subgraph Routing ["Phase 3: Model Routing & Inference"]
+        E --> F[Nemotron Dynamic Model Router]
+        F -->|Low Complexity| G[FAST: Nemotron-3-Nano-30B-A3B]
+        F -->|Standard Coding| H[STANDARD: Nemotron-3-Super-70B]
+        F -->|Regression Repair| I[ESCALATION: Nemotron-4-340B-Instruct]
+        G & H & I --> J[Structured Patch Synthesizer]
+    end
+
+    subgraph DeterministicChecks ["Phase 4: Syntactic & Bounds Verification"]
+        J --> K[Patch Integrity Guard: Path Traversal & File Limits]
+        K -->|CLAIM-001| L[AST Syntax Validity Check: ast.parse]
+        L -->|CLAIM-002| M{Docker Engine Reachable?}
+    end
+
+    subgraph Sandbox ["Phase 5: Isolated Execution Sandbox"]
+        M -->|Yes| N[Hardened Docker Container\n--network none, 256MB RAM]
+        M -->|No| O[Restricted Subprocess Fallback\nStripped API Keys & Allowlist]
+        N & O --> P[Clean Module Import Check\nCLAIM-003]
+        P --> Q[Pytest Regression Test Suite\nCLAIM-004]
+    end
+
+    subgraph SelfRepair ["Phase 6: Bounded Self-Repair Loop"]
+        Q --> R{All Test Assertions Passed?}
+        R -->|No: Attempts < Max Repairs| S[Self-Repair Engine\nEscalate Nemotron Tier & Diagnose Stderr]
+        S -->|Targeted Repair Patch| J
+        R -->|No: Exhausted| T[Mark Regression FAILED\nPreserve Diagnostic Logs]
+    end
+
+    subgraph Ledger ["Phase 7: Verification Ledger & Audit"]
+        R -->|Yes: All Passed| U[Verification Ledger Engine]
+        T --> U
+        U --> V[Generate Inspectable Report\nreport.md & ledger.json]
+        V --> W[(SQLite DB Persistence\ndata/veriq.db)]
+        V --> X[Server-Sent Events SSE Stream\nReal-Time Workbench UI]
+    end
+
+    %% Class Styling
+    classDef verified fill:#10B98115,stroke:#10B981,stroke-width:2px;
+    classDef inference fill:#8CE4FF15,stroke:#8CE4FF,stroke-width:2px;
+    classDef research fill:#A78BFA15,stroke:#A78BFA,stroke-width:2px;
+    classDef sandbox fill:#F59E0B15,stroke:#F59E0B,stroke-width:2px;
+    classDef repair fill:#F43F5E15,stroke:#F43F5E,stroke-width:2px;
+
+    class K,L,P,Q,U verified;
+    class F,G,H,I,J inference;
+    class D,E research;
+    class N,O sandbox;
+    class S,T repair;</code></pre>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Slide-out Details Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+  <aside class="drawer" id="node-drawer">
+    <div class="drawer-header">
+      <div class="drawer-title" id="drawer-title">Step Specifications</div>
+      <button class="drawer-close" onclick="closeDrawer()">&times;</button>
+    </div>
+    <div class="drawer-body" id="drawer-content">
+      <!-- Dynamic content injected on node click -->
+    </div>
+  </aside>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        const viewId = `view-${btn.dataset.view}`;
+        document.getElementById(viewId)?.classList.add('active');
+      });
+    });
+
+    // Technical step specifications dictionary
+    const nodeDetails = {
+      'task-spec': {
+        title: 'Task Intake & Constraints Specification',
+        category: 'Ingress & Validation',
+        desc: 'Accepts structured developer tasks with explicit constraints, execution target repository, requested execution mode (live vs. replay), and bounded self-repair budget (0 to 3 attempts).',
+        guardrails: 'Strict Pydantic schema validation; maximum repair bounds; forbidden system commands.',
+        evidence: 'RUN-xxxx record initialized in SQLite with deterministic UUID and ISO-8601 timestamp.',
+        security: 'Validates task length, target folder permissions, and sanitizes input arguments.'
+      },
+      'repo-snapshot': {
+        title: 'Repository Snapshotting & Workspace Isolation',
+        category: 'Workspace Integrity',
+        desc: 'Creates a complete disposable snapshot of the target codebase inside `.veriq_workspaces/RUN-xxxx`. The developer original repository is never modified in-place.',
+        guardrails: 'Ensures workspace directory path traversal is completely blocked. Baseline tests are evaluated.',
+        evidence: 'EVID-BASE-xxx: Git tree SHA-256 hash snapshot before any modifications.',
+        security: 'Operating in an ephemeral workspace prevents accidental source corruption.'
+      },
+      'tavily-grounding': {
+        title: 'Tavily Search & Extract API Grounding',
+        category: 'Evidence Retrieval',
+        desc: 'Queries authoritative documentation, official SDK references, and technical constraints through Tavily Search API. Extracted text passages are cryptographically fingerprinted.',
+        guardrails: 'Rate-limited; domain whitelisting; cached responses to avoid redundant external network calls.',
+        evidence: 'EVID-DOC-xxx: Content hash (SHA-256), exact URL, query string, and quoted excerpt.',
+        security: 'Sanitizes external web payloads to eliminate prompt injection vectors.'
+      },
+      'model-router': {
+        title: 'Nemotron Dynamic Complexity Router',
+        category: 'Model Orchestration',
+        desc: 'Inspects task specifications and codebase characteristics (complexity heuristic, token length, file count) to dynamically select the optimal NVIDIA Nemotron model via Nebius Token Factory.',
+        guardrails: 'Bounded fallback tiers; telemetry collection for latency, tokens, and estimated cost.',
+        evidence: 'EVID-ROUTE-xxx: Selected model ID, prompt token count, latency in milliseconds, routing rationale.',
+        security: 'All inference authenticated via Nebius API Key with secret stripping from logs.'
+      },
+      'nemotron-tiers': {
+        title: 'Nebius Token Factory NVIDIA Nemotron Tiers',
+        category: 'AI Infrastructure',
+        desc: 'Three calibrated model tiers: FAST (Nemotron-3-Nano-30B-A3B) for fast targeted edits; STANDARD (Nemotron-3-Super-70B) for algorithmic synthesis; ESCALATION (Nemotron-4-340B-Instruct) for complex repairs.',
+        guardrails: 'Fallback chaining; timeout controls; temperature bounded for deterministic code generation.',
+        evidence: 'Model routing records persisted in runs table and displayed in workbench telemetry.',
+        security: 'Nebius Token Factory compatible inference over OpenAI-standard endpoints.'
+      },
+      'patch-gen': {
+        title: 'Structured Patch Synthesizer',
+        category: 'Code Generation',
+        desc: 'Generates atomic, constrained unified diffs. Implements a multi-strategy parser handling pure JSON blocks, markdown code blocks, and standalone Python diffs.',
+        guardrails: 'Rejects unbounded multi-file renames; prevents modification of hidden or parent directories.',
+        evidence: 'EVID-PATCH-xxx: Cumulative unified diff output comparing against baseline snapshot.',
+        security: 'Patches cannot exceed MAX_PATCH_BYTES; cannot touch .env or sensitive config files.'
+      },
+      'ast-integrity': {
+        title: 'Deterministic Checks: AST & Patch Integrity',
+        category: 'Syntactic Verification',
+        desc: 'Validates code syntax without execution using Python abstract syntax trees (`ast.parse()`). Simultaneously verifies patch bounds and verifies no path traversal exists.',
+        guardrails: 'Strict AST parse; fail-closed on any syntax error before code ever executes.',
+        evidence: 'CLAIM-001 (Patch Structural Integrity & Bounds) & CLAIM-002 (AST Syntax Validity).',
+        security: 'Pure static analysis guarantees zero arbitrary code execution risk.'
+      },
+      'sandbox-decision': {
+        title: 'Sandbox Dispatch Decision Engine',
+        category: 'Security Architecture',
+        desc: 'Dynamically tests whether Docker daemon is reachable on the host. If available, executes in hardened Docker container; if unavailable, seamlessly falls back to restricted process sandbox.',
+        guardrails: 'Explicit fallback auditing in ledger: "Docker daemon was not reachable; executed under process isolation."',
+        evidence: 'Sandbox mode logged in health and attached to test evidence records.',
+        security: 'Neither mode allows host credential leakage or unvalidated command execution.'
+      },
+      'docker-sandbox': {
+        title: 'Hardened Docker Container Sandbox',
+        category: 'Kernel-Level Isolation',
+        desc: 'Runs test runner inside a dedicated Linux container (`veriq-sandbox:latest`). Configured with `--network none`, `--memory 256m`, `--cpus 1.0`, non-root user `veriq:1000`.',
+        guardrails: 'Zero network access; cannot exfiltrate data; memory and CPU quotas prevent denial-of-service.',
+        evidence: 'Container execution ID, duration_ms, and Linux kernel cgroup exit code.',
+        security: 'Standard Linux namespace and cgroup boundaries prevent host system access.'
+      },
+      'process-sandbox': {
+        title: 'Restricted Subprocess Fallback Sandbox',
+        category: 'Host Process Isolation',
+        desc: 'Executes tests in a stripped-environment subprocess. All host environment variables, API keys (`NEBIUS_API_KEY`, `TAVILY_API_KEY`), and user secrets are wiped.',
+        guardrails: 'Strict command allowlist (only `pytest` allowed); cwd locked to temporary workspace.',
+        evidence: 'Explicit limitation audit logged in ledger; environment variable sanitization record.',
+        security: 'Protects host credentials even when Docker Desktop is offline or uninstalled.'
+      },
+      'test-execution': {
+        title: 'Clean Import & Pytest Regression Suite',
+        category: 'Functional Verification',
+        desc: 'Executes clean import verification (`python -c "import <module>"`) followed by full test suite (`pytest -v`). Captures exact exit codes, stdout, stderr, and timings.',
+        guardrails: 'Hard timeout (30 seconds); process killed if running beyond budget.',
+        evidence: 'CLAIM-003 (Clean Module Import) & CLAIM-004 (Test Suite Regression Verification).',
+        security: 'Stdout and stderr are sanitized and secrets are redacted before presentation.'
+      },
+      'pass-decision': {
+        title: 'Verification Outcome Decision Gate',
+        category: 'Audit Decision',
+        desc: 'Evaluates the composite results of all deterministic checks. If all passed, proceeds to ledger publication. If tests failed, triggers bounded self-repair if budget remains.',
+        guardrails: 'Never upgrades an unverified claim to verified status merely because a workflow finished.',
+        evidence: 'Composite verification score and verified/total claim counts.',
+        security: 'Strict binary truth table; no partial passes without explicit limitations.'
+      },
+      'ledger-aggregator': {
+        title: 'Verification Ledger Engine',
+        category: 'Core Differentiator',
+        desc: 'The heart of VERIQ. Evaluates each claim against deterministic evidence records. Distinguishes between what AI asserts and what deterministic checks proved.',
+        guardrails: 'Assigns VERIFIED, SUPPORTED, FAILED, UNRESOLVED, or NOT_RUN statuses based on strict evidence rules.',
+        evidence: 'Deterministic claims table with linked evidence IDs, check types, commands, and limitations.',
+        security: 'Ledger records are immutable once run reaches terminal completion.'
+      },
+      'report-gen': {
+        title: 'Inspectable Engineering Report Generator',
+        category: 'Artifact Production',
+        desc: 'Compiles the full verification ledger, unified diff, routing telemetry, and failure audits into downloadable developer report (`report.md`) and machine-readable ledger (`ledger.json`).',
+        guardrails: 'Cryptographic SHA-256 fingerprinting of generated artifacts for auditability.',
+        evidence: 'Exportable via `/api/runs/{id}/report?format=markdown` and `format=json`.',
+        security: 'All generated files stored in isolated data/ directory.'
+      },
+      'sqlite-persist': {
+        title: 'SQLite Run State Persistence',
+        category: 'Data Layer',
+        desc: 'Stores run records, events stream, claims, and evidence items in lightweight SQLite database (`data/veriq.db`). Supports instant retrieval of run history and benchmark harness records.',
+        guardrails: 'WAL journal mode; transactional consistency; connection pooling.',
+        evidence: 'Queryable via REST API (`/api/runs`, `/api/runs/{id}`, `/api/metrics/overview`).',
+        security: 'Parameterized SQL queries prevent SQL injection across all database repositories.'
+      },
+      'sse-ui': {
+        title: 'Real-time Server-Sent Events UI Workbench',
+        category: 'Developer Experience',
+        desc: 'Streams live events (`MODEL_SELECTED`, `PATCH_GENERATED`, `TESTS_EXECUTED`, `RUN_COMPLETED`) directly to the developer workbench via SSE (`/api/runs/{id}/events`).',
+        guardrails: 'Auto-reconnecting EventSource; fallback polling; responsive non-overlapping layout.',
+        evidence: 'Live timeline dots, unified diff syntax highlighting, model routing telemetry cards.',
+        security: 'Vanilla JavaScript with zero external runtime dependencies.'
+      }
+    };
+
+    function showNodeDetails(nodeKey) {
+      const data = nodeDetails[nodeKey];
+      if (!data) return;
+
+      const titleEl = document.getElementById('drawer-title');
+      const contentEl = document.getElementById('drawer-content');
+
+      titleEl.textContent = data.title;
+      contentEl.innerHTML = `
+        <div class="detail-section">
+          <div class="detail-label">Pipeline Category</div>
+          <span class="state-badge badge-supported">${data.category}</span>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-label">Stage Description</div>
+          <p class="detail-content">${data.desc}</p>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-label">Deterministic Guardrails & Checks</div>
+          <p class="detail-content">${data.guardrails}</p>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-label">Verification Evidence Generated</div>
+          <div class="detail-box">${data.evidence}</div>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-label">Security Boundaries</div>
+          <p class="detail-content" style="color:var(--status-unresolved);">${data.security}</p>
+        </div>
+      `;
+
+      document.getElementById('drawer-overlay').classList.add('active');
+      document.getElementById('node-drawer').classList.add('active');
+    }
+
+    function closeDrawer() {
+      document.getElementById('drawer-overlay').classList.remove('active');
+      document.getElementById('node-drawer').classList.remove('active');
+    }
+
+    function copyMermaidCode() {
+      const code = document.getElementById('mermaid-code-text').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.getElementById('btn-copy-mermaid');
+        btn.textContent = 'Copied to Clipboard!';
+        setTimeout(() => { btn.textContent = 'Copy Mermaid Code'; }, 2000);
+      });
+    }
+
+    // ESC key closes drawer
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+  </script>
+</body>
+</html>

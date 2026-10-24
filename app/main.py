@@ -48,7 +48,7 @@ app.add_middleware(
 async def add_cache_control_header(request: Request, call_next):
     """Ensure static assets always revalidate during development."""
     response = await call_next(request)
-    if request.url.path.startswith("/static") or request.url.path == "/":
+    if request.url.path.startswith("/static") or request.url.path in ("/", "/diagram"):
         response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
         response.headers["Pragma"] = "no-cache"
         response.headers["Expires"] = "0"
@@ -87,3 +87,12 @@ async def root():
             "api_docs": "/docs",
         }
     )
+
+
+@app.get("/diagram", include_in_schema=False)
+async def diagram():
+    """Serves the VERIQ Architecture & Workflow Execution Flow Diagram."""
+    diagram_file = static_dir / "diagram.html"
+    if diagram_file.exists():
+        return FileResponse(str(diagram_file))
+    return JSONResponse(status_code=404, content={"error": "Diagram not found"})
