@@ -167,7 +167,7 @@ function initForms() {
     e.preventDefault();
     const btn = document.getElementById('btn-submit-run');
     btn.disabled = true;
-    btn.textContent = 'Launching run...';
+    btn.textContent = 'Starting task...';
 
     const payload = {
       title: document.getElementById('run-title').value.trim(),
@@ -191,14 +191,14 @@ function initForms() {
       }
 
       const run = await resp.json();
-      showToast(`Run ${run.run_id} initiated`, 'success');
+      showToast(`Task ${run.run_id} launched successfully`, 'success');
       btn.disabled = false;
-      btn.textContent = 'Launch verification run';
+      btn.textContent = 'Launch task & verify code';
       openRunWorkspace(run.run_id);
     } catch (err) {
       showToast(err.message, 'error');
       btn.disabled = false;
-      btn.textContent = 'Launch verification run';
+      btn.textContent = 'Launch task & verify code';
     }
   });
 }
@@ -215,9 +215,9 @@ async function openRunWorkspace(runId) {
   }
 
   document.getElementById('active-run-id').textContent = runId;
-  document.getElementById('active-run-title').textContent = 'Loading task specification...';
-  document.getElementById('timeline-container').innerHTML = '<div style="color:var(--label-quaternary); text-align:center; padding:28px;">Connecting to event stream...</div>';
-  document.getElementById('diff-code-block').innerHTML = '<code>Waiting for candidate patch...</code>';
+  document.getElementById('active-run-title').textContent = 'Loading task details...';
+  document.getElementById('timeline-container').innerHTML = '<div style="color:var(--label-quaternary); text-align:center; padding:28px;">Connecting to live event stream...</div>';
+  document.getElementById('diff-code-block').innerHTML = '<code>Waiting for code changes...</code>';
   document.getElementById('routing-decisions-container').innerHTML = '<div style="color:var(--label-quaternary); font-size:12px;">Awaiting model selection...</div>';
   document.getElementById('workspace-ledger-claims').innerHTML = '<div style="color:var(--label-quaternary); font-size:12px;">Registering claims...</div>';
 
@@ -508,7 +508,7 @@ function renderLedgerClaims(claims, containerId, evidenceList = []) {
     if (claim.limitations && claim.limitations.length > 0) {
       limitationsHtml = `
         <div style="margin-top:10px;">
-          <strong style="font-size:11px; color:var(--label-tertiary); text-transform:uppercase;">Explicit limitations:</strong>
+          <strong style="font-size:11px; color:var(--label-tertiary); text-transform:uppercase;">Notes & limitations:</strong>
           <ul style="margin-left:18px; color:var(--label-secondary); margin-top:4px; font-size:12px;">
             ${claim.limitations.map(l => `<li><em>${escapeHtml(l)}</em></li>`).join('')}
           </ul>
@@ -532,7 +532,7 @@ function renderLedgerClaims(claims, containerId, evidenceList = []) {
       <div class="claim-disclosure-drawer">
         ${limitationsHtml}
         <div style="margin-top:10px;">
-          <strong style="font-size:11px; color:var(--label-tertiary); text-transform:uppercase;">Deterministic evidence records (${backingEv.length}):</strong>
+          <strong style="font-size:11px; color:var(--label-tertiary); text-transform:uppercase;">Verified test & evidence records (${backingEv.length}):</strong>
           ${evHtml || '<div style="color:var(--label-quaternary); font-size:11px; margin-top:4px;">No concrete evidence records attached.</div>'}
         </div>
       </div>

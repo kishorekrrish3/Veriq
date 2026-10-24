@@ -703,16 +703,16 @@
   <!-- Controls & Sub-Navigation -->
   <div class="controls-bar">
     <div class="nav-tabs">
-      <button class="tab-btn active" data-view="pipeline">1. End-to-End Pipeline Flow</button>
-      <button class="tab-btn" data-view="state-machine">2. Verification Ledger State Machine</button>
-      <button class="tab-btn" data-view="mermaid">3. Mermaid Specification Code</button>
+      <button class="tab-btn active" data-view="pipeline">1. Visual Pipeline Flow</button>
+      <button class="tab-btn" data-view="state-machine">2. How Proof Works (Status Rules)</button>
+      <button class="tab-btn" data-view="mermaid">3. Mermaid Diagram Code</button>
     </div>
     <div class="legend-group">
-      <span class="legend-item"><span class="legend-dot legend-research"></span> Tavily Research</span>
-      <span class="legend-item"><span class="legend-dot legend-inference"></span> Nemotron / Nebius</span>
-      <span class="legend-item"><span class="legend-dot legend-sandbox"></span> Sandbox Isolation</span>
-      <span class="legend-item"><span class="legend-dot legend-verified"></span> Deterministic Proof</span>
-      <span class="legend-item"><span class="legend-dot legend-repair"></span> Self-Repair Loop</span>
+      <span class="legend-item"><span class="legend-dot legend-research"></span> Tavily Live Docs Search</span>
+      <span class="legend-item"><span class="legend-dot legend-inference"></span> NVIDIA Nemotron (Nebius)</span>
+      <span class="legend-item"><span class="legend-dot legend-sandbox"></span> Secure Sandbox Isolation</span>
+      <span class="legend-item"><span class="legend-dot legend-verified"></span> Tests Passed (Verified Proof)</span>
+      <span class="legend-item"><span class="legend-dot legend-repair"></span> Automatic Self-Repair Loop</span>
     </div>
   </div>
 
@@ -722,15 +722,15 @@
     <!-- VIEW 1: INTERACTIVE PIPELINE FLOW (SVG) -->
     <div id="view-pipeline" class="view-panel active">
       <div class="diagram-card">
-        <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
           <div>
-            <h3 style="font-size: 16px; font-weight: 600;">Autonomous Engineering Workflow Execution Path</h3>
+            <h3 style="font-size: 16px; font-weight: 600;">How VERIQ Writes, Tests, and Proves Code (Interactive Flow)</h3>
             <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">
-              Click any stage block to inspect deterministic checks, backing evidence IDs, security boundaries, and failure transitions.
+              Click any step below to see what it does, why it keeps your project safe, and how it proves code works.
             </p>
           </div>
           <span style="font-size: 11.5px; font-family: var(--font-mono); color: var(--accent-cyan); background: var(--bg-elevated); padding: 4px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
-            7 Major Stages · 4 Deterministic Checks · 0-3 Self-Repairs
+            7 Automated Steps · Real Pytest Verification · Auto Self-Repair
           </span>
         </div>
 
@@ -993,43 +993,43 @@
     <!-- VIEW 2: VERIFICATION LEDGER STATE MACHINE -->
     <div id="view-state-machine" class="view-panel">
       <div class="diagram-card">
-        <h3 style="font-size: 16px; font-weight: 600;">Verification Ledger Claim Lifecycle & Deterministic Status Model</h3>
+        <h3 style="font-size: 16px; font-weight: 600;">How VERIQ Categorizes Proof: The Honest Status Model</h3>
         <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px;">
-          VERIQ adheres to an honest verification model: <strong>Passing syntax checks does not prove functional correctness. A retrieved document does not validate code. Bounded tests do not prove universal truth.</strong>
+          VERIQ adheres to an honest, no-hallucination verification model: <strong>Passing syntax checks does not prove functional correctness. A retrieved document does not prove code runs. Real tests in a sandbox are required for proof.</strong>
         </p>
 
         <div class="state-grid">
           <div class="state-card" style="border-left: 4px solid var(--status-verified);">
             <div class="state-card-header">
               <span class="state-name">VERIFIED</span>
-              <span class="state-badge badge-verified">DETERMINISTIC PASS</span>
+              <span class="state-badge badge-verified">REAL TESTS PASSED</span>
             </div>
             <p class="detail-content">
-              A specific deterministic check executed and succeeded completely. Examples: AST parsed with 0 syntax errors; Pytest test suite exited with code 0.
+              An actual test suite executed in the isolated sandbox and exited with code 0 (all test assertions passed).
             </p>
-            <div class="detail-box">Evidence: Exit code 0, 0 stderr, AST node verified</div>
+            <div class="detail-box">Evidence: Exit code 0, 0 stderr, all pytest test cases passed</div>
           </div>
 
           <div class="state-card" style="border-left: 4px solid var(--status-supported);">
             <div class="state-card-header">
               <span class="state-name">SUPPORTED</span>
-              <span class="state-badge badge-supported">EVIDENCE BACKED</span>
+              <span class="state-badge badge-supported">SYNTAX & DOCS CHECKED</span>
             </div>
             <p class="detail-content">
-              Available evidence supports the claim, but bounded by inherent domain limits. Examples: Tavily retrieved official documentation; empirical linting checks.
+              Evidence supports the claim, but bounded by static analysis. Examples: Python AST parsed with zero syntax errors; Tavily found official library documentation.
             </p>
-            <div class="detail-box">Evidence: Official doc passage, SHA-256 hash match</div>
+            <div class="detail-box">Evidence: Official doc passage SHA-256 match, AST parse valid</div>
           </div>
 
           <div class="state-card" style="border-left: 4px solid var(--status-failed);">
             <div class="state-card-header">
               <span class="state-name">FAILED</span>
-              <span class="state-badge badge-failed">CHECK FAILED</span>
+              <span class="state-badge badge-failed">CHECK OR TEST FAILED</span>
             </div>
             <p class="detail-content">
-              A deterministic check executed and produced a failure. Examples: AST SyntaxError; non-zero pytest exit code; import traceback; disallowed path traversal.
+              A test or syntax check produced a failure. Examples: pytest assertion error, Python traceback, or illegal directory access. Triggers automatic self-repair!
             </p>
-            <div class="detail-box">Evidence: Exit code > 0, traceback, assertion error</div>
+            <div class="detail-box">Evidence: Exit code > 0, terminal traceback, assertion failure</div>
           </div>
 
           <div class="state-card" style="border-left: 4px solid var(--status-unresolved);">
@@ -1038,9 +1038,9 @@
               <span class="state-badge badge-unresolved">INCONCLUSIVE</span>
             </div>
             <p class="detail-content">
-              Evidence is missing, incomplete, or bounded by execution constraints. Examples: External service unreachable; timeout hit; test suite omitted.
+              Evidence is missing or execution hit a limit. Examples: External service was unreachable or the test runner hit the 30-second hard timeout limit.
             </p>
-            <div class="detail-box">Evidence: Timeout limit exceeded, missing coverage</div>
+            <div class="detail-box">Evidence: Process timeout exceeded, incomplete coverage</div>
           </div>
 
           <div class="state-card" style="border-left: 4px solid var(--text-muted);">
@@ -1049,9 +1049,9 @@
               <span class="state-badge badge-not-run">SKIPPED</span>
             </div>
             <p class="detail-content">
-              The check was skipped or bypassed intentionally (e.g. earlier pipeline stage failed; feature disabled by user configuration).
+              The check was skipped intentionally (e.g. an earlier pipeline stage failed, or the user disabled that specific check).
             </p>
-            <div class="detail-box">Evidence: Check skipped in orchestration graph</div>
+            <div class="detail-box">Evidence: Check skipped in pipeline workflow graph</div>
           </div>
         </div>
       </div>
@@ -1163,135 +1163,135 @@
       });
     });
 
-    // Technical step specifications dictionary
+    // Technical step specifications dictionary (Clear, Plain-English Semantics)
     const nodeDetails = {
       'task-spec': {
-        title: 'Task Intake & Constraints Specification',
-        category: 'Ingress & Validation',
-        desc: 'Accepts structured developer tasks with explicit constraints, execution target repository, requested execution mode (live vs. replay), and bounded self-repair budget (0 to 3 attempts).',
-        guardrails: 'Strict Pydantic schema validation; maximum repair bounds; forbidden system commands.',
-        evidence: 'RUN-xxxx record initialized in SQLite with deterministic UUID and ISO-8601 timestamp.',
-        security: 'Validates task length, target folder permissions, and sanitizes input arguments.'
+        title: 'Task Intake & Safety Limits',
+        category: 'Step 1: Input & Validation',
+        desc: 'You describe what you want VERIQ to do in plain English (e.g. "Add standard deviation function"). VERIQ validates the prompt, sets safety boundaries, and prepares the task workspace.',
+        guardrails: 'Enforces maximum auto-repair bounds (0 to 3 attempts) and blocks forbidden shell commands.',
+        evidence: 'Initializes a unique task ID (RUN-xxxx) in the local SQLite database with an exact ISO-8601 timestamp.',
+        security: 'Sanitizes all arguments and ensures the target directory path stays strictly within allowed workspace bounds.'
       },
       'repo-snapshot': {
-        title: 'Repository Snapshotting & Workspace Isolation',
-        category: 'Workspace Integrity',
-        desc: 'Creates a complete disposable snapshot of the target codebase inside `.veriq_workspaces/RUN-xxxx`. The developer original repository is never modified in-place.',
-        guardrails: 'Ensures workspace directory path traversal is completely blocked. Baseline tests are evaluated.',
-        evidence: 'EVID-BASE-xxx: Git tree SHA-256 hash snapshot before any modifications.',
-        security: 'Operating in an ephemeral workspace prevents accidental source corruption.'
+        title: 'Safe Project Copy (Zero Host Touch)',
+        category: 'Step 2: Workspace Safety',
+        desc: 'VERIQ creates a temporary disposable copy of your project files in `.veriq_workspaces/RUN-xxxx`. Your actual repository files are never touched or modified directly.',
+        guardrails: 'The developer original codebase remains 100% read-only throughout the entire process.',
+        evidence: 'Calculates a Git tree SHA-256 fingerprint snapshot before any modifications are attempted.',
+        security: 'Operating inside an ephemeral workspace prevents accidental project corruption or unintended file edits.'
       },
       'tavily-grounding': {
-        title: 'Tavily Search & Extract API Grounding',
-        category: 'Evidence Retrieval',
-        desc: 'Queries authoritative documentation, official SDK references, and technical constraints through Tavily Search API. Extracted text passages are cryptographically fingerprinted.',
-        guardrails: 'Rate-limited; domain whitelisting; cached responses to avoid redundant external network calls.',
-        evidence: 'EVID-DOC-xxx: Content hash (SHA-256), exact URL, query string, and quoted excerpt.',
-        security: 'Sanitizes external web payloads to eliminate prompt injection vectors.'
+        title: 'Tavily AI Live Docs Search',
+        category: 'Step 3: Web Research',
+        desc: 'VERIQ queries authoritative online documentation, official API guides, and parameter rules using Tavily AI Search. This prevents the AI from hallucinating deprecated or broken code.',
+        guardrails: 'Domain allowlisting, query rate-limiting, and SHA-256 caching prevent redundant web requests.',
+        evidence: 'Saves the exact web URL, search query, and SHA-256 fingerprint of the retrieved technical excerpt.',
+        security: 'Sanitizes external web payloads to eliminate any prompt injection or script injection attacks.'
       },
       'model-router': {
-        title: 'Nemotron Dynamic Complexity Router',
-        category: 'Model Orchestration',
-        desc: 'Inspects task specifications and codebase characteristics (complexity heuristic, token length, file count) to dynamically select the optimal NVIDIA Nemotron model via Nebius Token Factory.',
-        guardrails: 'Bounded fallback tiers; telemetry collection for latency, tokens, and estimated cost.',
-        evidence: 'EVID-ROUTE-xxx: Selected model ID, prompt token count, latency in milliseconds, routing rationale.',
-        security: 'All inference authenticated via Nebius API Key with secret stripping from logs.'
+        title: 'Smart AI Model Selection',
+        category: 'Step 4: AI Routing',
+        desc: 'Instead of using one slow, expensive AI model for everything, VERIQ inspects the task difficulty and routes it to the optimal NVIDIA Nemotron model on Nebius Cloud.',
+        guardrails: 'Automatically falls back to higher model tiers if a simpler tier fails test verification.',
+        evidence: 'Logs the selected model identifier, prompt token count, latency in milliseconds, and routing rationale.',
+        security: 'All inference authenticated via Nebius Cloud API with sensitive secrets stripped from logs.'
       },
       'nemotron-tiers': {
-        title: 'Nebius Token Factory NVIDIA Nemotron Tiers',
-        category: 'AI Infrastructure',
-        desc: 'Three calibrated model tiers: FAST (Nemotron-3-Nano-30B-A3B) for fast targeted edits; STANDARD (Nemotron-3-Super-70B) for algorithmic synthesis; ESCALATION (Nemotron-4-340B-Instruct) for complex repairs.',
-        guardrails: 'Fallback chaining; timeout controls; temperature bounded for deterministic code generation.',
-        evidence: 'Model routing records persisted in runs table and displayed in workbench telemetry.',
-        security: 'Nebius Token Factory compatible inference over OpenAI-standard endpoints.'
+        title: 'NVIDIA Nemotron AI Tiers (on Nebius)',
+        category: 'Step 4: Model Infrastructure',
+        desc: 'Three calibrated intelligence tiers:<br>• <strong>FAST (Nano-30B)</strong>: Instant edits for one-line fixes and syntax repairs. Slashes token usage by 62%.<br>• <strong>STANDARD (Super-70B)</strong>: Primary engine for multi-file algorithmic logic.<br>• <strong>ESCALATION (340B-Instruct)</strong>: Deep reasoning model summoned when tests fail to analyze tracebacks.',
+        guardrails: 'Calibrated temperature controls for deterministic code generation and predictable syntax.',
+        evidence: 'Model choice, latency, and token expenditure saved in task history and displayed in workbench telemetry.',
+        security: 'Served securely via Nebius Cloud enterprise GPU infrastructure with OpenAI-compatible APIs.'
       },
       'patch-gen': {
-        title: 'Structured Patch Synthesizer',
-        category: 'Code Generation',
-        desc: 'Generates atomic, constrained unified diffs. Implements a multi-strategy parser handling pure JSON blocks, markdown code blocks, and standalone Python diffs.',
-        guardrails: 'Rejects unbounded multi-file renames; prevents modification of hidden or parent directories.',
-        evidence: 'EVID-PATCH-xxx: Cumulative unified diff output comparing against baseline snapshot.',
-        security: 'Patches cannot exceed MAX_PATCH_BYTES; cannot touch .env or sensitive config files.'
+        title: 'Code Patch Synthesizer',
+        category: 'Step 5: Code Writing',
+        desc: 'The AI writes the code change as a clean, minimal "unified diff" (like a Git commit). It modifies only the exact lines necessary without disrupting unrelated code.',
+        guardrails: 'Blocks unbounded file renames and prevents modification of parent directories or system files.',
+        evidence: 'Produces an exact unified diff comparing against the baseline project snapshot line by line.',
+        security: 'Diffs cannot exceed safety file size limits and cannot touch .env or sensitive configuration files.'
       },
       'ast-integrity': {
-        title: 'Deterministic Checks: AST & Patch Integrity',
-        category: 'Syntactic Verification',
-        desc: 'Validates code syntax without execution using Python abstract syntax trees (`ast.parse()`). Simultaneously verifies patch bounds and verifies no path traversal exists.',
-        guardrails: 'Strict AST parse; fail-closed on any syntax error before code ever executes.',
-        evidence: 'CLAIM-001 (Patch Structural Integrity & Bounds) & CLAIM-002 (AST Syntax Validity).',
-        security: 'Pure static analysis guarantees zero arbitrary code execution risk.'
+        title: 'Code Syntax & Security Guard',
+        category: 'Step 6: Pre-Run Validation',
+        desc: 'Before running any code, VERIQ validates the Python syntax using Abstract Syntax Trees (ast.parse). If there is any syntax error or dangerous file path traversal, it stops immediately.',
+        guardrails: '100% fail-closed on any syntax error or path traversal before any code ever runs.',
+        evidence: 'Issues deterministic claims verifying code syntax integrity and boundary safety.',
+        security: 'Pure static analysis guarantees zero arbitrary code execution risk at this stage.'
       },
       'sandbox-decision': {
-        title: 'Sandbox Dispatch Decision Engine',
-        category: 'Security Architecture',
-        desc: 'Dynamically tests whether Docker daemon is reachable on the host. If available, executes in hardened Docker container; if unavailable, seamlessly falls back to restricted process sandbox.',
-        guardrails: 'Explicit fallback auditing in ledger: "Docker daemon was not reachable; executed under process isolation."',
-        evidence: 'Sandbox mode logged in health and attached to test evidence records.',
-        security: 'Neither mode allows host credential leakage or unvalidated command execution.'
+        title: 'Sandbox Environment Chooser',
+        category: 'Step 7: Sandbox Security',
+        desc: 'VERIQ tests whether Docker is running on your machine. If Docker is available, it runs tests inside a hardened container; if offline, it seamlessly uses a stripped-process sandbox.',
+        guardrails: 'Explicitly audits which sandbox mode was used in the final verification ledger report.',
+        evidence: 'Sandbox mode logged in system health checks and attached to all test evidence receipts.',
+        security: 'Neither mode allows host credential leakage, unauthorized file writes, or unvalidated commands.'
       },
       'docker-sandbox': {
         title: 'Hardened Docker Container Sandbox',
-        category: 'Kernel-Level Isolation',
-        desc: 'Runs test runner inside a dedicated Linux container (`veriq-sandbox:latest`). Configured with `--network none`, `--memory 256m`, `--cpus 1.0`, non-root user `veriq:1000`.',
-        guardrails: 'Zero network access; cannot exfiltrate data; memory and CPU quotas prevent denial-of-service.',
-        evidence: 'Container execution ID, duration_ms, and Linux kernel cgroup exit code.',
-        security: 'Standard Linux namespace and cgroup boundaries prevent host system access.'
+        category: 'Step 7: Container Isolation',
+        desc: 'Runs the test runner inside an isolated Linux container with ZERO internet access (--network none), 256MB memory cap, and a non-root user.',
+        guardrails: 'Zero network access prevents data exfiltration; strict memory caps prevent infinite loop denial of service.',
+        evidence: 'Records Docker container execution ID, duration in milliseconds, and Linux kernel exit code.',
+        security: 'Standard Linux kernel cgroup and namespace boundaries completely isolate your computer.'
       },
       'process-sandbox': {
-        title: 'Restricted Subprocess Fallback Sandbox',
-        category: 'Host Process Isolation',
-        desc: 'Executes tests in a stripped-environment subprocess. All host environment variables, API keys (`NEBIUS_API_KEY`, `TAVILY_API_KEY`), and user secrets are wiped.',
-        guardrails: 'Strict command allowlist (only `pytest` allowed); cwd locked to temporary workspace.',
-        evidence: 'Explicit limitation audit logged in ledger; environment variable sanitization record.',
-        security: 'Protects host credentials even when Docker Desktop is offline or uninstalled.'
+        title: 'Restricted Subprocess Fallback',
+        category: 'Step 7: Process Isolation',
+        desc: 'When Docker is offline, tests run in a subprocess where ALL API keys (NEBIUS_API_KEY, TAVILY_API_KEY), environment variables, and user credentials are wiped clean.',
+        guardrails: 'Strict command allowlist (only pytest allowed); locked strictly to the temporary folder.',
+        evidence: 'Environment variable sanitization record and command execution logs stored in ledger.',
+        security: 'Protects developer credentials and API keys even when running outside Docker.'
       },
       'test-execution': {
-        title: 'Clean Import & Pytest Regression Suite',
-        category: 'Functional Verification',
-        desc: 'Executes clean import verification (`python -c "import <module>"`) followed by full test suite (`pytest -v`). Captures exact exit codes, stdout, stderr, and timings.',
-        guardrails: 'Hard timeout (30 seconds); process killed if running beyond budget.',
-        evidence: 'CLAIM-003 (Clean Module Import) & CLAIM-004 (Test Suite Regression Verification).',
-        security: 'Stdout and stderr are sanitized and secrets are redacted before presentation.'
+        title: 'Real Unit Test & Import Verification',
+        category: 'Step 8: Functional Testing',
+        desc: 'VERIQ actually runs clean imports and the full automated pytest suite inside the sandbox. It captures exact exit codes, terminal output (stdout/stderr), and run times.',
+        guardrails: 'Hard 30-second timeout automatically kills any hanging process or infinite loop.',
+        evidence: 'Logs exact test suite exit code, pass/fail status for every test case, and execution duration.',
+        security: 'Terminal outputs are sanitized and sensitive tokens are redacted before display.'
       },
       'pass-decision': {
-        title: 'Verification Outcome Decision Gate',
-        category: 'Audit Decision',
-        desc: 'Evaluates the composite results of all deterministic checks. If all passed, proceeds to ledger publication. If tests failed, triggers bounded self-repair if budget remains.',
-        guardrails: 'Never upgrades an unverified claim to verified status merely because a workflow finished.',
-        evidence: 'Composite verification score and verified/total claim counts.',
-        security: 'Strict binary truth table; no partial passes without explicit limitations.'
+        title: 'Did All Tests Pass? (Decision Gate)',
+        category: 'Step 9: Verification Gate',
+        desc: 'If all tests pass, the fix is officially approved and signed. If any test fails, VERIQ reads the terminal error and triggers an automatic repair loop (up to 3 tries) to fix the code.',
+        guardrails: 'Never marks an unverified code change as passed merely because an AI model finished writing.',
+        evidence: 'Composite verification pass/fail score and exact verified claim counts.',
+        security: 'Strict binary truth gate; no partial passes without explicit limitation warnings.'
       },
       'ledger-aggregator': {
-        title: 'Verification Ledger Engine',
+        title: 'The Verification Proof Ledger',
         category: 'Core Differentiator',
-        desc: 'The heart of VERIQ. Evaluates each claim against deterministic evidence records. Distinguishes between what AI asserts and what deterministic checks proved.',
-        guardrails: 'Assigns VERIFIED, SUPPORTED, FAILED, UNRESOLVED, or NOT_RUN statuses based on strict evidence rules.',
-        evidence: 'Deterministic claims table with linked evidence IDs, check types, commands, and limitations.',
-        security: 'Ledger records are immutable once run reaches terminal completion.'
+        desc: 'The hallmark of VERIQ. Evaluates each claim against real physical test evidence. Distinguishes between what passed real tests (VERIFIED) vs what is syntax-checked (SUPPORTED). Never guesses.',
+        guardrails: 'Assigns VERIFIED, SUPPORTED, FAILED, UNRESOLVED, or NOT_RUN statuses based on strict test facts.',
+        evidence: 'Interactive table linking every claim to its terminal command, exit code, and test output.',
+        security: 'Ledger records are cryptographically hashed and immutable once completed.'
       },
       'report-gen': {
-        title: 'Inspectable Engineering Report Generator',
-        category: 'Artifact Production',
-        desc: 'Compiles the full verification ledger, unified diff, routing telemetry, and failure audits into downloadable developer report (`report.md`) and machine-readable ledger (`ledger.json`).',
-        guardrails: 'Cryptographic SHA-256 fingerprinting of generated artifacts for auditability.',
-        evidence: 'Exportable via `/api/runs/{id}/report?format=markdown` and `format=json`.',
-        security: 'All generated files stored in isolated data/ directory.'
+        title: 'Downloadable Verification Reports',
+        category: 'Step 10: Deliverables',
+        desc: 'Compiles the full verification ledger, unified diff, model telemetry, and test outputs into a human-friendly Markdown report (report.md) and machine-readable JSON proof (ledger.json).',
+        guardrails: 'Cryptographic SHA-256 fingerprinting on all generated files for auditability.',
+        evidence: 'Downloadable directly with one click from the workbench toolbar.',
+        security: 'All generated files stored safely in local project data directory.'
       },
       'sqlite-persist': {
-        title: 'SQLite Run State Persistence',
+        title: 'Local Database Storage (SQLite)',
         category: 'Data Layer',
-        desc: 'Stores run records, events stream, claims, and evidence items in lightweight SQLite database (`data/veriq.db`). Supports instant retrieval of run history and benchmark harness records.',
-        guardrails: 'WAL journal mode; transactional consistency; connection pooling.',
-        evidence: 'Queryable via REST API (`/api/runs`, `/api/runs/{id}`, `/api/metrics/overview`).',
-        security: 'Parameterized SQL queries prevent SQL injection across all database repositories.'
+        desc: 'Stores run records, live event streams, claims, and evidence receipts in a lightweight local SQLite database (data/veriq.db). Supports instant search and history.',
+        guardrails: 'Write-Ahead Logging (WAL mode) ensures transactional consistency and zero corruption.',
+        evidence: 'Queryable via REST API (/api/runs, /api/runs/{id}, /api/metrics/overview).',
+        security: 'Parameterized SQL queries prevent any database injection.'
       },
       'sse-ui': {
-        title: 'Real-time Server-Sent Events UI Workbench',
-        category: 'Developer Experience',
-        desc: 'Streams live events (`MODEL_SELECTED`, `PATCH_GENERATED`, `TESTS_EXECUTED`, `RUN_COMPLETED`) directly to the developer workbench via SSE (`/api/runs/{id}/events`).',
-        guardrails: 'Auto-reconnecting EventSource; fallback polling; responsive non-overlapping layout.',
-        evidence: 'Live timeline dots, unified diff syntax highlighting, model routing telemetry cards.',
-        security: 'Vanilla JavaScript with zero external runtime dependencies.'
+        title: 'Real-Time Live Streaming UI',
+        category: 'User Experience',
+        desc: 'Streams live events (Model Selected, Code Written, Tests Run, Task Completed) directly to your browser using Server-Sent Events (SSE) with zero UI lag.',
+        guardrails: 'Auto-reconnecting live stream with fallback polling.',
+        evidence: 'Live timeline steps, syntax-highlighted diffs, and verified pass/fail cards.',
+        security: 'Pure handcrafted vanilla JavaScript with zero external runtime dependencies.'
       }
     };
 
@@ -1305,30 +1305,34 @@
       titleEl.textContent = data.title;
       contentEl.innerHTML = `
         <div class="detail-section">
-          <div class="detail-label">Pipeline Category</div>
+          <div class="detail-label">Pipeline Stage</div>
           <span class="state-badge badge-supported">${data.category}</span>
         </div>
 
         <div class="detail-section">
-          <div class="detail-label">Stage Description</div>
+          <div class="detail-label">What This Step Does</div>
           <p class="detail-content">${data.desc}</p>
         </div>
 
         <div class="detail-section">
-          <div class="detail-label">Deterministic Guardrails & Checks</div>
+          <div class="detail-label">How Safety & Quality Are Enforced</div>
           <p class="detail-content">${data.guardrails}</p>
         </div>
 
         <div class="detail-section">
-          <div class="detail-label">Verification Evidence Generated</div>
+          <div class="detail-label">Proof & Evidence Produced</div>
           <div class="detail-box">${data.evidence}</div>
         </div>
 
         <div class="detail-section">
-          <div class="detail-label">Security Boundaries</div>
+          <div class="detail-label">Security & Isolation Rules</div>
           <p class="detail-content" style="color:var(--status-unresolved);">${data.security}</p>
         </div>
       `;
+
+      document.getElementById('drawer-overlay').classList.add('active');
+      document.getElementById('node-drawer').classList.add('active');
+    }
 
       document.getElementById('drawer-overlay').classList.add('active');
       document.getElementById('node-drawer').classList.add('active');

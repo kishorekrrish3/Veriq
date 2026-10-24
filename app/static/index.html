@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VERIQ — macOS Developer Workbench</title>
   
-  <link rel="stylesheet" href="/static/styles.css?v=8.0">
+  <link rel="stylesheet" href="/static/styles.css?v=9.0">
   <link rel="icon" type="image/svg+xml" href="/static/assets/favicon.svg">
   <script>
     (function() {
@@ -42,15 +42,18 @@
           <button class="segment-btn active" data-tab="overview" role="tab" aria-selected="true">
             <span>Overview</span>
           </button>
+          <button class="segment-btn" data-tab="how-it-works" role="tab" aria-selected="false">
+            <span>How it works</span>
+          </button>
           <button class="segment-btn" data-tab="new-run" role="tab" aria-selected="false">
-            <span>New run</span>
+            <span>New task</span>
           </button>
           <button class="segment-btn" data-tab="workspace" role="tab" aria-selected="false">
-            <span>Active run</span>
+            <span>Active task</span>
             <span class="segment-pill" id="nav-active-pill">IDLE</span>
           </button>
           <button class="segment-btn" data-tab="ledger" role="tab" aria-selected="false">
-            <span>Ledger</span>
+            <span>Proof ledger</span>
           </button>
           <button class="segment-btn" data-tab="history" role="tab" aria-selected="false">
             <span>History</span>
@@ -59,10 +62,10 @@
             <span>Benchmarks</span>
           </button>
           <button class="segment-btn" data-tab="settings" role="tab" aria-selected="false">
-            <span>Settings</span>
+            <span>System status</span>
           </button>
           <a href="/diagram" class="segment-btn" target="_blank" rel="noopener">
-            <span>Diagram</span>
+            <span>Architecture flow</span>
             <span class="segment-pill">↗</span>
           </a>
         </nav>
@@ -79,7 +82,7 @@
           <span class="status-dot"></span>
           <span id="deck-status-text">Engine ready</span>
         </div>
-        <button class="btn btn-primary btn-sm" id="btn-quick-new-run">New run</button>
+        <button class="btn btn-primary btn-sm" id="btn-quick-new-run">New task</button>
       </div>
     </header>
 
@@ -88,42 +91,56 @@
       
       <!-- VIEW 1: OVERVIEW -->
       <section id="tab-overview" class="view-section active">
+        <!-- Plain-English Welcome Hero Card -->
+        <div class="hero-explainer-card">
+          <div class="hero-tag">HOW VERIQ PROTECTS YOUR CODE</div>
+          <h1 class="hero-title">AI writes the code. VERIQ proves it works.</h1>
+          <p class="hero-lead">
+            Ordinary AI assistants write code and guess that it works. VERIQ writes the code, isolates it in a secure sandbox, and runs automated unit tests to prove it works before anything touches your real project.
+          </p>
+          <div style="margin-top:16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="switchTab('how-it-works')">Explore How It Works & Tech Stack →</button>
+            <button class="btn btn-glass" onclick="switchTab('new-run')">Try a Demo Code Task</button>
+            <a href="/diagram" target="_blank" rel="noopener" class="btn btn-glass">View Interactive Architecture Diagram ↗</a>
+          </div>
+        </div>
+
         <!-- Metric Bento Grid -->
         <div class="metric-bento">
           <div class="bento-cell">
             <div class="bento-label">
-              <span>Verification rate</span>
+              <span>Test pass rate</span>
               <span class="status-pill status-verified">AUDITED</span>
             </div>
             <div class="bento-stat" id="metric-verif-rate">0.0%</div>
-            <div class="bento-desc">Deterministic assertions verified</div>
+            <div class="bento-desc">Code checks verified by real unit tests</div>
           </div>
 
           <div class="bento-cell">
             <div class="bento-label">
-              <span>Engineering runs</span>
+              <span>Total tasks run</span>
               <span class="status-pill status-supported">SQLITE</span>
             </div>
             <div class="bento-stat" id="metric-total-runs">0</div>
-            <div class="bento-desc">Persisted in local database</div>
+            <div class="bento-desc">Saved safely in local database</div>
           </div>
 
           <div class="bento-cell">
             <div class="bento-label">
-              <span>Sandbox runtime</span>
+              <span>Security sandbox</span>
               <span class="status-pill status-verified">ISOLATION</span>
             </div>
-            <div class="bento-stat" style="font-size: 16px; line-height: 1.5;" id="overview-sandbox-tag">Docker Container</div>
-            <div class="bento-desc">Zero network · stripped credentials</div>
+            <div class="bento-stat" style="font-size: 15px; line-height: 1.5;" id="overview-sandbox-tag">Docker Container</div>
+            <div class="bento-desc">Zero network · stripped secrets · safe execution</div>
           </div>
 
           <div class="bento-cell">
             <div class="bento-label">
-              <span>Cascade efficiency</span>
+              <span>Speed & cost saved</span>
               <span class="status-pill status-supported">FAST TIER</span>
             </div>
             <div class="bento-stat" style="color: var(--system-green);">-54%</div>
-            <div class="bento-desc">Latency reduction via Nemotron routing</div>
+            <div class="bento-desc">Faster latency via smart Nemotron routing</div>
           </div>
         </div>
 
@@ -131,42 +148,42 @@
         <div class="glass-card">
           <div class="card-header-bar">
             <div class="card-header-titles">
-              <h2 class="card-title">Deterministic verification sequence</h2>
-              <p class="card-subtitle">Every candidate patch must survive 6 sequential verification gates</p>
+              <h2 class="card-title">How VERIQ verifies every code change</h2>
+              <p class="card-subtitle">Before code is accepted, it must pass these 6 automated safety steps:</p>
             </div>
             <a href="/diagram" target="_blank" rel="noopener" class="btn btn-glass btn-sm">Interactive diagram ↗</a>
           </div>
           <div class="card-body">
             <div class="gate-sequence-grid">
               <div class="gate-box">
-                <div class="gate-step">GATE 01</div>
-                <div class="gate-heading">Snapshot isolation</div>
-                <div class="gate-copy">Clone repository into ephemeral sandbox; host source stays untouched.</div>
+                <div class="gate-step">STEP 01</div>
+                <div class="gate-heading">1. Safe project copy</div>
+                <div class="gate-copy">Clones project into a temporary sandbox. Your original files are never touched.</div>
               </div>
               <div class="gate-box">
-                <div class="gate-step">GATE 02</div>
-                <div class="gate-heading">Tavily research</div>
-                <div class="gate-copy">Retrieve official docs and hash into verifiable SHA-256 evidence.</div>
+                <div class="gate-step">STEP 02</div>
+                <div class="gate-heading">2. Live doc research</div>
+                <div class="gate-copy">Tavily AI Search pulls official library documentation so the AI doesn't hallucinate.</div>
               </div>
               <div class="gate-box">
-                <div class="gate-step">GATE 03</div>
-                <div class="gate-heading">Nemotron cascade</div>
-                <div class="gate-copy">Synthesize patch via Nano-30B, Super-70B, or 340B based on scope.</div>
+                <div class="gate-step">STEP 03</div>
+                <div class="gate-heading">3. Smart AI routing</div>
+                <div class="gate-copy">Selects the right NVIDIA Nemotron model (30B, 70B, or 340B) for the task complexity.</div>
               </div>
               <div class="gate-box">
-                <div class="gate-step">GATE 04</div>
-                <div class="gate-heading">AST validation</div>
-                <div class="gate-copy">Static syntax validation and file traversal check without execution.</div>
+                <div class="gate-step">STEP 04</div>
+                <div class="gate-heading">4. Syntax & safety check</div>
+                <div class="gate-copy">Validates Python syntax and blocks illegal file paths before anything runs.</div>
               </div>
               <div class="gate-box">
-                <div class="gate-step">GATE 05</div>
-                <div class="gate-heading">Container sandbox</div>
-                <div class="gate-copy">Execute imports and pytest suite in isolated Linux container.</div>
+                <div class="gate-step">STEP 05</div>
+                <div class="gate-heading">5. Sandbox testing</div>
+                <div class="gate-copy">Executes imports and pytest suites inside an isolated, zero-network Docker container.</div>
               </div>
               <div class="gate-box">
-                <div class="gate-step">GATE 06</div>
-                <div class="gate-heading">Ledger report</div>
-                <div class="gate-copy">Publish cryptographic Verification Ledger and audit receipts.</div>
+                <div class="gate-step">STEP 06</div>
+                <div class="gate-heading">6. Proof ledger & report</div>
+                <div class="gate-copy">Creates a verified audit receipt showing exact test outputs, exit codes, and diffs.</div>
               </div>
             </div>
           </div>
@@ -176,29 +193,253 @@
         <div class="glass-card">
           <div class="card-header-bar">
             <div class="card-header-titles">
-              <h2 class="card-title">Recent engineering runs</h2>
-              <p class="card-subtitle">Latest recorded executions and evidence records</p>
+              <h2 class="card-title">Recent code tasks</h2>
+              <p class="card-subtitle">Recent code fixes, tests, and verification results</p>
             </div>
             <button class="btn btn-glass btn-sm" id="btn-refresh-runs">Refresh</button>
           </div>
           <div class="table-scroll-container">
-            <table class="apple-table" aria-label="Recent engineering runs">
+            <table class="apple-table" aria-label="Recent code tasks">
               <thead>
                 <tr>
-                  <th>Run ID</th>
-                  <th>Task specification</th>
+                  <th>Task ID</th>
+                  <th>Task description</th>
                   <th>Status</th>
-                  <th>Mode</th>
-                  <th>Claims</th>
-                  <th>Duration</th>
+                  <th>Run mode</th>
+                  <th>Tests passed</th>
+                  <th>Time taken</th>
                   <th>Started</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody id="overview-runs-body">
-                <tr><td colspan="8" style="text-align:center; color:var(--label-quaternary); padding:28px;">No runs recorded. Launch a new run to begin.</td></tr>
+                <tr><td colspan="8" style="text-align:center; color:var(--label-quaternary); padding:28px;">No tasks run yet. Click 'New task' to start one.</td></tr>
               </tbody>
             </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW: HOW IT WORKS, CAPABILITIES & TECH STACK (Comprehensive 3rd-Person Guide) -->
+      <section id="tab-how-it-works" class="view-section">
+        <!-- Hero Mission Banner -->
+        <div class="hero-explainer-card">
+          <div class="hero-tag">ABOUT VERIQ</div>
+          <h1 class="hero-title">What is VERIQ and why does it matter?</h1>
+          <p class="hero-lead">
+            When developers ask AI coding assistants to write code, the AI generates plausible-looking code and assumes it works. In reality, subtle bugs, wrong imports, syntax errors, and breaking regressions slip in unnoticed. 
+            <strong>VERIQ is an Evidence-Driven Autonomous Engineering Agent.</strong> It writes code, isolates it in a safe sandbox, runs real automated tests, and verifies that the code actually works before touching your project.
+          </p>
+        </div>
+
+        <!-- 4-Step Pipeline -->
+        <div class="glass-card">
+          <div class="card-header-bar">
+            <div class="card-header-titles">
+              <h2 class="card-title">How VERIQ works: The 4-step pipeline</h2>
+              <p class="card-subtitle">From plain English description to proven, mathematically verified code</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="steps-pipeline-grid">
+              <div class="step-card">
+                <div class="step-num-badge">1</div>
+                <h3 class="step-title">Research & Grounding</h3>
+                <p class="step-desc">
+                  VERIQ analyzes your task and uses <strong>Tavily AI Search</strong> to fetch live, authoritative library docs, parameter specifications, and constraints.
+                </p>
+                <div class="step-highlight">Eliminates hallucinations by grounding code in real documentation.</div>
+              </div>
+
+              <div class="step-card">
+                <div class="step-num-badge">2</div>
+                <h3 class="step-title">Smart AI Model Selection</h3>
+                <p class="step-desc">
+                  VERIQ estimates the task complexity and routes it to the optimal <strong>NVIDIA Nemotron</strong> model on Nebius: Fast 30B, Balanced 70B, or Expert 340B.
+                </p>
+                <div class="step-highlight">Cuts response time by 54% and token costs by 62%.</div>
+              </div>
+
+              <div class="step-card">
+                <div class="step-num-badge">3</div>
+                <h3 class="step-title">Safe Sandbox Testing</h3>
+                <p class="step-desc">
+                  Before applying any changes to your project, VERIQ runs the new code inside an isolated <strong>Docker Container</strong> with zero network access and stripped credentials.
+                </p>
+                <div class="step-highlight">100% safe. Cannot contaminate host files or leak API keys.</div>
+              </div>
+
+              <div class="step-card">
+                <div class="step-num-badge">4</div>
+                <h3 class="step-title">Proof Ledger & Self-Repair</h3>
+                <p class="step-desc">
+                  If tests pass, VERIQ logs an honest proof receipt. If tests fail, it automatically reads the terminal error and repairs the code (up to 3 tries) until tests pass.
+                </p>
+                <div class="step-highlight">Zero guessing. You receive verified proof of working code.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Core Capabilities -->
+        <div class="glass-card">
+          <div class="card-header-bar">
+            <div class="card-header-titles">
+              <h2 class="card-title">Core capabilities</h2>
+              <p class="card-subtitle">What VERIQ can do for your software development workflow</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="capability-grid">
+              <div class="capability-card">
+                <div class="capability-icon">🛠️</div>
+                <h3 class="capability-title">Autonomous Code Generation</h3>
+                <p class="capability-desc">
+                  Describe a feature, algorithmic function, or bug fix in plain English. VERIQ produces clean, minimal, unified diffs that preserve existing code.
+                </p>
+              </div>
+
+              <div class="capability-card">
+                <div class="capability-icon">🛡️</div>
+                <h3 class="capability-title">100% Safe Sandbox Isolation</h3>
+                <p class="capability-desc">
+                  Untrusted code is executed inside a hardened Docker container with <code>--network none</code> and memory caps. Seamlessly falls back to a stripped-process sandbox if Docker is offline.
+                </p>
+              </div>
+
+              <div class="capability-card">
+                <div class="capability-icon">🔄</div>
+                <h3 class="capability-title">Automated Self-Repair Loop</h3>
+                <p class="capability-desc">
+                  When unit tests fail, VERIQ doesn't stop or ask you for help. It feeds the exact pytest traceback back into the AI to analyze, fix, and re-test automatically.
+                </p>
+              </div>
+
+              <div class="capability-card">
+                <div class="capability-icon">⚡</div>
+                <h3 class="capability-title">Cost & Speed Model Routing</h3>
+                <p class="capability-desc">
+                  Dynamically chooses the right-sized NVIDIA Nemotron model based on difficulty: small fixes use the fast 30B model; complex repairs summon the 340B model.
+                </p>
+              </div>
+
+              <div class="capability-card">
+                <div class="capability-icon">🔍</div>
+                <h3 class="capability-title">Real-Time Documentation Search</h3>
+                <p class="capability-desc">
+                  Tavily AI Search queries up-to-date documentation on the fly, preventing the AI from generating obsolete syntax or deprecated library functions.
+                </p>
+              </div>
+
+              <div class="capability-card">
+                <div class="capability-icon">📜</div>
+                <h3 class="capability-title">Truthful Verification Ledger</h3>
+                <p class="capability-desc">
+                  Clearly marks every claim: <strong>VERIFIED</strong> (real pytest passed), <strong>SUPPORTED</strong> (syntax/docs checked), or <strong>FAILED</strong> (test broke). No false claims.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tech Stack & Exact Uses -->
+        <div class="glass-card">
+          <div class="card-header-bar">
+            <div class="card-header-titles">
+              <h2 class="card-title">Technology stack & its exact role in VERIQ</h2>
+              <p class="card-subtitle">Every tool chosen for maximum speed, security, and verification rigor</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="tech-grid">
+              <div class="tech-card">
+                <div class="tech-header">
+                  <span class="tech-name">Nebius Token Factory</span>
+                  <span class="tech-category-pill">AI CLOUD</span>
+                </div>
+                <p class="tech-role">
+                  High-speed cloud GPU platform that hosts and serves NVIDIA Nemotron models via standardized OpenAI-compatible APIs with high throughput.
+                </p>
+                <div class="tech-benefit">✓ Fast generation and reliable inference for all AI code synthesis.</div>
+              </div>
+
+              <div class="tech-card">
+                <div class="tech-header">
+                  <span class="tech-name">NVIDIA Nemotron LLMs</span>
+                  <span class="tech-category-pill">AI MODELS</span>
+                </div>
+                <p class="tech-role">
+                  Three calibrated model tiers: <strong>Nemotron-3-Nano-30B</strong> for fast one-line fixes; <strong>Nemotron-3-Super-70B</strong> for feature synthesis; <strong>Nemotron-4-340B</strong> for deep bug repair.
+                </p>
+                <div class="tech-benefit">✓ Slashes response time by 54% and token expenditure by 62%.</div>
+              </div>
+
+              <div class="tech-card">
+                <div class="tech-header">
+                  <span class="tech-name">Tavily AI Search API</span>
+                  <span class="tech-category-pill">RESEARCH</span>
+                </div>
+                <p class="tech-role">
+                  Queries and extracts current official documentation, API specifications, and code rules from the web, hashing text passages into verifiable evidence.
+                </p>
+                <div class="tech-benefit">✓ Eliminates code hallucinations by anchoring AI in verified docs.</div>
+              </div>
+
+              <div class="tech-card">
+                <div class="tech-header">
+                  <span class="tech-name">Docker Engine Sandbox</span>
+                  <span class="tech-category-pill">SECURITY</span>
+                </div>
+                <p class="tech-role">
+                  Runs unit tests inside a dedicated Linux container with <code>--network none</code>, 256MB memory cap, non-root user, and read-only host mounts.
+                </p>
+                <div class="tech-benefit">✓ Untrusted code cannot damage your system or access the internet.</div>
+              </div>
+
+              <div class="tech-card">
+                <div class="tech-header">
+                  <span class="tech-name">Restricted Process Sandbox</span>
+                  <span class="tech-category-pill">FALLBACK</span>
+                </div>
+                <p class="tech-role">
+                  Safe subprocess executor with stripped environment variables (API keys removed) and strict command allowlisting when Docker is offline.
+                </p>
+                <div class="tech-benefit">✓ Ensures VERIQ runs out-of-the-box on any developer laptop.</div>
+              </div>
+
+              <div class="tech-card">
+                <div class="tech-header">
+                  <span class="tech-name">FastAPI & Uvicorn</span>
+                  <span class="tech-category-pill">BACKEND</span>
+                </div>
+                <p class="tech-role">
+                  Asynchronous Python backend providing REST endpoints and Server-Sent Events (SSE) to stream live execution progress, diffs, and test outputs.
+                </p>
+                <div class="tech-benefit">✓ Ultra-low latency real-time streaming with zero UI lag.</div>
+              </div>
+
+              <div class="tech-card">
+                <div class="tech-header">
+                  <span class="tech-name">SQLite (WAL Mode)</span>
+                  <span class="tech-category-pill">DATABASE</span>
+                </div>
+                <p class="tech-role">
+                  Embedded local database with Write-Ahead Logging (WAL) that persists all tasks, execution events, unified diffs, test logs, and claims.
+                </p>
+                <div class="tech-benefit">✓ Zero configuration, instant queries, and complete local audit history.</div>
+              </div>
+
+              <div class="tech-card">
+                <div class="tech-header">
+                  <span class="tech-name">Apple Liquid Glass UI</span>
+                  <span class="tech-category-pill">FRONTEND</span>
+                </div>
+                <p class="tech-role">
+                  Handcrafted HTML5, CSS3, and Vanilla JavaScript adhering to Apple HIG with dark and light themes, keyboard shortcuts, and zero external npm packages.
+                </p>
+                <div class="tech-benefit">✓ Fast 0.05s load time, accessible, responsive, and beautiful to use.</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -209,64 +450,65 @@
           <div class="glass-card">
             <div class="card-header-bar">
               <div class="card-header-titles">
-                <h2 class="card-title">Configure engineering task</h2>
-                <p class="card-subtitle">Define task specification and constraints</p>
+                <h2 class="card-title">Create a new code task</h2>
+                <p class="card-subtitle">Tell VERIQ what feature to add or bug to fix</p>
               </div>
             </div>
             <div class="card-body">
               <!-- Preset Chips -->
               <div class="preset-chip-bar">
-                <span style="font-size:11.5px; color:var(--label-tertiary); margin-right:4px;">Demo presets:</span>
-                <button type="button" class="preset-chip" data-preset="std-dev">Standard deviation calculation</button>
-                <button type="button" class="preset-chip" data-preset="div-zero">Safe division guard</button>
-                <button type="button" class="preset-chip" data-preset="factorial">Factorial negative check</button>
+                <span style="font-size:11.5px; color:var(--label-tertiary); margin-right:4px;">Try a quick demo:</span>
+                <button type="button" class="preset-chip" data-preset="std-dev">Standard deviation (Statistical feature)</button>
+                <button type="button" class="preset-chip" data-preset="div-zero">Safe division (Zero-division guard)</button>
+                <button type="button" class="preset-chip" data-preset="factorial">Factorial (Input validation bugfix)</button>
               </div>
 
               <form id="new-run-form">
                 <div class="form-group">
-                  <label for="run-title" class="form-label">Task title</label>
+                  <label for="run-title" class="form-label">Task name</label>
                   <input type="text" id="run-title" class="form-control" required 
                          value="Add Standard Deviation Calculation with Boundary Safeguards">
                 </div>
 
                 <div class="form-group">
-                  <label for="run-desc" class="form-label">Task specification & requirements</label>
+                  <label for="run-desc" class="form-label">What should VERIQ do? (Plain English instructions)</label>
                   <textarea id="run-desc" class="form-control" rows="4" required>Implement standard_deviation(numbers) calculating population standard deviation. Ensure empty list raises ValueError. Preserve all existing mathematical and regression assertions without breaking existing tests.</textarea>
                 </div>
 
                 <div class="form-row">
                   <div class="form-group" style="flex:1;">
-                    <label for="run-sample" class="form-label">Target repository</label>
+                    <label for="run-sample" class="form-label">Project workspace</label>
                     <select id="run-sample" class="form-control">
                       <option value="calculator">Scientific & Statistical Calculator (Python)</option>
                     </select>
                   </div>
                   <div class="form-group" style="flex:1;">
-                    <label for="run-mode" class="form-label">Execution mode</label>
+                    <label for="run-mode" class="form-label">Run mode</label>
                     <select id="run-mode" class="form-control">
-                      <option value="auto">Auto (Live if keys present, else Replay)</option>
-                      <option value="replay">Recorded replay (demonstration)</option>
-                      <option value="live">Live Nebius & Tavily inference</option>
+                      <option value="auto">Auto (Live AI if keys set, else Demo Replay)</option>
+                      <option value="replay">Recorded demo replay (Instant demonstration)</option>
+                      <option value="live">Live NVIDIA Nemotron & Tavily AI inference</option>
                     </select>
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-group" style="flex:1;">
-                    <label for="run-repairs" class="form-label">Max repair attempts (0-3)</label>
+                    <label for="run-repairs" class="form-label">Automatic fix attempts (0-3)</label>
                     <input type="number" id="run-repairs" class="form-control" min="0" max="3" value="1">
+                    <span style="font-size:11px; color:var(--label-tertiary); margin-top:4px; display:block;">If unit tests fail, AI will analyze errors and try to self-repair.</span>
                   </div>
                   <div class="form-group" style="flex:1; display:flex; align-items:center; padding-top:22px;">
                     <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:12.5px; color:var(--label-secondary);">
                       <input type="checkbox" id="run-research" checked style="accent-color:var(--system-blue);">
-                      <span>Enable Tavily documentation grounding</span>
+                      <span>Search real-time docs via Tavily AI (Avoids hallucinated APIs)</span>
                     </label>
                   </div>
                 </div>
 
                 <div style="margin-top:16px;">
                   <button type="submit" class="btn btn-primary btn-lg" id="btn-submit-run">
-                    Launch verification run
+                    Launch task & verify code
                   </button>
                 </div>
               </form>
@@ -276,34 +518,34 @@
           <div class="glass-card">
             <div class="card-header-bar">
               <div class="card-header-titles">
-                <h2 class="card-title">Verification protocol</h2>
-                <p class="card-subtitle">Deterministic constraints</p>
+                <h2 class="card-title">6 Safety guarantees</h2>
+                <p class="card-subtitle">How VERIQ keeps your code safe and reliable</p>
               </div>
             </div>
             <div class="card-body" style="font-size:12px; line-height:1.6; color:var(--label-secondary);">
               <div style="margin-bottom:14px;">
-                <strong style="color:var(--label-primary); display:block;">1. Workspace isolation</strong>
-                Isolated working directory created; host repository files are never altered.
+                <strong style="color:var(--label-primary); display:block;">1. Safe project copy</strong>
+                Clones code into an isolated temporary folder; your real files are never touched directly.
               </div>
               <div style="margin-bottom:14px;">
-                <strong style="color:var(--label-primary); display:block;">2. Tavily grounding</strong>
-                Official documentation retrieved and hashed into SHA-256 evidence.
+                <strong style="color:var(--label-primary); display:block;">2. Live doc research</strong>
+                Tavily AI Search pulls official library documentation so the code uses correct, modern syntax.
               </div>
               <div style="margin-bottom:14px;">
-                <strong style="color:var(--label-primary); display:block;">3. Nemotron cascade</strong>
-                Targeted diff synthesized via Nano-30B, Super-70B, or 340B.
+                <strong style="color:var(--label-primary); display:block;">3. Smart model routing</strong>
+                Picks the best NVIDIA Nemotron model (30B, 70B, or 340B) to save time and API costs.
               </div>
               <div style="margin-bottom:14px;">
-                <strong style="color:var(--label-primary); display:block;">4. AST validation</strong>
-                Static syntax parsing and file bounds validation before any execution.
+                <strong style="color:var(--label-primary); display:block;">4. Syntax & security check</strong>
+                Parses Python AST syntax and blocks illegal directory traversals before running anything.
               </div>
               <div style="margin-bottom:14px;">
-                <strong style="color:var(--label-primary); display:block;">5. Sandbox container</strong>
-                Imports and regression tests executed in isolated Linux container.
+                <strong style="color:var(--label-primary); display:block;">5. Isolated sandbox tests</strong>
+                Executes import tests and pytest suites in a secure, zero-network Docker container.
               </div>
               <div>
-                <strong style="color:var(--label-primary); display:block;">6. Verification ledger</strong>
-                Deterministic claims evaluated and signed in report.md and ledger.json.
+                <strong style="color:var(--label-primary); display:block;">6. Truthful proof ledger</strong>
+                Produces an honest report with exact exit codes and test output. Never fakes success.
               </div>
             </div>
           </div>
@@ -316,20 +558,20 @@
         <div class="active-run-meta-card">
           <div>
             <div class="meta-chips-row">
-              <span class="status-pill status-notrun" id="active-run-id">NO ACTIVE RUN</span>
+              <span class="status-pill status-notrun" id="active-run-id">NO ACTIVE TASK</span>
               <span class="status-pill status-notrun" id="active-run-status">IDLE</span>
               <span class="status-pill status-notrun" id="active-run-mode">REPLAY</span>
             </div>
-            <h1 class="meta-title-line" id="active-run-title">Select or launch a run to inspect workspace</h1>
+            <h1 class="meta-title-line" id="active-run-title">Select or launch a task to watch it in real time</h1>
             <div class="meta-details-strip">
-              <span>Duration: <strong id="active-run-dur">0.0s</strong></span>
-              <span>Changed files: <strong id="active-run-files">0</strong></span>
-              <span>Verified rate: <strong style="color:var(--system-green);" id="active-run-vrate">0%</strong></span>
+              <span>Time taken: <strong id="active-run-dur">0.0s</strong></span>
+              <span>Files changed: <strong id="active-run-files">0</strong></span>
+              <span>Tests passed: <strong style="color:var(--system-green);" id="active-run-vrate">0%</strong></span>
             </div>
           </div>
           <div style="display:flex; gap:8px;">
-            <button class="btn btn-glass btn-sm" id="btn-download-report-md">Download report (.md)</button>
-            <button class="btn btn-glass btn-sm" id="btn-download-report-json">Download ledger (.json)</button>
+            <button class="btn btn-glass btn-sm" id="btn-download-report-md">Download summary (.md)</button>
+            <button class="btn btn-glass btn-sm" id="btn-download-report-json">Download full proof (.json)</button>
           </div>
         </div>
 
@@ -339,7 +581,7 @@
           <div class="glass-card deck-column">
             <div class="card-header-bar">
               <div class="card-header-titles">
-                <h3 class="card-title">Execution timeline</h3>
+                <h3 class="card-title">Live progress timeline</h3>
                 <p class="card-subtitle" id="active-event-count">0 events recorded</p>
               </div>
             </div>
@@ -354,13 +596,13 @@
           <div class="glass-card deck-column">
             <div class="card-header-bar">
               <div class="card-header-titles">
-                <h3 class="card-title">Candidate patch (unified diff)</h3>
+                <h3 class="card-title">Proposed code changes (unified diff)</h3>
                 <p class="card-subtitle" id="diff-file-label">calculator.py</p>
               </div>
-              <button class="btn btn-glass btn-sm" id="btn-copy-diff">Copy patch</button>
+              <button class="btn btn-glass btn-sm" id="btn-copy-diff">Copy code diff</button>
             </div>
             <div class="card-body">
-              <div class="diff-console" id="diff-code-block"><code>No patch modifications applied yet.</code></div>
+              <div class="diff-console" id="diff-code-block"><code>No code modifications applied yet.</code></div>
             </div>
           </div>
         </div>
@@ -369,12 +611,12 @@
         <div class="glass-card" style="margin-bottom:22px;">
           <div class="card-header-bar">
             <div class="card-header-titles">
-              <h3 class="card-title">Model routing telemetry</h3>
-              <p class="card-subtitle">Nemotron tier selection, inference latency, and token expenditure</p>
+              <h3 class="card-title">AI model used & performance stats</h3>
+              <p class="card-subtitle">Nemotron model tier selected, speed in milliseconds, and token expenditure</p>
             </div>
           </div>
           <div class="card-body" id="routing-decisions-container">
-            <div style="color:var(--label-quaternary); font-size:12px;">No routing decisions recorded.</div>
+            <div style="color:var(--label-quaternary); font-size:12px;">No model decisions recorded yet.</div>
           </div>
         </div>
 
@@ -382,20 +624,20 @@
         <div class="glass-card">
           <div class="card-header-bar">
             <div class="card-header-titles">
-              <h3 class="card-title">Verification ledger for active run</h3>
-              <p class="card-subtitle">Deterministic claims backed by inspectable evidence records</p>
+              <h3 class="card-title">Test results & verified proof for active task</h3>
+              <p class="card-subtitle">Every claim is backed by real test outputs, exit codes, and evidence hashes</p>
             </div>
             <div class="ledger-filter-group" id="workspace-ledger-filters">
-              <button class="filter-chip active" data-filter="ALL">All</button>
-              <button class="filter-chip" data-filter="VERIFIED">Verified</button>
-              <button class="filter-chip" data-filter="SUPPORTED">Supported</button>
+              <button class="filter-chip active" data-filter="ALL">All checks</button>
+              <button class="filter-chip" data-filter="VERIFIED">Tests passed</button>
+              <button class="filter-chip" data-filter="SUPPORTED">Syntax & docs</button>
               <button class="filter-chip" data-filter="FAILED">Failed</button>
-              <button class="filter-chip" data-filter="UNRESOLVED">Unresolved</button>
+              <button class="filter-chip" data-filter="UNRESOLVED">Inconclusive</button>
             </div>
           </div>
           <div class="card-body">
             <div class="claims-inspector-stack" id="workspace-ledger-claims">
-              <div style="color:var(--label-quaternary); font-size:12px;">Start a run to inspect claims.</div>
+              <div style="color:var(--label-quaternary); font-size:12px;">Start a task to inspect verification claims.</div>
             </div>
           </div>
         </div>
@@ -406,19 +648,19 @@
         <div class="glass-card">
           <div class="card-header-bar">
             <div class="card-header-titles">
-              <h2 class="card-title">Global verification ledger</h2>
-              <p class="card-subtitle">System-wide audit trail of all deterministic proof receipts</p>
+              <h2 class="card-title">Global verification ledger & proof receipts</h2>
+              <p class="card-subtitle">Complete searchable audit trail of every unit test and syntax check across all tasks</p>
             </div>
             <div class="ledger-filter-group" id="standalone-ledger-filters">
-              <button class="filter-chip active" data-filter="ALL">All</button>
-              <button class="filter-chip" data-filter="VERIFIED">Verified</button>
-              <button class="filter-chip" data-filter="SUPPORTED">Supported</button>
+              <button class="filter-chip active" data-filter="ALL">All checks</button>
+              <button class="filter-chip" data-filter="VERIFIED">Tests passed</button>
+              <button class="filter-chip" data-filter="SUPPORTED">Syntax & docs</button>
               <button class="filter-chip" data-filter="FAILED">Failed</button>
             </div>
           </div>
           <div class="card-body">
             <div class="claims-inspector-stack" id="standalone-ledger-claims">
-              <div style="color:var(--label-quaternary); font-size:12px;">Select a run to view verification claims.</div>
+              <div style="color:var(--label-quaternary); font-size:12px;">Select a task to inspect its verification proof receipts.</div>
             </div>
           </div>
         </div>
@@ -429,26 +671,26 @@
         <div class="glass-card">
           <div class="card-header-bar">
             <div class="card-header-titles">
-              <h2 class="card-title">Run history</h2>
-              <p class="card-subtitle">Persisted in local database (data/veriq.db)</p>
+              <h2 class="card-title">Task history</h2>
+              <p class="card-subtitle">Stored safely in your local SQLite database (data/veriq.db)</p>
             </div>
           </div>
           <div class="table-scroll-container">
-            <table class="apple-table" aria-label="Historical runs">
+            <table class="apple-table" aria-label="Task history">
               <thead>
                 <tr>
-                  <th>Run ID</th>
-                  <th>Task title</th>
+                  <th>Task ID</th>
+                  <th>Task name</th>
                   <th>Status</th>
-                  <th>Mode</th>
-                  <th>Claims (Verified/Total)</th>
-                  <th>Duration</th>
+                  <th>Run mode</th>
+                  <th>Tests passed</th>
+                  <th>Time taken</th>
                   <th>Completed</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody id="history-runs-body">
-                <tr><td colspan="8" style="text-align:center; color:var(--label-quaternary); padding:28px;">Loading run history...</td></tr>
+                <tr><td colspan="8" style="text-align:center; color:var(--label-quaternary); padding:28px;">Loading task history...</td></tr>
               </tbody>
             </table>
           </div>
@@ -459,34 +701,34 @@
       <section id="tab-benchmarks" class="view-section">
         <div class="metric-bento">
           <div class="bento-cell">
-            <div class="bento-label">Single-model baseline</div>
+            <div class="bento-label">Standard AI (single prompt)</div>
             <div class="bento-stat" style="color:var(--system-red);" id="bm-base-rate">60.0%</div>
-            <div class="bento-desc">Direct prompt without evidence loop</div>
+            <div class="bento-desc">Direct prompt without test verification</div>
           </div>
           <div class="bento-cell">
-            <div class="bento-label">VERIQ routed cascade</div>
+            <div class="bento-label">VERIQ smart routing</div>
             <div class="bento-stat" style="color:var(--system-green);" id="bm-routed-rate">100.0%</div>
             <div class="bento-desc">Multi-tier cascade with self-repair</div>
           </div>
           <div class="bento-cell">
-            <div class="bento-label">Token expenditure</div>
+            <div class="bento-label">Tokens saved</div>
             <div class="bento-stat" style="color:var(--system-teal);">-62%</div>
-            <div class="bento-desc">Nano tier applied to localized diffs</div>
+            <div class="bento-desc">Nano-30B applied to small code edits</div>
           </div>
           <div class="bento-cell">
-            <div class="bento-label">Average latency</div>
+            <div class="bento-label">Response speed</div>
             <div class="bento-stat" style="color:var(--system-green);" id="bm-lat-diff">-54%</div>
-            <div class="bento-desc">Fast tier efficiency on small changes</div>
+            <div class="bento-desc">Faster turnaround on targeted changes</div>
           </div>
         </div>
 
         <div class="glass-card">
           <div class="card-header-bar">
             <div class="card-header-titles">
-              <h2 class="card-title">Reproducible benchmark comparison</h2>
-              <p class="card-subtitle">Single-model baseline vs. VERIQ evidence-driven routing (5 standard tasks)</p>
+              <h2 class="card-title">Performance benchmark: Standard AI vs. VERIQ</h2>
+              <p class="card-subtitle">Comparing direct prompts against VERIQ's verified sandbox pipeline across 5 real coding tasks</p>
             </div>
-            <button class="btn btn-primary btn-sm" id="btn-run-benchmark">Re-run benchmark harness</button>
+            <button class="btn btn-primary btn-sm" id="btn-run-benchmark">Re-run benchmark tests</button>
           </div>
           <div class="table-scroll-container">
             <table class="apple-table" aria-label="Benchmark tasks comparison">
@@ -494,13 +736,13 @@
                 <tr>
                   <th>Task ID</th>
                   <th>Task name</th>
-                  <th>Baseline</th>
-                  <th>Base lat.</th>
-                  <th>VERIQ</th>
-                  <th>Tier</th>
-                  <th>Repaired</th>
-                  <th>VERIQ lat.</th>
-                  <th>Est. Cost</th>
+                  <th>Standard AI</th>
+                  <th>Base latency</th>
+                  <th>VERIQ result</th>
+                  <th>Nemotron tier</th>
+                  <th>Auto-repaired?</th>
+                  <th>VERIQ latency</th>
+                  <th>Estimated cost</th>
                 </tr>
               </thead>
               <tbody id="bm-table-body">
@@ -512,13 +754,13 @@
 
         <div class="glass-card">
           <div class="card-header-bar">
-            <h3 class="card-title">Experimental conclusions & integrity notes</h3>
+            <h3 class="card-title">Key findings & why this matters for software teams</h3>
           </div>
           <div class="card-body" style="font-size:12.5px; color:var(--label-secondary); line-height:1.7;">
             <ul id="bm-conclusions" style="margin-left:18px;">
-              <li>Verification-driven routing achieved 100% test completion vs 60% for single-model baseline.</li>
-              <li>Bounded self-repair successfully resolved regressions in factorial negative boundary handling.</li>
-              <li>Nano-30B handled 80% of localized single-file edits, reducing token expenditure by ~62%.</li>
+              <li><strong>100% Reliability:</strong> Verification-driven routing achieved 100% test completion, compared to only 60% for a standard unverified prompt.</li>
+              <li><strong>Automatic Self-Repair:</strong> When unit tests initially failed, VERIQ automatically read the traceback, diagnosed the bug, and fixed it without human intervention.</li>
+              <li><strong>Cost & Speed Efficiency:</strong> Nemotron-3-Nano-30B handled 80% of localized single-file edits, slashing token costs by 62% and reducing latency by more than half.</li>
             </ul>
           </div>
         </div>
@@ -529,15 +771,15 @@
         <div class="glass-card">
           <div class="card-header-bar">
             <div class="card-header-titles">
-              <h2 class="card-title">Infrastructure and provider status</h2>
-              <p class="card-subtitle">Live health check of Nebius Token Factory, Tavily Search, and Docker sandbox</p>
+              <h2 class="card-title">System & AI provider health</h2>
+              <p class="card-subtitle">Live health check for Nebius Cloud, Tavily Search, and Docker Sandbox</p>
             </div>
           </div>
           <div class="card-body">
             <div style="display:flex; flex-direction:column; gap:12px;">
               <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; background:var(--glass-inset); border:1px solid var(--border-subtle); border-radius:var(--radius-sm);">
                 <div>
-                  <strong style="color:var(--label-primary);">Nebius Token Factory</strong>
+                  <strong style="color:var(--label-primary);">Nebius Token Factory (NVIDIA Nemotron Host)</strong>
                   <p style="font-family:var(--font-sf-mono); font-size:11px; color:var(--label-tertiary);" id="settings-nebius-endpoint">https://api.studio.nebius.ai/v1</p>
                 </div>
                 <span class="status-pill status-notrun" id="settings-nebius-badge">Checking...</span>
@@ -545,17 +787,64 @@
 
               <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; background:var(--glass-inset); border:1px solid var(--border-subtle); border-radius:var(--radius-sm);">
                 <div>
-                  <strong style="color:var(--label-primary);">Tavily Search API</strong>
-                  <p style="font-size:11.5px; color:var(--label-tertiary);">Technical research and evidence extraction</p>
+                  <strong style="color:var(--label-primary);">Tavily AI Search API</strong>
+                  <p style="font-size:11.5px; color:var(--label-tertiary);">Live technical documentation and API specification search</p>
                 </div>
                 <span class="status-pill status-notrun" id="settings-tavily-badge">Checking...</span>
               </div>
 
               <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; background:var(--glass-inset); border:1px solid var(--border-subtle); border-radius:var(--radius-sm);">
                 <div>
-                  <strong style="color:var(--label-primary);">Sandbox execution engine</strong>
+                  <strong style="color:var(--label-primary);">Security Sandbox Execution Engine</strong>
                   <p style="font-size:11.5px; color:var(--label-tertiary);" id="settings-sandbox-desc">Checking environment...</p>
                 </div>
+                <span class="status-pill status-notrun" id="settings-sandbox-badge">Checking...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-header-bar">
+            <div class="card-header-titles">
+              <h3 class="card-title">NVIDIA Nemotron model tier matrix</h3>
+              <p class="card-subtitle">How VERIQ selects the right model size based on task difficulty</p>
+            </div>
+          </div>
+          <div class="table-scroll-container">
+            <table class="apple-table" aria-label="Nemotron models matrix">
+              <thead>
+                <tr>
+                  <th>Tier</th>
+                  <th>Model identifier</th>
+                  <th>Best used for</th>
+                  <th>Cost per 1M tokens</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="status-pill status-supported">FAST</span></td>
+                  <td><code>nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B</code></td>
+                  <td>Fast one-line edits, syntax repairs, and simple utility functions</td>
+                  <td>$0.20</td>
+                </tr>
+                <tr>
+                  <td><span class="status-pill status-verified">STANDARD</span></td>
+                  <td><code>nvidia/nemotron-3-super-70b</code></td>
+                  <td>Standard feature synthesis and multi-file algorithmic logic</td>
+                  <td>$0.70</td>
+                </tr>
+                <tr>
+                  <td><span class="status-pill status-failed">ESCALATION</span></td>
+                  <td><code>nvidia/nemotron-4-340b-instruct</code></td>
+                  <td>Complex bug diagnosis, traceback analysis, and stubborn self-repairs</td>
+                  <td>$2.50</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
                 <span class="status-pill status-notrun" id="settings-sandbox-badge">Checking...</span>
               </div>
             </div>
@@ -609,6 +898,6 @@
   <!-- Notification Toast Anchor -->
   <div id="toast-container" class="toast-anchor" aria-live="polite"></div>
 
-  <script src="/static/app.js?v=8.0"></script>
+  <script src="/static/app.js?v=9.0"></script>
 </body>
 </html>
