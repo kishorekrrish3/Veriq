@@ -43,6 +43,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.middleware("http")
+async def add_cache_control_header(request: Request, call_next):
+    """Ensure static assets always revalidate during development."""
+    response = await call_next(request)
+    if request.url.path.startswith("/static") or request.url.path == "/":
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+    return response
+
 # Custom exception handler for typed VeriqErrors
 @app.exception_handler(VeriqError)
 async def veriq_exception_handler(request: Request, exc: VeriqError):
