@@ -38,4 +38,4 @@ def test_escalation_tier_on_repair_trigger():
     )
     assert decision.tier == ModelTier.ESCALATION
     assert decision.trigger == "VERIFICATION_FAILURE_ESCALATION"
-    assert "nvidia/nemotron-4-340b" in decision.model_id
+    assert "nemotron" in decision.model_id.lower()

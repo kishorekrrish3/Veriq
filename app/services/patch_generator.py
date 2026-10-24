@@ -267,11 +267,12 @@ class PatchGenerator:
             max_tokens=3000,
         )
 
-        # Parse JSON from response
+        # Parse JSON from response with resilience to preambles, reasoning traces, or markdown fences
         cleaned = raw_response.strip()
-        if cleaned.startswith("```"):
-            cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned)
-            cleaned = re.sub(r"\s*```$", "", cleaned)
+        start_idx = cleaned.find("{")
+        end_idx = cleaned.rfind("}")
+        if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+            cleaned = cleaned[start_idx : end_idx + 1]
 
         parsed = json.loads(cleaned)
         changes = [
