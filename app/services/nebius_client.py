@@ -94,7 +94,12 @@ class NebiusClient:
                     max_tokens=max_tokens,
                 )
                 latency_ms = (time.perf_counter() - start) * 1000.0
-                content = response.choices[0].message.content or ""
+                msg = response.choices[0].message
+                content = msg.content
+                if not content:
+                    # Capture reasoning_content if model put generation there
+                    content = getattr(msg, "reasoning_content", None) or getattr(msg, "reasoning", None) or ""
+
                 usage = {
                     "prompt_tokens": response.usage.prompt_tokens if response.usage else 0,
                     "completion_tokens": response.usage.completion_tokens if response.usage else 0,

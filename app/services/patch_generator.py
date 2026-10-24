@@ -264,17 +264,14 @@ class PatchGenerator:
             model=model_id,
             messages=messages,
             temperature=0.1,
-            max_tokens=3000,
+            max_tokens=4096,
         )
 
-        # Parse JSON from response with resilience to preambles, reasoning traces, or markdown fences
-        cleaned = raw_response.strip()
-        start_idx = cleaned.find("{")
-        end_idx = cleaned.rfind("}")
-        if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
-            cleaned = cleaned[start_idx : end_idx + 1]
+        if not raw_response or not raw_response.strip():
+            raise ValueError(f"Model {model_id} returned empty content. Token limit may have been reached during reasoning.")
 
-        parsed = json.loads(cleaned)
+        # Robustly extract and parse patch from LLM response (resilient to thinking tokens, fences, etc.)
+        parsed = self._parse_patch_response(raw_response, default_file=list(files_context.keys())[0] if files_context else "calculator.py")
         changes = [
             PatchFileChange(
                 file_path=item["file_path"],
@@ -285,6 +282,68 @@ class PatchGenerator:
         ]
 
         return changes, usage, latency
+
+    def _parse_patch_response(self, raw: str, default_file: str = "calculator.py") -> dict:
+        """Parses model response into a patch dictionary with fallback heuristics."""
+        cleaned = raw.strip()
+
+        # 1. Look for markdown fenced JSON: ```json { ... } ```
+        match_json = re.search(r"```(?:json)?\s*(\{[\s\S]*?\"files\"[\s\S]*?\})\s*```", cleaned)
+        if match_json:
+            try:
+                return json.loads(match_json.group(1))
+            except Exception:
+                pass
+
+        # 2. Look for raw JSON { "files": [ ... ] }
+        match_files = re.search(r"(\{\s*\"files\"\s*:\s*\[[\s\S]*?\]\s*\})", cleaned)
+        if match_files:
+            try:
+                return json.loads(match_files.group(1))
+            except Exception:
+                pass
+
+        # 3. Outer { ... } block
+        start_idx = cleaned.find("{")
+        end_idx = cleaned.rfind("}")
+        if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+            candidate = cleaned[start_idx : end_idx + 1]
+            try:
+                res = json.loads(candidate)
+                if "files" in res:
+                    return res
+            except Exception:
+                pass
+
+        # 4. If the model provided python code in a markdown block ```python ... ```
+        match_py = re.search(r"```(?:python)?\s*([\s\S]+?)\s*```", cleaned)
+        if match_py:
+            code = match_py.group(1).strip()
+            if "def " in code or "class " in code:
+                return {
+                    "files": [
+                        {
+                            "file_path": default_file,
+                            "action": "modify",
+                            "new_content": code,
+                        }
+                    ]
+                }
+
+        # 5. Direct raw python code output
+        if "def " in cleaned or "class " in cleaned:
+            return {
+                "files": [
+                    {
+                        "file_path": default_file,
+                        "action": "modify",
+                        "new_content": cleaned,
+                    }
+                ]
+            }
+
+        # If everything fails, attempt standard json.loads
+        return json.loads(cleaned)
 
 
 patch_generator = PatchGenerator()

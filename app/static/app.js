@@ -286,9 +286,7 @@ function renderRoutingDecision(decision) {
   }
 
   const card = document.createElement('div');
-  card.className = 'provider-row mt-4';
-  card.style.flexDirection = 'column';
-  card.style.alignItems = 'flex-start';
+  card.className = 'provider-row routing-telemetry-row';
 
   const tierBadgeClass = decision.tier === 'FAST' ? 'badge-cyan' : decision.tier === 'STANDARD' ? 'badge-blue' : 'badge-escalate';
 
