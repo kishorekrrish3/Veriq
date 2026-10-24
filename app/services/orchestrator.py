@@ -369,6 +369,10 @@ class AgentOrchestrator:
                     re_ev_ast = verification_engine.verify_ast_syntax("CLAIM-002", c.file_path, c.new_content)
                     ledger.attach_evidence(re_ev_ast)
 
+                # Re-run isolated import check
+                re_ev_imp = verification_engine.verify_import("CLAIM-003", workspace_path, "calculator")
+                ledger.attach_evidence(re_ev_imp)
+
                 # Re-run pytest in sandbox
                 re_ev_test = verification_engine.verify_tests("CLAIM-004", workspace_path, "test_calculator.py")
                 ledger.attach_evidence(re_ev_test)
