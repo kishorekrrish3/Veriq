@@ -1,63 +1,150 @@
 /* ==============================================================================
    VERIQ — macOS & Liquid Glass Developer Workbench
-   Follows Apple Human Interface Guidelines (HIG) per AGENT.md
-   Principles: Clarity, Deference, Depth
-   Materials: Frosted Glass, Inset Grouped Panels, SF Font Stack, System Vibrancy
+   Apple Human Interface Guidelines (HIG) with Maximum Glassmorphism
+   Dark & Light System Theme Architecture
    ============================================================================== */
 
-:root {
-  /* Apple Dark System Colors (HIG macOS / iOS) */
+:root, [data-theme="dark"] {
+  --theme: dark;
+
+  /* Apple Dark System Canvas & Glass */
   --system-bg: #000000;
-  --system-bg-elevated: #0C0D11;
+  --system-bg-elevated: #090B10;
+  --system-bg-gradient: radial-gradient(circle at 50% 0%, rgba(10, 132, 255, 0.12) 0%, transparent 65%),
+                        radial-gradient(circle at 100% 50%, rgba(191, 90, 242, 0.08) 0%, transparent 55%),
+                        #000000;
   
-  /* Translucent Liquid Glass Materials */
-  --glass-panel: rgba(24, 25, 30, 0.72);
-  --glass-panel-hover: rgba(34, 36, 44, 0.82);
-  --glass-sidebar: rgba(18, 19, 24, 0.82);
-  --glass-toolbar: rgba(18, 19, 24, 0.85);
-  --glass-inset: rgba(12, 13, 17, 0.78);
-  --glass-terminal: #07080B;
+  /* Translucent Liquid Glass Materials (Dark Mode) */
+  --glass-panel: rgba(20, 22, 28, 0.60);
+  --glass-panel-hover: rgba(28, 32, 42, 0.75);
+  --glass-toolbar: rgba(16, 18, 24, 0.72);
+  --glass-inset: rgba(10, 11, 16, 0.68);
+  --glass-terminal: rgba(6, 7, 10, 0.85);
 
   /* Specular Hairline Borders & Inner Highlights */
-  --border-specular: rgba(255, 255, 255, 0.11);
-  --border-specular-bright: rgba(255, 255, 255, 0.18);
-  --border-subtle: rgba(255, 255, 255, 0.07);
-  --inner-bevel: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  --border-specular: rgba(255, 255, 255, 0.14);
+  --border-specular-bright: rgba(255, 255, 255, 0.25);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --inner-bevel: inset 0 1px 0 rgba(255, 255, 255, 0.16);
 
-  /* Apple Dynamic Label Hierarchy */
+  /* Apple Dynamic Label Hierarchy (Dark Mode) */
   --label-primary: #FFFFFF;
-  --label-secondary: rgba(235, 235, 245, 0.75);
-  --label-tertiary: rgba(235, 235, 245, 0.45);
-  --label-quaternary: rgba(235, 235, 245, 0.22);
+  --label-secondary: rgba(235, 235, 245, 0.78);
+  --label-tertiary: rgba(235, 235, 245, 0.48);
+  --label-quaternary: rgba(235, 235, 245, 0.25);
 
-  /* Apple System Accent Colors */
+  /* Apple System Accents */
   --system-blue: #0A84FF;
   --system-blue-hover: #409CFF;
-  --system-blue-tint: rgba(10, 132, 255, 0.15);
+  --system-blue-tint: rgba(10, 132, 255, 0.18);
 
   --system-green: #30D158;
-  --system-green-tint: rgba(48, 209, 88, 0.15);
-  --system-green-border: rgba(48, 209, 88, 0.4);
+  --system-green-tint: rgba(48, 209, 88, 0.18);
+  --system-green-border: rgba(48, 209, 88, 0.45);
 
   --system-red: #FF453A;
-  --system-red-tint: rgba(255, 69, 58, 0.15);
-  --system-red-border: rgba(255, 69, 58, 0.4);
+  --system-red-tint: rgba(255, 69, 58, 0.18);
+  --system-red-border: rgba(255, 69, 58, 0.45);
 
   --system-orange: #FF9F0A;
-  --system-orange-tint: rgba(255, 159, 10, 0.15);
-  --system-orange-border: rgba(255, 159, 10, 0.4);
+  --system-orange-tint: rgba(255, 159, 10, 0.18);
+  --system-orange-border: rgba(255, 159, 10, 0.45);
 
   --system-purple: #BF5AF2;
-  --system-purple-tint: rgba(191, 90, 242, 0.15);
-
-  --system-indigo: #5E5CE6;
+  --system-purple-tint: rgba(191, 90, 242, 0.18);
   --system-teal: #64D2FF;
 
-  /* Typography Stacks */
+  /* Diff Syntax Colors (Dark) */
+  --diff-add-bg: rgba(48, 209, 88, 0.16);
+  --diff-add-text: #6EE7B7;
+  --diff-del-bg: rgba(255, 69, 58, 0.16);
+  --diff-del-text: #FCA5A5;
+  --diff-hunk-bg: rgba(10, 132, 255, 0.14);
+  --diff-hunk-text: #7DD3FC;
+
+  /* Apple Depth & Soft Elevation */
+  --shadow-window: 0 32px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.14);
+  --shadow-card: 0 12px 32px -4px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.09);
+  --shadow-dropdown: 0 18px 42px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.16);
+  --segmented-bg: rgba(0, 0, 0, 0.45);
+  --segmented-active: rgba(255, 255, 255, 0.18);
+}
+
+/* ==============================================================================
+   LIGHT THEME: APPLE MACOS SONOMA / SEQUOIA LIQUID GLASS
+   ============================================================================== */
+[data-theme="light"] {
+  --theme: light;
+
+  /* Apple Light System Canvas & Glass */
+  --system-bg: #E8EEF5;
+  --system-bg-elevated: #F4F7FB;
+  --system-bg-gradient: radial-gradient(circle at 50% 0%, rgba(10, 132, 255, 0.12) 0%, transparent 60%),
+                        radial-gradient(circle at 100% 60%, rgba(191, 90, 242, 0.08) 0%, transparent 50%),
+                        linear-gradient(180deg, #EDF2F8 0%, #DCE5F0 100%);
+
+  /* Translucent Liquid Glass Materials (Light Mode) */
+  --glass-panel: rgba(255, 255, 255, 0.68);
+  --glass-panel-hover: rgba(255, 255, 255, 0.85);
+  --glass-toolbar: rgba(255, 255, 255, 0.78);
+  --glass-inset: rgba(240, 244, 250, 0.75);
+  --glass-terminal: rgba(250, 252, 255, 0.92);
+
+  /* Specular Highlights & Light Borders */
+  --border-specular: rgba(255, 255, 255, 0.85);
+  --border-specular-bright: rgba(255, 255, 255, 1);
+  --border-subtle: rgba(0, 0, 0, 0.07);
+  --inner-bevel: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+  /* Apple Dynamic Label Hierarchy (Light Mode) */
+  --label-primary: #111827;
+  --label-secondary: #374151;
+  --label-tertiary: #6B7280;
+  --label-quaternary: #9CA3AF;
+
+  /* Apple System Accents (Calibrated for Light Contrast) */
+  --system-blue: #0071E3;
+  --system-blue-hover: #0077ED;
+  --system-blue-tint: rgba(0, 113, 227, 0.12);
+
+  --system-green: #15803D;
+  --system-green-tint: rgba(21, 128, 61, 0.12);
+  --system-green-border: rgba(21, 128, 61, 0.35);
+
+  --system-red: #DC2626;
+  --system-red-tint: rgba(220, 38, 38, 0.12);
+  --system-red-border: rgba(220, 38, 38, 0.35);
+
+  --system-orange: #D97706;
+  --system-orange-tint: rgba(217, 119, 6, 0.12);
+  --system-orange-border: rgba(217, 119, 6, 0.35);
+
+  --system-purple: #9333EA;
+  --system-purple-tint: rgba(147, 51, 234, 0.12);
+  --system-teal: #0284C7;
+
+  /* Diff Syntax Colors (Light) */
+  --diff-add-bg: rgba(34, 197, 94, 0.15);
+  --diff-add-text: #15803D;
+  --diff-del-bg: rgba(239, 68, 68, 0.15);
+  --diff-del-text: #B91C1C;
+  --diff-hunk-bg: rgba(0, 113, 227, 0.12);
+  --diff-hunk-text: #0284C7;
+
+  /* Apple Depth & Light Elevation */
+  --shadow-window: 0 24px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 8px 24px -2px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(255, 255, 255, 0.9);
+  --shadow-dropdown: 0 16px 40px rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
+  --segmented-bg: rgba(0, 0, 0, 0.07);
+  --segmented-active: #FFFFFF;
+}
+
+:root {
+  /* Common Constants */
   --font-sf: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
   --font-sf-mono: "SF Mono", Monaco, Menlo, Consolas, monospace;
 
-  /* Corner Radii System (Apple Smooth Squircle feel) */
+  /* Apple Squircle Radii */
   --radius-xs: 5px;
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -65,17 +152,12 @@
   --radius-xl: 22px;
   --radius-pill: 9999px;
 
-  /* Apple Depth & Soft Elevation */
-  --shadow-window: 0 24px 70px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.12);
-  --shadow-card: 0 8px 24px -4px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08);
-  --shadow-card-active: 0 12px 36px -4px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(10, 132, 255, 0.5);
-
-  /* Layout */
+  /* Dimensions */
   --max-width: 1400px;
 }
 
 /* ==============================================================================
-   RESET & SYSTEM BASE
+   RESET & FOUNDATIONS
    ============================================================================== */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -87,9 +169,8 @@ html, body {
   width: 100%;
   min-height: 100vh;
   background-color: var(--system-bg);
-  background-image: 
-    radial-gradient(circle at 50% 0%, rgba(10, 132, 255, 0.08) 0%, transparent 60%),
-    radial-gradient(circle at 100% 50%, rgba(191, 90, 242, 0.05) 0%, transparent 50%);
+  background-image: var(--system-bg-gradient);
+  background-attachment: fixed;
   color: var(--label-primary);
   font-family: var(--font-sf);
   font-size: 13.5px;
@@ -97,6 +178,7 @@ html, body {
   letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 200ms ease, color 200ms ease;
 }
 
 a {
@@ -131,14 +213,16 @@ code, pre {
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 40px);
+  transition: background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
 }
 
-/* macOS Unified Toolbar */
+/* macOS Unified Toolbar with Maximum Glassmorphism */
 .window-toolbar {
   height: 54px;
   background: var(--glass-toolbar);
-  backdrop-filter: blur(30px) saturate(190%);
-  border-bottom: 1px solid var(--border-specular);
+  backdrop-filter: blur(40px) saturate(210%);
+  -webkit-backdrop-filter: blur(40px) saturate(210%);
+  border-bottom: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -147,9 +231,9 @@ code, pre {
   top: 0;
   z-index: 100;
   box-shadow: var(--inner-bevel);
+  transition: background-color 200ms ease, border-color 200ms ease;
 }
 
-/* Traffic Light Window Controls */
 .toolbar-left {
   display: flex;
   align-items: center;
@@ -185,8 +269,8 @@ code, pre {
   width: 26px;
   height: 26px;
   border-radius: var(--radius-sm);
-  background: linear-gradient(180deg, #1C2333 0%, #0F131D 100%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: linear-gradient(180deg, rgba(28, 35, 51, 0.8) 0%, rgba(15, 19, 29, 0.9) 100%);
+  border: 1px solid var(--border-specular);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -194,7 +278,13 @@ code, pre {
   font-weight: 700;
   font-size: 13px;
   color: var(--label-primary);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="light"] .brand-glyph {
+  background: linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 100%);
+  color: var(--label-primary);
+  border-color: rgba(0, 0, 0, 0.12);
 }
 
 .brand-label-title {
@@ -219,11 +309,12 @@ code, pre {
 .segmented-control {
   display: inline-flex;
   align-items: center;
-  background: rgba(0, 0, 0, 0.35);
+  background: var(--segmented-bg);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   padding: 3px;
   gap: 2px;
+  transition: background-color 200ms ease;
 }
 
 .segment-btn {
@@ -245,14 +336,14 @@ code, pre {
 
 .segment-btn:hover {
   color: var(--label-primary);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .segment-btn.active {
-  background: rgba(255, 255, 255, 0.14);
+  background: var(--segmented-active);
   color: var(--label-primary);
   font-weight: 600;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), var(--inner-bevel);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18), var(--inner-bevel);
 }
 
 .segment-pill {
@@ -260,15 +351,40 @@ code, pre {
   font-size: 9.5px;
   padding: 1px 5px;
   border-radius: 4px;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.12);
   color: var(--label-tertiary);
 }
 
-/* Toolbar Right Status */
+/* Toolbar Right Status & Theme Switcher */
 .toolbar-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+}
+
+/* Theme Switcher Button (Apple Tactile Pill) */
+.theme-switch-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-specular);
+  border-radius: var(--radius-pill);
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--label-primary);
+  transition: all 140ms ease;
+  box-shadow: var(--inner-bevel);
+}
+
+.theme-switch-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: scale(1.04);
+}
+
+.theme-switch-btn:active {
+  transform: scale(0.96);
 }
 
 .system-status-capsule {
@@ -289,7 +405,7 @@ code, pre {
   height: 7px;
   border-radius: 50%;
   background-color: var(--system-green);
-  box-shadow: 0 0 8px rgba(48, 209, 88, 0.5);
+  box-shadow: 0 0 8px rgba(48, 209, 88, 0.6);
 }
 
 /* ==============================================================================
@@ -316,17 +432,18 @@ code, pre {
 }
 
 /* ==============================================================================
-   APPLE INSET GROUPED CARDS (Liquid Glass)
+   APPLE INSET GROUPED CARDS (Liquid Glass with Maximum Blur & Specular)
    ============================================================================== */
 .glass-card {
   background: var(--glass-panel);
-  backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(36px) saturate(200%);
+  -webkit-backdrop-filter: blur(36px) saturate(200%);
   border: 1px solid var(--border-specular);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   margin-bottom: 22px;
   overflow: hidden;
-  transition: border-color 150ms ease, box-shadow 150ms ease;
+  transition: all 200ms ease;
 }
 
 .glass-card:hover {
@@ -408,7 +525,7 @@ code, pre {
 }
 
 .btn-glass:hover {
-  background: rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.16);
   border-color: var(--border-specular-bright);
 }
 
@@ -465,7 +582,7 @@ code, pre {
 }
 
 .status-notrun {
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: rgba(120, 120, 128, 0.12);
   color: var(--label-tertiary);
   border-color: var(--border-subtle);
 }
@@ -482,11 +599,13 @@ code, pre {
 
 .bento-cell {
   background: var(--glass-panel);
-  backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(36px) saturate(200%);
+  -webkit-backdrop-filter: blur(36px) saturate(200%);
   border: 1px solid var(--border-specular);
   border-radius: var(--radius-md);
   padding: 18px;
   box-shadow: var(--shadow-card);
+  transition: all 200ms ease;
 }
 
 .bento-label {
@@ -527,6 +646,7 @@ code, pre {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   padding: 14px;
+  backdrop-filter: blur(20px);
 }
 
 .gate-step {
@@ -582,8 +702,13 @@ code, pre {
   transition: all 120ms ease;
 }
 
+[data-theme="light"] .preset-chip {
+  background: #FFFFFF;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
 .preset-chip:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.18);
   color: var(--label-primary);
   border-color: var(--system-blue);
 }
@@ -629,7 +754,8 @@ code, pre {
 .active-run-meta-card {
   padding: 18px 22px;
   background: var(--glass-panel);
-  backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(36px) saturate(200%);
+  -webkit-backdrop-filter: blur(36px) saturate(200%);
   border: 1px solid var(--border-specular);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
@@ -719,18 +845,18 @@ code, pre {
 }
 
 .diff-add {
-  background-color: rgba(48, 209, 88, 0.12);
-  color: #75E696;
+  background-color: var(--diff-add-bg);
+  color: var(--diff-add-text);
 }
 
 .diff-del {
-  background-color: rgba(255, 69, 58, 0.12);
-  color: #FF7B72;
+  background-color: var(--diff-del-bg);
+  color: var(--diff-del-text);
 }
 
 .diff-hunk {
-  background-color: rgba(10, 132, 255, 0.12);
-  color: var(--system-teal);
+  background-color: var(--diff-hunk-bg);
+  color: var(--diff-hunk-text);
   font-weight: 600;
 }
 
@@ -799,8 +925,13 @@ code, pre {
   transition: all 120ms ease;
 }
 
+[data-theme="light"] .filter-chip {
+  background: #FFFFFF;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
 .filter-chip:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.14);
   color: var(--label-primary);
 }
 
@@ -827,7 +958,6 @@ code, pre {
 
 .claim-inspector-item:hover {
   border-color: var(--border-specular-bright);
-  background: rgba(24, 25, 30, 0.85);
 }
 
 .claim-inspector-top {
@@ -868,7 +998,7 @@ code, pre {
 }
 
 .evidence-terminal-box {
-  background: #040508;
+  background: var(--glass-terminal);
   border: 1px solid var(--border-specular);
   border-radius: var(--radius-sm);
   padding: 12px 14px;
@@ -902,11 +1032,15 @@ code, pre {
 
 .apple-table th {
   padding: 10px 14px;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.25);
   border-bottom: 1px solid var(--border-specular);
   color: var(--label-tertiary);
   font-weight: 600;
   font-size: 11px;
+}
+
+[data-theme="light"] .apple-table th {
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .apple-table td {
@@ -916,7 +1050,7 @@ code, pre {
 }
 
 .apple-table tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.04);
   color: var(--label-primary);
 }
 
@@ -933,15 +1067,15 @@ code, pre {
 }
 
 .toast-pill {
-  background: rgba(30, 32, 40, 0.95);
-  backdrop-filter: blur(24px);
+  background: var(--glass-panel);
+  backdrop-filter: blur(32px);
   border: 1px solid var(--border-specular-bright);
   color: var(--label-primary);
   padding: 10px 16px;
   font-size: 12.5px;
   font-weight: 500;
   border-radius: var(--radius-sm);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--shadow-dropdown);
   pointer-events: auto;
 }
 

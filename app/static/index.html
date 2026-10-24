@@ -1,12 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VERIQ — macOS Developer Workbench</title>
   
-  <link rel="stylesheet" href="/static/styles.css?v=7.0">
+  <link rel="stylesheet" href="/static/styles.css?v=8.0">
   <link rel="icon" type="image/svg+xml" href="/static/assets/favicon.svg">
+  <script>
+    (function() {
+      const saved = localStorage.getItem('veriq-theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
 </head>
 <body>
   <!-- macOS Window Frame Shell -->
@@ -62,8 +68,13 @@
         </nav>
       </div>
 
-      <!-- Toolbar Actions & Health Status -->
+      <!-- Toolbar Actions, Theme Switcher & Health Status -->
       <div class="toolbar-right">
+        <!-- Tactile Dark/Light Mode Switcher -->
+        <button class="theme-switch-btn" id="btn-theme-toggle" aria-label="Toggle Dark and Light Mode" title="Toggle theme (⌘T)">
+          <svg id="theme-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+
         <div class="system-status-capsule" id="deck-status-pill">
           <span class="status-dot"></span>
           <span id="deck-status-text">Engine ready</span>
@@ -598,6 +609,6 @@
   <!-- Notification Toast Anchor -->
   <div id="toast-container" class="toast-anchor" aria-live="polite"></div>
 
-  <script src="/static/app.js?v=7.0"></script>
+  <script src="/static/app.js?v=8.0"></script>
 </body>
 </html>

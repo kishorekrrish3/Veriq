@@ -1,6 +1,7 @@
 /**
  * VERIQ — macOS & Liquid Glass Developer Workbench
  * Strictly adhering to Apple HIG per AGENT.md
+ * Dynamic Liquid Glass Theme Switcher Engine
  */
 
 let activeRunId = null;
@@ -12,6 +13,7 @@ let runTimerInterval = null;
 let runStartTime = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
   initNavigation();
   initForms();
   initFilters();
@@ -22,6 +24,49 @@ document.addEventListener('DOMContentLoaded', () => {
   checkProviderStatus();
   loadBenchmarks();
 });
+
+// Dynamic Liquid Glass Theme Switcher Engine
+function initTheme() {
+  const savedTheme = localStorage.getItem('veriq-theme') || 
+    (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  applyTheme(savedTheme, false);
+
+  const toggleBtn = document.getElementById('btn-theme-toggle');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      applyTheme(next, true);
+    });
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && (e.key === 't' || e.key === 'T')) {
+      e.preventDefault();
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      applyTheme(next, true);
+    }
+  });
+}
+
+function applyTheme(theme, notify = false) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('veriq-theme', theme);
+
+  const themeIcon = document.getElementById('theme-icon');
+  if (themeIcon) {
+    if (theme === 'dark') {
+      themeIcon.innerHTML = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
+    } else {
+      themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+    }
+  }
+
+  if (notify) {
+    showToast(`Switched to ${theme === 'dark' ? 'Dark Liquid Glass' : 'Light Liquid Glass'}`, 'info');
+  }
+}
 
 // Toast Notifications (macOS Banner Style)
 function showToast(message, type = 'info') {
@@ -453,7 +498,7 @@ function renderLedgerClaims(claims, containerId, evidenceList = []) {
           </div>
           ${ev.command ? `<div style="margin-bottom:4px;"><strong>Command:</strong> <code>${escapeHtml(ev.command)}</code></div>` : ''}
           ${ev.exit_code !== null ? `<div style="margin-bottom:4px;"><strong>Exit code:</strong> ${ev.exit_code} · <strong>Duration:</strong> ${ev.duration_ms}ms · <strong>Sandbox:</strong> ${escapeHtml(ev.sandbox_type || 'CONTAINER')}</div>` : ''}
-          ${ev.stdout ? `<div style="margin-top:6px;"><strong>Stdout:</strong> <pre style="white-space:pre-wrap; background:rgba(0,0,0,0.6); padding:8px; border-radius:4px; max-height:140px; overflow-y:auto; color:var(--label-secondary);">${escapeHtml(ev.stdout)}</pre></div>` : ''}
+          ${ev.stdout ? `<div style="margin-top:6px;"><strong>Stdout:</strong> <pre style="white-space:pre-wrap; background:rgba(0,0,0,0.4); padding:8px; border-radius:4px; max-height:140px; overflow-y:auto; color:var(--label-secondary);">${escapeHtml(ev.stdout)}</pre></div>` : ''}
           ${ev.stderr ? `<div style="margin-top:6px; color:var(--system-red);"><strong>Stderr:</strong> <pre style="white-space:pre-wrap; background:rgba(255,69,58,0.1); padding:8px; border-radius:4px; max-height:140px; overflow-y:auto;">${escapeHtml(ev.stderr)}</pre></div>` : ''}
         </div>
       `;
