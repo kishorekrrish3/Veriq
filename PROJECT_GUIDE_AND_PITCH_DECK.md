@@ -13,6 +13,7 @@
 |---|---|
 | **Project Short Name** | **VERIQ** |
 | **Project Full Title** | **Evidence-Driven Autonomous Code Synthesis and Self-Repair via Deterministic Sandbox Verification and Multi-Tier NVIDIA Nemotron Model Routing** |
+| **GitHub Repository** | [https://github.com/kishorekrrish3/Veriq](https://github.com/kishorekrrish3/Veriq) |
 | **Headline Pitch** | While current AI coding assistants guess and hallucinate, VERIQ isolates code in a hardened sandbox, executes real automated unit tests, and proves correctness before touching developer files. |
 | **Core AI Infrastructure** | Nebius Token Factory (NVIDIA Nemotron-3-Nano-30B, Nemotron-3-Super-70B, Nemotron-4-340B-Instruct) |
 | **Research Grounding** | Tavily AI Search & Web Extract API |

@@ -1,8 +1,12 @@
 <div align="center">
 
-<img src="assets/logo.svg" alt="VERIQ — Evidence-Driven Autonomous Engineering Agent" width="840" />
+<img src="assets/logo.svg" alt="Veriq — Evidence-Driven Autonomous Engineering Agent" width="840" />
 
-<br/><br/>
+# Veriq
+
+### Evidence-Driven Autonomous Code Synthesis and Self-Repair via Deterministic Sandbox Verification and Multi-Tier NVIDIA Nemotron Model Routing
+
+<br/>
 
 [![Tests: 48 Passed](https://img.shields.io/badge/Tests-48%20Passed%20(100%25)-success?style=for-the-badge&logo=pytest&logoColor=white)](tests/)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue?style=for-the-badge&logo=python&logoColor=white)](pyproject.toml)
@@ -16,9 +20,8 @@
 
 <br/>
 
-### **Code is generated. Proof is earned.**
-
-*An Evidence-Driven Autonomous Engineering Agent that builds, isolates, tests, and mathematically proves every code fix it makes.*
+> **"Code is generated. Proof is earned."**  
+> *An Evidence-Driven Autonomous Engineering Agent that builds, isolates, tests, and mathematically proves every code fix it makes.*
 
 **Built for the Nebius × NVIDIA Global AI Hackathon · October 2026**
 
@@ -28,11 +31,12 @@
 
 ## 📌 Project Identity & Titles
 
-* **Short-Form Title**: **VERIQ**
-* **Long-Form Academic / LinkedIn Title**:  
+* **Primary Project Name**: **Veriq**
+* **Full Title**:  
   > **Evidence-Driven Autonomous Code Synthesis and Self-Repair via Deterministic Sandbox Verification and Multi-Tier NVIDIA Nemotron Model Routing**
+* **Repository**: [`https://github.com/kishorekrrish3/Veriq`](https://github.com/kishorekrrish3/Veriq)
 * **Tagline**: *Code is generated. Proof is earned.*
-* **Core Differentiator**: Generative LLMs hypothesize; VERIQ deterministically proves.
+* **Core Differentiator**: Generative LLMs hypothesize; Veriq deterministically proves.
 
 ---
 
@@ -51,7 +55,8 @@
 11. [Quickstart & Installation Guide](#11-quickstart--installation-guide)
 12. [REST API & SSE Event Reference](#12-rest-api--sse-event-reference)
 13. [Project Directory Layout](#13-project-directory-layout)
-14. [Hackathon Submission & Rubric Alignment](#14-hackathon-submission--rubric-alignment)
+14. [GitHub Push & Production Deployment Guide](#14-github-push--production-deployment-guide)
+15. [Hackathon Submission & Rubric Alignment](#15-hackathon-submission--rubric-alignment)
 
 ---
 
@@ -284,8 +289,8 @@ VERIQ includes a **100% Free** Google Authentication implementation:
 
 ### Step 1: Clone the Repository
 ```bash
-git clone https://github.com/your-username/veriq.git
-cd veriq
+git clone https://github.com/kishorekrrish3/Veriq.git
+cd Veriq
 ```
 
 ### Step 2: Create a Virtual Environment & Install Dependencies
@@ -435,7 +440,98 @@ python -m pytest tests -v
 
 ---
 
-## 14. Hackathon Submission & Rubric Alignment
+## 14. GitHub Push & Production Deployment Guide
+
+### A. Pushing to GitHub
+
+To push this codebase to the official GitHub repository at [`https://github.com/kishorekrrish3/Veriq`](https://github.com/kishorekrrish3/Veriq):
+
+```bash
+# 1. Verify working directory is clean
+git status
+
+# 2. Set the GitHub remote repository
+git remote add origin https://github.com/kishorekrrish3/Veriq.git
+# (If remote origin already exists, update it with: git remote set-url origin https://github.com/kishorekrrish3/Veriq.git)
+
+# 3. Rename branch to main (GitHub standard)
+git branch -M main
+
+# 4. Push all commits and tags to GitHub
+git push -u origin main
+```
+
+> [!NOTE]
+> `.env` is strictly ignored by `.gitignore`, ensuring your private API keys and OAuth secrets remain completely safe on your local machine and are never leaked to public version control.
+
+---
+
+### B. Production Cloud Deployment (Docker / VPS / Render / Railway)
+
+Veriq is a containerized FastAPI application with an asynchronous SQLite WAL database and ephemeral sandboxing.
+
+#### 1. Quick Docker Deploy
+```bash
+# Build production container image
+docker build -t veriq-app:latest .
+
+# Run on port 8000
+docker run -d \
+  --name veriq-service \
+  -p 8000:8000 \
+  --env-file .env \
+  -v veriq_data:/app/data \
+  veriq-app:latest
+```
+
+#### 2. Direct Process Deploy (Systemd / PM2 / Supervisor)
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+```
+
+---
+
+### C. Production Environment Variables Reference
+
+When deploying to Render, Railway, Fly.io, AWS, or GCP, set these environment variables in your cloud provider's dashboard:
+
+| Variable | Recommended Production Value | Description |
+|---|---|---|
+| `APP_ENV` | `production` | Enables production security policies |
+| `HOST` | `0.0.0.0` | Binds to all network interfaces |
+| `PORT` | `8000` | Port served by cloud router |
+| `DEBUG` | `false` | Disables debug tracebacks in HTTP responses |
+| `SECRET_KEY` | *(Random 32-byte string)* | Cryptographic session cookie signer |
+| `DATABASE_URL` | `sqlite:///./data/veriq.db` | Local persistent SQLite connection string |
+| `NEBIUS_API_KEY` | `v1.CmQKHHN0...` | Nebius Token Factory API key |
+| `ENABLE_LIVE_INFERENCE` | `true` | Enables real-time NVIDIA Nemotron model routing |
+| `TAVILY_API_KEY` | `tvly-dev-...` | Tavily live technical documentation search key |
+| `ENABLE_LIVE_RESEARCH` | `true` | Enables live web grounding |
+| `GOOGLE_CLIENT_ID` | `your-client-id.apps.googleusercontent.com` | Google Cloud OAuth Client ID |
+| `GOOGLE_CLIENT_SECRET` | `your-client-secret` | Google Cloud OAuth Client Secret |
+| `GOOGLE_REDIRECT_URI` | `https://<your-domain>/api/auth/google/callback` | OAuth redirect callback URL |
+| `ALLOW_DEMO_LOGIN` | `true` | Keeps instant 1-click fallback login active for judges |
+
+---
+
+### D. Updating Google Cloud Console for Production Domain
+
+When deploying to a public domain (e.g. `https://veriq.yourdomain.com` or `https://veriq.onrender.com`):
+
+1. Open [Google Cloud Console → Credentials](https://console.cloud.google.com/apis/credentials).
+2. Click your OAuth 2.0 Client ID.
+3. Under **Authorized JavaScript origins**, click **+ ADD URI** and add:
+   * `https://<your-production-domain>`
+4. Under **Authorized redirect URIs**, click **+ ADD URI** and add:
+   * `https://<your-production-domain>/api/auth/google/callback`
+5. Click **Save**. Google changes propagate globally within ~5 minutes.
+
+---
+
+## 15. Hackathon Submission & Rubric Alignment
 
 | Rubric Criteria | Score Alignment | How VERIQ Fulfills It |
 |---|:---:|---|
