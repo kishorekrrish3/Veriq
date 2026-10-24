@@ -14,7 +14,7 @@ router = APIRouter(tags=["health"])
 @router.get("/health")
 async def get_health():
     """System health check and runtime environment info."""
-    docker_available = sandbox_runner.is_docker_available()
+    docker_available = sandbox_runner.is_docker_available(refresh=True)
     return {
         "status": "healthy",
         "app_name": settings.APP_NAME,

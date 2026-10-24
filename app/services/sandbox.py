@@ -48,28 +48,50 @@ class SandboxResult:
         }
 
 
+def find_docker_binary() -> str:
+    """Finds the docker executable path, including Windows User AppData locations."""
+    which_docker = shutil.which("docker")
+    if which_docker:
+        return which_docker
+
+    candidate_paths = [
+        os.path.expandvars(r"%LOCALAPPDATA%\Programs\DockerDesktop\resources\bin\docker.exe"),
+        r"C:\Program Files\Docker\Docker\resources\bin\docker.exe",
+        os.path.expanduser(r"~\AppData\Local\Programs\DockerDesktop\resources\bin\docker.exe"),
+    ]
+    for p in candidate_paths:
+        if os.path.isfile(p):
+            bin_dir = os.path.dirname(p)
+            if bin_dir not in os.environ.get("PATH", ""):
+                os.environ["PATH"] = bin_dir + os.pathsep + os.environ.get("PATH", "")
+            return p
+
+    return "docker"
+
+
 class SandboxRunner:
     def __init__(self):
         self._docker_available: Optional[bool] = None
 
-    def is_docker_available(self) -> bool:
+    def is_docker_available(self, refresh: bool = False) -> bool:
         """Determines whether the Docker CLI and daemon are reachable."""
-        if self._docker_available is not None:
-            return self._docker_available
+        if not refresh and self._docker_available is True:
+            return True
 
+        docker_bin = find_docker_binary()
         try:
             res = subprocess.run(
-                ["docker", "info"],
+                [docker_bin, "info"],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                timeout=3,
+                timeout=4,
                 check=False,
             )
             self._docker_available = (res.returncode == 0)
         except Exception:
             self._docker_available = False
 
-        logger.info(f"Docker sandbox availability detected: {self._docker_available}")
+        logger.info(f"Docker sandbox availability detected: {self._docker_available} (binary: {docker_bin})")
         return self._docker_available
 
     def execute(
@@ -99,17 +121,16 @@ class SandboxRunner:
     ) -> SandboxResult:
         """Executes the command inside a hardened Docker container."""
         start = time.perf_counter()
-        abs_workspace = str(workspace_path.resolve())
+        abs_workspace = str(workspace_path.resolve()).replace("\\", "/")
+        docker_bin = find_docker_binary()
 
         # Hardened docker arguments:
         # - non-root user (veriq: 1000)
         # - no network access (--network none)
-        # - read-only root (--read-only)
-        # - explicit tmpfs for /tmp
         # - bounded memory (256m)
         # - bounded cpu (1.0)
         docker_cmd = [
-            "docker", "run", "--rm",
+            docker_bin, "run", "--rm",
             "--network", "none",
             "--memory", "256m",
             "--cpus", "1.0",
